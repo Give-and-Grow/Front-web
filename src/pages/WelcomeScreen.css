@@ -1,0 +1,70 @@
+.container {
+    width: 100vw;
+    min-height: 100vh; /* استخدمها هون بدل height */
+    border-width: 3px;
+    border-color: #66bb6a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #E8F5E9;
+    padding: 20px;
+    padding-top: 50px;
+  }
+  
+  
+  .icon {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 30px;
+    border-radius: 80px;
+    border: 3px solid #66bb6a;
+  }
+  
+  .title {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    line-height: 40px;
+  }
+  
+  .welcomeText {
+    color: #388e3c;
+    font-style: italic;
+  }
+  
+  .volunteerText {
+    color: #66bb6a;
+    font-style: italic;
+  }
+  
+  .description {
+    font-size: 16px;
+    color: #388e3c;
+    text-align: center;
+    margin-bottom: 40px;
+    line-height: 28px;
+    letter-spacing: 1px;
+    padding: 15px;
+    background-color: #eaf7ea;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button {
+    background-color: #66bb6a;
+    padding: 15px 40px;
+    border-radius: 50px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button:hover {
+    background-color: #5aaf58; /* Darken on hover */
+  }
+  
