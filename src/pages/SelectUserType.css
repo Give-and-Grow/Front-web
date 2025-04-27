@@ -1,0 +1,68 @@
+.select-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #e8f5e9;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+  
+  .image-container {
+    width: 100%; 
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .select-image {
+    width: 40%;  /* تم تقليل العرض هنا */
+    height: auto;  /* الحفاظ على النسب */
+    max-width: 300px;  /* تحديد الحد الأقصى لحجم الصورة */
+    border-radius: 15px;
+    border: 5px solid #66bb6a;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+  
+  .select-title {
+    font-size: 28px;
+    font-weight: bold;
+    font-style: italic;
+    color: #66bb6a;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .select-buttons {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+  }
+  
+  @media (min-width: 768px) {
+    .select-buttons {
+      flex-direction: row;
+    }
+  }
+  
+  .select-button {
+    background-color: white;
+    color: #14752e;
+    border: 2px solid #66bb6a;
+    padding: 16px 32px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    font-style: italic;
+    width: 250px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .select-button:hover {
+    background-color: #c8e6c9;
+    box-shadow: 0 4px 10px rgba(102, 187, 106, 0.4);
+  }
+  

@@ -86,7 +86,7 @@
 }
 
 .footer-link {
-    color: #14752e;
+   /* color: #14752e;*/
     font-size: 12px;  /* تم تقليل الحجم */
     margin-bottom: 5px;
     font-style: italic;

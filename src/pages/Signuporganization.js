@@ -1,40 +1,22 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import './Signupscreen.css'; // استورد ملف CSS
-import volunteerImage from '../images/Signup.gif';
+import { useNavigate } from 'react-router-dom';
+import './Signupscreen.css'; 
+import volunteerImage from '../images/organSingup.png';
 
-const SignupScreen = ({ role }) => {
-  const navigate = useNavigate(); // Use useNavigate hook to get navigate function
+const Signuporganization = ({ role }) => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [username, setUsername] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [birthday, setBirthday] = useState('');
-  const [gender, setGender] = useState('');
+  const [organizationName, setOrganizationName] = useState('');
+  const [description, setDescription] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  const [showResendForm, setShowResendForm] = useState(false); // New state to toggle resend form
+  const [showResendForm, setShowResendForm] = useState(false);
 
   const handleNext = async () => {
-    if (!firstName || !lastName || !birthday || !gender || !email || !password || !phone) {
+    if (!organizationName || !description || !email || !password || !phone) {
       alert('Please fill all fields');
-      return;
-    }
-  
-    // Validate the date format using regex (YYYY-MM-DD)
-    const birthdayRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!birthdayRegex.test(birthday)) {
-      alert('Please enter a valid birthday in the format YYYY-MM-DD');
-      return;
-    }
-  
-    // Create a new Date object from the input and check if it's a valid date
-    const [year, month, day] = birthday.split('-');
-    const date = new Date(year, month - 1, day); // month is 0-indexed in JavaScript Date
-    if (date.getFullYear() !== parseInt(year) || date.getMonth() !== parseInt(month) - 1 || date.getDate() !== parseInt(day)) {
-      alert('Please enter a valid date');
       return;
     }
   
@@ -43,25 +25,19 @@ const SignupScreen = ({ role }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: `${firstName} ${lastName}`,
-          last_name: lastName,
-          day,
-          month,
-          year,
-          gender,
+          name: organizationName,
+          description,
           email,
           password,
           phone_number: phone,
-          role, // تأكد أن هنا يتم إرسال role بالضبط
+          role: role, // Use the role prop here
         }),
-        
       });
-  
+
       const data = await response.json();
-  
+
       if (response.status === 201) {
         alert(data.msg);
-        setUsername(data.username);
         setStep(2);
       } else {
         alert(data.msg || 'Something went wrong');
@@ -71,9 +47,6 @@ const SignupScreen = ({ role }) => {
       alert('Failed to connect to server');
     }
   };
-  
-  
-  
 
   const handleVerification = async () => {
     if (!verificationCode || !email) {
@@ -104,7 +77,6 @@ const SignupScreen = ({ role }) => {
       alert('Failed to connect to server');
     }
   };
-  
 
   const finishSignup = () => {
     if (!email) {
@@ -128,7 +100,6 @@ const SignupScreen = ({ role }) => {
       });
 
       const text = await response.text();
-      console.log('Raw response:', text);
 
       let data;
       try {
@@ -160,20 +131,12 @@ const SignupScreen = ({ role }) => {
 
       {step === 1 && (
         <>
-          <h1 className="title">Create Account</h1>
-          <input type="text" placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} className="input" />
-          <input type="text" placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} className="input" />
-          <input type="text" placeholder="Birthday (YYYY-MM-DD)" value={birthday} onChange={e => setBirthday(e.target.value)} className="input" />
-          
-          <div className="genderContainer">
-            <button className={`genderButton ${gender === 'Male' ? 'selectedGender' : ''}`} onClick={() => setGender('Male')}>Male</button>
-            <button className={`genderButton ${gender === 'Female' ? 'selectedGender' : ''}`} onClick={() => setGender('Female')}>Female</button>
-          </div>
-
+          <h1 className="title">Create Organization Account</h1>
+          <input type="text" placeholder="Organization Name" value={organizationName} onChange={e => setOrganizationName(e.target.value)} className="input" />
+          <input type="text" placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} className="input" />
           <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="input" />
           <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="input" />
           <input type="text" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} className="input" />
-          
           <button className="button" onClick={handleNext}>Next</button>
         </>
       )}
@@ -188,7 +151,7 @@ const SignupScreen = ({ role }) => {
             <a 
               href="#!" 
               className="resendLink" 
-              onClick={() => setShowResendForm(!showResendForm)} // Toggle resend form visibility
+              onClick={() => setShowResendForm(!showResendForm)}
             >
               Resend Code
             </a>
@@ -221,9 +184,9 @@ const SignupScreen = ({ role }) => {
 
       {step === 4 && (
         <>
-          <h1 className="welcomeTitle">Welcome, {firstName}!</h1>
-          <h2 className="welcomeTitle">Your username is {username}</h2>
-          <p className="welcomeSubtitle">We're happy to have you 🎉</p>
+          <h1 className="welcomeTitle">Welcome, {organizationName}!</h1>
+          <h2 className="welcomeTitle">Your account is now set up!</h2>
+          <p className="welcomeSubtitle">Thank you for joining us!</p>
           <button className="button" onClick={() => navigate('/LoginPage')}>Go to Login</button>
         </>
       )}
@@ -231,4 +194,4 @@ const SignupScreen = ({ role }) => {
   );
 };
 
-export default SignupScreen;
+export default Signuporganization;
