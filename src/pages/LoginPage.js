@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './LoginPage.css'; // Make sure this CSS file exists
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import './LoginPage.css'; // تأكد من أن ملف CSS موجود
+import { useNavigate } from 'react-router-dom';
 
 const images = [
     require('../images/volunter1.jpg'),
@@ -15,7 +15,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [imageIndex, setImageIndex] = useState(0);
     const [fade, setFade] = useState(true);
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -34,10 +34,14 @@ const LoginPage = () => {
                 username,
                 password,
             });
-
+    
             if (response.status === 200) {
+                const token = response.data.token;
+                localStorage.setItem('userToken', token);  // تخزين التوكين
+                console.log('Saved token:', token);  // هنا تضيف الـ console.log
+    
                 alert('Login successful!');
-                navigate('homepage'); // Use navigate here
+                navigate('/Homepage'); // إعادة التوجيه إلى صفحة البروفايل
             } else {
                 alert(response.data.message || 'Invalid credentials');
             }
@@ -47,6 +51,7 @@ const LoginPage = () => {
             alert(message);
         }
     };
+    
 
     return (
         <div className="login-container">
@@ -83,7 +88,7 @@ const LoginPage = () => {
                 </button>
 
                 <div className="footer">
-                    <p className="footer-link" onClick={() => navigate('/SignupScreen')}>
+                    <p className="footer-link" onClick={() => navigate('/SignupFlow')}>
                         Don't have an account? Sign Up
                     </p>
                     <p className="footer-link" onClick={() => navigate('/ResetPasswordScreen')}>
