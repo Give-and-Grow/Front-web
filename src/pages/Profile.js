@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FaEdit, FaSave, FaLock, FaUser, FaUserCircle, FaEnvelope, FaPhone, FaCity, FaHome, FaVenusMars, FaBirthdayCake, FaInfoCircle, FaBook } from 'react-icons/fa';
+
 import './Profile.css';
 
 const Profile = () => {
@@ -9,17 +11,15 @@ const Profile = () => {
     const [token, setToken] = useState('');
     const navigate = useNavigate();
 
-    // استرجاع التوكن عند تحميل الصفحة
     useEffect(() => {
         const getToken = async () => {
             try {
                 const savedToken = localStorage.getItem('userToken');
-                console.log('Saved Token:', savedToken); // طباعة التوكن للتحقق
                 if (savedToken) {
                     setToken(savedToken);
                     fetchProfile(savedToken);
                 } else {
-                    navigate('/LoginPage'); // إعادة التوجيه إلى صفحة تسجيل الدخول إذا لم يكن هناك توكين
+                    navigate('/LoginPage');
                 }
             } catch (err) {
                 console.error('Error retrieving token:', err);
@@ -29,18 +29,14 @@ const Profile = () => {
         getToken();
     }, [navigate]);
 
-    // جلب البيانات من الـ API
     const fetchProfile = async (token) => {
-        console.log('Token:', token); // طباعة التوكن للتحقق
         try {
-            const res = await axios.get('http://localhost:5000/profile', {
+            const res = await axios.get('http://localhost:5000/profile/', {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
             if (res.status === 200) {
                 setProfile(res.data);
-            } else {
-                console.error('Unexpected response status:', res.status);
             }
         } catch (err) {
             if (err.response) {
@@ -53,16 +49,15 @@ const Profile = () => {
         }
     };
 
-    // التعامل مع تغيير البيانات
     const handleChange = (field, value) => {
         setProfile({ ...profile, [field]: value });
     };
 
-    // حفظ التغييرات بعد التعديل
     const handleSave = async () => {
         const editableFields = [
-            'name', 'last_name', 'username', 'phone_number', 'gender',
-            'city', 'village', 'bio', 'experience', 'date_of_birth', 'profile_picture'
+            'username', 'name', 'last_name', 'phone_number', 'gender',
+            'city', 'village', 'bio', 'experience', 'date_of_birth', 'profile_picture',
+            'identity_picture', 'skills'
         ];
 
         const cleanedProfile = {};
@@ -73,11 +68,12 @@ const Profile = () => {
         });
 
         try {
-            const res = await axios.put('http://localhost:5000/profile', cleanedProfile, {
-                headers: { Authorization: `Bearer ${token}` }, // إرسال التوكين في الهيدر
+            const res = await axios.put('http://localhost:5000/profile/', cleanedProfile, {
+                headers: { Authorization: `Bearer ${token}` },
             });
             console.log('Profile updated:', res.data);
             setIsEditing(false);
+            fetchProfile(token);
         } catch (err) {
             if (err.response) {
                 console.error('Validation error:', err.response.data);
@@ -100,110 +96,157 @@ const Profile = () => {
                 )}
 
                 {/* Basic Info */}
-                <div className="card">
-                    <h2>Basic Information</h2>
-                    <input
-                        type="text"
-                        value={profile.name || ''}
-                        onChange={(e) => handleChange('name', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="First Name"
-                    />
-                    <input
-                        type="text"
-                        value={profile.last_name || ''}
-                        onChange={(e) => handleChange('last_name', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="Last Name"
-                    />
-                    <input
-                        type="text"
-                        value={profile.username || ''}
-                        onChange={(e) => handleChange('username', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="Username"
-                    />
-                </div>
+<div className="card">
+  <h2>Basic Information</h2>
+  <div className="input-with-icon">
+    <FaUser className="input-icon" />
+    <input
+      type="text"
+      value={profile.name || ''}
+      onChange={(e) => handleChange('name', e.target.value)}
+      disabled={!isEditing}
+      placeholder="First Name"
+    />
+  </div>
 
-                {/* Contact Info */}
-                <div className="card">
-                    <h2>Contact Information</h2>
-                    <input
-                        type="email"
-                        value={profile.email || ''}
-                        disabled
-                        placeholder="Email"
-                    />
-                    <input
-                        type="text"
-                        value={profile.phone_number || ''}
-                        onChange={(e) => handleChange('phone_number', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="Phone Number"
-                    />
-                    <input
-                        type="text"
-                        value={profile.city || ''}
-                        onChange={(e) => handleChange('city', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="City"
-                    />
-                    <input
-                        type="text"
-                        value={profile.village || ''}
-                        onChange={(e) => handleChange('village', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="Village"
-                    />
-                </div>
+  <div className="input-with-icon">
+    <FaUserCircle className="input-icon" />
+    <input
+      type="text"
+      value={profile.last_name || ''}
+      onChange={(e) => handleChange('last_name', e.target.value)}
+      disabled={!isEditing}
+      placeholder="Last Name"
+    />
+  </div>
 
-                {/* Volunteer Info */}
-                <div className="card">
-                    <h2>Volunteer Information</h2>
-                    <input
-                        type="text"
-                        value={profile.gender || ''}
-                        onChange={(e) => handleChange('gender', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="Gender"
-                    />
-                    <input
-                        type="text"
-                        value={profile.date_of_birth || ''}
-                        onChange={(e) => handleChange('date_of_birth', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="Date of Birth"
-                    />
-                    <textarea
-                        value={profile.bio || ''}
-                        onChange={(e) => handleChange('bio', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="Bio"
-                    />
-                    <input
-                        type="text"
-                        value={profile.experience || ''}
-                        onChange={(e) => handleChange('experience', e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="Experience"
-                    />
-                </div>
+  <div className="input-with-icon">
+    <FaUserCircle className="input-icon" />
+    <input
+      type="text"
+      value={profile.username || ''}
+      onChange={(e) => handleChange('username', e.target.value)}
+      disabled={!isEditing}
+      placeholder="Username"
+    />
+  </div>
+</div>
 
+{/* Contact Info */}
+<div className="card">
+  <h2>Contact Information</h2>
+
+  <div className="input-with-icon">
+    <FaEnvelope className="input-icon" />
+    <input
+      type="email"
+      value={profile.email || ''}
+      disabled
+      placeholder="Email"
+    />
+  </div>
+
+  <div className="input-with-icon">
+    <FaPhone className="input-icon" />
+    <input
+      type="text"
+      value={profile.phone_number || ''}
+      onChange={(e) => handleChange('phone_number', e.target.value)}
+      disabled={!isEditing}
+      placeholder="Phone Number"
+    />
+  </div>
+
+  <div className="input-with-icon">
+    <FaCity className="input-icon" />
+    <input
+      type="text"
+      value={profile.city || ''}
+      onChange={(e) => handleChange('city', e.target.value)}
+      disabled={!isEditing}
+      placeholder="City"
+    />
+  </div>
+
+  <div className="input-with-icon">
+    <FaHome className="input-icon" />
+    <input
+      type="text"
+      value={profile.village || ''}
+      onChange={(e) => handleChange('village', e.target.value)}
+      disabled={!isEditing}
+      placeholder="Village"
+    />
+  </div>
+</div>
+
+{/* Volunteer Info */}
+<div className="card">
+  <h2> Other information </h2>
+
+  <div className="input-with-icon">
+    <FaVenusMars className="input-icon" />
+    <input
+      type="text"
+      value={profile.gender || ''}
+      onChange={(e) => handleChange('gender', e.target.value)}
+      disabled={!isEditing}
+      placeholder="Gender"
+    />
+  </div>
+
+  <div className="input-with-icon">
+    <FaBirthdayCake className="input-icon" />
+    <input
+      type="text"
+      value={profile.date_of_birth || ''}
+      onChange={(e) => handleChange('date_of_birth', e.target.value)}
+      disabled={!isEditing}
+      placeholder="Date of Birth"
+    />
+  </div>
+
+  <div className="input-with-icon">
+    <FaInfoCircle className="input-icon" />
+    <textarea
+      value={profile.bio || ''}
+      onChange={(e) => handleChange('bio', e.target.value)}
+      disabled={!isEditing}
+      placeholder="Bio"
+    />
+  </div>
+
+  <div className="input-with-icon">
+    <FaBook className="input-icon" />
+    <input
+      type="text"
+      value={profile.experience || ''}
+      onChange={(e) => handleChange('experience', e.target.value)}
+      disabled={!isEditing}
+      placeholder="Experience"
+    />
+  </div>
+</div>
+
+                {/* Buttons with icons */}
                 <div className="button-group">
                     <button onClick={() => setIsEditing(!isEditing)} className="action-button">
+                        <FaEdit style={{ marginRight: '8px' }} />
                         {isEditing ? 'Cancel Editing' : 'Edit Profile'}
                     </button>
 
                     {isEditing && (
                         <button onClick={handleSave} className="action-button">
+                            <FaSave style={{ marginRight: '8px' }} />
                             Save Changes
                         </button>
                     )}
 
                     <button
-                        onClick={() => navigate('/change-password')}
+                        onClick={() => navigate('/ChangePasswordProfile')}
                         className="action-button"
                     >
+                        <FaLock style={{ marginRight: '8px' }} />
                         Update Password
                     </button>
                 </div>
