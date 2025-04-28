@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import Signuporganization from './pages/Signuporganization';
 import SelectUserType from './pages/SelectUserType';
 import SignupFlow from './pages/SignupFlow';
+import ChangePasswordProfile from './pages/ChangePasswordProfile';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/Signuporganization" element={<Signuporganization />} />
         <Route path="/SelectUserType" element={<SelectUserType />} />
         <Route path="/SignupFlow" element={<SignupFlow />} />
+        <Route path="/ChangePasswordProfile" element={<ChangePasswordProfile />} />
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>

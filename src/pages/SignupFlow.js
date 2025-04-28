@@ -13,7 +13,7 @@ const SignupFlow = () => {
   return (
     <>
       {!userType && <SelectUserType onSelect={handleUserTypeSelect} />}
-      {userType === 'volunteer' && <SignupScreen role="volunteer" />}
+      {userType === 'volunteer' && <SignupScreen role="USER" />}
       {userType === 'organization' && <Signuporganization role="organization" />}
     </>
   );
