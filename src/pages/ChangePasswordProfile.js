@@ -52,7 +52,7 @@ const ChangePasswordProfile = () => {
 
       if (response.status === 200) {
         alert('Password changed successfully!');
-        navigate('/login'); // ✅ إعادة التوجيه إلى صفحة تسجيل الدخول بعد تغيير الباسورد
+        navigate('/LoginPage'); // ✅ إعادة التوجيه إلى صفحة تسجيل الدخول بعد تغيير الباسورد
       } else {
         alert(response.data.message || 'Failed to change password');
       }
