@@ -12,22 +12,50 @@ const Profile = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const getToken = async () => {
-            try {
-                const savedToken = localStorage.getItem('userToken');
-                if (savedToken) {
-                    setToken(savedToken);
-                    fetchProfile(savedToken);
-                } else {
-                    navigate('/LoginPage');
-                }
-            } catch (err) {
-                console.error('Error retrieving token:', err);
-            }
-        };
-
-        getToken();
-    }, [navigate]);
+      const getToken = async () => {
+          try {
+              const savedToken = localStorage.getItem('userToken');
+              if (savedToken) {
+                  setToken(savedToken);
+                  fetchProfile(savedToken);
+              } else {
+                  navigate('/LoginPage');
+              }
+          } catch (err) {
+              console.error('Error retrieving token:', err);
+          }
+      };
+  
+      getToken();
+  
+      if (!profile.country && !profile.city && !profile.village) {
+          navigator.geolocation.getCurrentPosition(
+              async (position) => {
+                  const { latitude, longitude } = position.coords;
+                  try {
+                      const response = await axios.get(
+                          `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=22f2b0c405f545b2b40c99d92f01127e`
+                      );
+                      if (response.data && response.data.results.length > 0) {
+                          const components = response.data.results[0].components;
+                          setProfile((prevProfile) => ({
+                              ...prevProfile,
+                              country: components.country || '',
+                              city: components.city || components.town || components.village || '',
+                              village: components.village || '',
+                          }));
+                      }
+                  } catch (error) {
+                      console.error('Geolocation API error:', error);
+                  }
+              },
+              (error) => {
+                  console.error('Geolocation error:', error);
+              }
+          );
+      }
+  }, [navigate]);
+  
 
     const fetchProfile = async (token) => {
         try {
@@ -55,7 +83,7 @@ const Profile = () => {
 
     const handleSave = async () => {
         const editableFields = [
-            'username', 'name', 'last_name', 'phone_number', 'gender',
+            'username', 'name', 'last_name', 'phone_number', 'gender','country',
             'city', 'village', 'bio', 'experience', 'date_of_birth', 'profile_picture',
             'identity_picture', 'skills'
         ];
@@ -156,6 +184,16 @@ const Profile = () => {
       placeholder="Phone Number"
     />
   </div>
+  <div className="input-with-icon">
+  <FaCity className="input-icon" />
+  <input
+    type="text"
+    value={profile.country || ''}
+    onChange={(e) => handleChange('country', e.target.value)}
+    disabled={!isEditing}
+    placeholder="Country"
+  />
+</div>
 
   <div className="input-with-icon">
     <FaCity className="input-icon" />
