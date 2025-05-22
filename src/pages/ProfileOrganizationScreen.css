@@ -1,0 +1,166 @@
+body, html {
+  overflow: auto;
+  height: 100%;
+  padding-top: 4rem;
+}
+
+.container {
+  background: none !important;
+  padding: 40px 10px;
+  min-height: auto;
+  max-width: 800px;
+  width: 90%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2F4F2F;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  
+}
+@media (min-width: 769px) {
+  .menu-toggle {
+    display: none;
+  }
+}
+.profileImage {
+  width: 140px;
+  height: 140px;
+  margin-bottom: 35px;
+  border-radius: 50%;
+ 
+  object-fit: cover;
+  /* إزالة الظل والتكبير عند المرور */
+  box-shadow: none;
+  transition: none;
+  display: block;
+}
+.card {
+  margin-top: 5px; /* مسافة بين التاب والكرت */
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 18px;
+  box-shadow: none;
+  padding: 40px 50px;
+  transition: none;
+}
+
+
+.card h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #3A7D0A;
+  border-bottom: 3px solid #9EDB7B;
+  padding-bottom: 10px;
+  margin-bottom: 24px;
+  letter-spacing: 0.04em;
+}
+
+.card p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #264D20;
+  font-weight: 600;
+  letter-spacing: 0.035em;
+}
+
+.buttonGroup {
+  width: 100%;
+  max-width: 1000px;
+  text-align: center;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  background-color: #3F9E3F !important;
+ 
+  color: white;
+  padding: 18px 38px;
+  border-radius: 20px;
+  font-size: 19px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  flex: 1 1 160px;
+  max-width: 250px;
+  text-align: center;
+  border: none;
+  box-shadow: none;
+}
+
+.actionButton:hover {
+  background-color: #5EA15E; /* أخضر متوسط أغمق عند المرور */
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+
+@media (max-width: 480px) {
+  .card {
+    padding: 30px 25px;
+  }
+
+  .profileImage {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 25px;
+  }
+
+  .buttonGroup {
+
+    gap: 20px;
+  }
+
+  .actionButton {
+   
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}
+.input-with-icon {
+  position: relative;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.input-with-icon .input-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28px;
+  color: #69A969;
+  pointer-events: none; /* الأيقونة غير قابلة للنقر */
+  user-select: none;    /* لا يمكن تحديد النص داخل الأيقونة */
+  z-index: 2;
+}
+
+.input-with-icon input,
+.input-with-icon textarea {
+  width: 100%;
+  padding: 18px 55px 18px 60px; /* اترك مساحة من اليسار للأيقونة */
+  border-radius: 18px;
+  border: 2px solid #B9D6B9;
+  background-color: #F3FFF3;
+  font-size: 19px;
+  color: #264D20;
+  font-weight: 600;
+  letter-spacing: 0.035em;
+  transition: all 0.4s ease;
+  box-shadow: inset 0 0 6px #C9EAC9;
+  position: relative;
+  z-index: 1;
+}
+
+.input-with-icon input:focus,
+.input-with-icon textarea:focus {
+  border-color: #58A258;
+  background-color: #E3F7E3;
+  outline: none;
+  box-shadow: 0 0 12px #88C488;
+}

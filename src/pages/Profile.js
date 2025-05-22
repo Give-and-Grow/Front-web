@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaSave, FaLock, FaUser, FaUserCircle, FaEnvelope, FaPhone, FaCity, FaHome, FaVenusMars, FaBirthdayCake, FaInfoCircle, FaBook } from 'react-icons/fa';
-
+import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 import './Profile.css';
 
 const Profile = () => {
@@ -114,9 +114,8 @@ const Profile = () => {
 
     return (
         <div className="profile-container">
-            <header className="appbar">
-                <h1>My Profile</h1>
-            </header>
+           <Navbar />
+           
 
             <div className="profile-content">
                 {profile.profile_picture && (

@@ -1,71 +1,50 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
 import './Homepage.css';
-import hero from '../images/volunter1.jpg';
-import mission from '../images/volunter1.jpg';
-import logo from '../images/volunter1.jpg';
-
-const Homepage = () => {
-  const opportunities = [
-    { title: 'Education', description: 'Help children learn and grow.', image: hero },
-    { title: 'Healthcare', description: 'Support health campaigns.', image: mission },
-    { title: 'Environment', description: 'Contribute to a greener future.', image: hero },
-  ];
-
+import volunteerImage from '../images/volunter1.jpg'; // Adjust path to your image
+import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
+const Home = () => {
   return (
-    <div className="homepage">
-      {/* Navbar */}
-      <nav className="navbar">
-        <img src={logo} alt="logo" className="logo" />
-        <ul className="nav-links">
-          <li>Home</li>
-          <li>Opportunities</li>
-          <li>About</li>
-          <li>Contact</li>
-          {/* Add Profile button */}
-          <li><Link to="/profile">Profile</Link></li>
-        </ul>
-      </nav>
 
-      {/* Hero */}
-      <section className="hero" style={{ backgroundImage: `url(${hero})` }}>
-        <div className="hero-overlay">
-          <h1>Empower Volunteers. Elevate Communities.</h1>
-          <p>Join a movement of change and service across the nation.</p>
-          <button className="hero-btn">Join Now</button>
+    <div className="home-container">
+        <Navbar />
+      <section className="hero-section">
+        <div className="hero-text">
+          <h1>Together We Build a Better Community</h1>
+          <p>
+            Volunteering is a bridge of love and connection. Through it, we help others and make a real difference in their lives. 
+            Join us and discover the power of giving and its impact on your life and those around you.
+          </p>
+          <button className="btn-primary">Start Volunteering Now</button>
+        </div>
+        <div className="hero-image">
+          <img src={volunteerImage} alt="Volunteering and Work" />
         </div>
       </section>
 
-      {/* Mission */}
-      <section className="mission">
-        <div className="mission-text">
-          <h2>Our Mission</h2>
-          <p>We aim to connect passionate volunteers with meaningful opportunities to serve their communities and make a difference.</p>
-        </div>
-        <img src={mission} alt="mission" className="mission-img" />
-      </section>
-
-      {/* Opportunities */}
-      <section className="opportunities">
-        <h2 className="section-title">Volunteer Opportunities</h2>
-        <div className="opportunity-grid">
-          {opportunities.map((item, i) => (
-            <div key={i} className="opportunity-card">
-              <img src={item.image} alt={item.title} />
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-              <button>Learn More</button>
-            </div>
-          ))}
+      <section className="values-section">
+        <h2>Why Volunteer?</h2>
+        <div className="values-cards">
+          <div className="card">
+            <h3>Skill Development</h3>
+            <p>Volunteering helps you acquire new skills and develop your personal and professional abilities.</p>
+          </div>
+          <div className="card">
+            <h3>Building Connections</h3>
+            <p>Meet new people who share your values and ambitions.</p>
+          </div>
+          <div className="card">
+            <h3>Making a Difference</h3>
+            <p>Be part of the solution and help improve the community around you.</p>
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="footer">
-        <p>© 2025 Give & Grow. All rights reserved.</p>
-      </footer>
+      <section className="call-to-action">
+        <h2>Ready to Start Your Volunteering Journey?</h2>
+        <button className="btn-primary">Register Now</button>
+      </section>
     </div>
   );
 };
 
-export default Homepage;
+export default Home;

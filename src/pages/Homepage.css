@@ -1,199 +1,116 @@
-/* General Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  /* Homepage Styles */
-  .homepage {
-    font-family: 'Segoe UI', sans-serif;
-    color: #333;
-  }
-  
-  /* Navbar */
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px 50px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .logo {
-    height: 50px;
-  }
-  
-  .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 30px;
-    align-items: center;
-  }
-  
-  .nav-links li {
-    cursor: pointer;
-    font-weight: bold;
-    color: #00796b;
-    font-size: 18px;
-    transition: color 0.3s;
-  }
-  
-  .nav-links li:hover {
-    color: #004d40;
-  }
-  
-  /* Hero */
-  .hero {
-    height: 90vh;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    text-align: center;
-  }
-  
-  .hero-overlay {
-    background-color: rgba(0, 121, 107, 0.7);
-    color: white;
-    padding: 100px 20px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  
-  .hero h1 {
-    font-size: 48px;
-    margin-bottom: 20px;
-    font-weight: bold;
-    letter-spacing: 2px;
-  }
-  
-  .hero p {
-    font-size: 20px;
-    margin-bottom: 30px;
-  }
-  
-  .hero-btn {
-    padding: 12px 30px;
-    background-color: #ffca28;
-    border: none;
-    font-weight: bold;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s;
-  }
-  
-  .hero-btn:hover {
-    background-color: #ffb300;
-  }
-  
-  /* Mission */
-  .mission {
-    display: flex;
-    padding: 60px 50px;
-    align-items: center;
-    gap: 40px;
-    background-color: #f1f8f6;
-  }
-  
-  .mission-text {
-    flex: 1;
-  }
-  
-  .mission h2 {
-    font-size: 32px;
-    font-weight: bold;
-    color: #00796b;
-    margin-bottom: 20px;
-  }
-  
-  .mission p {
-    font-size: 18px;
-    line-height: 1.5;
-  }
-  
-  .mission-img {
-    width: 50%;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Opportunities */
-  .opportunities {
-    background-color: #ffffff;
-    padding: 60px 50px;
-    text-align: center;
-  }
-  
-  .section-title {
-    font-size: 32px;
-    font-weight: bold;
-    color: #00796b;
-    margin-bottom: 40px;
-  }
-  
-  .opportunity-grid {
-    display: flex;
-    gap: 30px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  .opportunity-card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    width: 300px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
-  }
-  
-  .opportunity-card:hover {
-    transform: translateY(-10px);
-  }
-  
-  .opportunity-card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 15px;
-  }
-  
-  .opportunity-card h3 {
-    color: #00796b;
-    margin-bottom: 10px;
-    font-size: 24px;
-  }
-  
-  .opportunity-card p {
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 20px;
-  }
-  
-  .opportunity-card button {
-    background-color: #00796b;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  
-  .opportunity-card button:hover {
-    background-color: #004d40;
-  }
-  
-  /* Footer */
-  .footer {
-    padding: 20px 50px;
-    background-color: #00796b;
-    color: white;
-    text-align: center;
-  }
-  
+.home-container {
+  padding: 100px 20px 50px; /* 100px for fixed navbar */
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
+  color: #2e7d32;
+  width:100%;
+}
+
+.hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+}
+
+.hero-text {
+  flex: 1 1 400px;
+}
+
+.hero-text h1 {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.hero-text p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: #4caf50;
+}
+
+.btn-primary {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #388e3c;
+}
+
+.hero-image {
+  flex: 1 1 400px;
+  text-align: center;
+}
+
+.hero-image img {
+  max-width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+}
+
+.values-section {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.values-section h2 {
+  font-size: 2rem;
+  margin-bottom: 40px;
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+.values-cards {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  background-color: #e6f2e6;
+  border-radius: 15px;
+  padding: 30px 20px;
+  width: 280px;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+}
+
+.card h3 {
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #388e3c;
+}
+
+.card p {
+  font-size: 1rem;
+  color: #4caf50;
+}
+
+.call-to-action {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.call-to-action h2 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #2e7d32;
+}

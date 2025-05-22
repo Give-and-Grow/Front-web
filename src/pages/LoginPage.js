@@ -34,14 +34,22 @@ const LoginPage = () => {
                 username,
                 password,
             });
-    
+
             if (response.status === 200) {
-                const token = response.data.token;
-                localStorage.setItem('userToken', token);  // تخزين التوكين
-                console.log('Saved token:', token);  // هنا تضيف الـ console.log
-    
+                const { token, role } = response.data;
+
+                // تخزين التوكين والrole في localStorage
+                localStorage.setItem('userToken', token);
+                localStorage.setItem('userRole', role);
+
                 alert('Login successful!');
-                navigate('/Homepage'); // إعادة التوجيه إلى صفحة البروفايل
+
+                // مثال: توجه المستخدم بناءً على الدور
+                if (role === 'ADMIN') {
+                    navigate('/admin-dashboard');
+                } else {
+                    navigate('/homepage');
+                }
             } else {
                 alert(response.data.message || 'Invalid credentials');
             }
@@ -51,7 +59,6 @@ const LoginPage = () => {
             alert(message);
         }
     };
-    
 
     return (
         <div className="login-container">
