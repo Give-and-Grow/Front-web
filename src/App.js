@@ -9,6 +9,14 @@ import Signuporganization from './pages/Signuporganization';
 import SelectUserType from './pages/SelectUserType';
 import SignupFlow from './pages/SignupFlow';
 import ChangePasswordProfile from './pages/ChangePasswordProfile';
+import ProfileOrganizationScreen from './pages/ProfileOrganizationScreen'
+import Navbar from './pages/Navbar'
+import CreatePostWeb from './pages/CreatePostWeb';
+import EditPostScreen from './pages/EditPostScreen';
+import FollowingScreen from './pages/FollowingScreen';
+import FollowScreenOrganization from './pages/FollowScreenOrganization';
+import FriendsPost from './pages/FriendsPost';
+import AllOppertinitesUser from './pages/AllOppertinitesUser';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -26,6 +34,15 @@ function App() {
         <Route path="/SelectUserType" element={<SelectUserType />} />
         <Route path="/SignupFlow" element={<SignupFlow />} />
         <Route path="/ChangePasswordProfile" element={<ChangePasswordProfile />} />
+
+        <Route path="/Navbar" element={<Navbar />} />
+        <Route path="/ProfileOrganizationScreen" element={<ProfileOrganizationScreen />} />
+        <Route path="/CreatePostWeb" element={<CreatePostWeb />} />
+        <Route path="/EditPostScreen/:postId" element={<EditPostScreen />} />
+        <Route path="/FollowScreenOrganization" element={<FollowScreenOrganization />} />
+        <Route path="/FollowingScreen" element={<FollowingScreen />} />
+        <Route path="/FriendsPost" element={<FriendsPost />} />
+        <Route path="/AllOppertinitesUser" element={<AllOppertinitesUser />} />
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>
