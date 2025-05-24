@@ -17,9 +17,14 @@ import FollowingScreen from './pages/FollowingScreen';
 import FollowScreenOrganization from './pages/FollowScreenOrganization';
 import FriendsPost from './pages/FriendsPost';
 import AllOppertinitesUser from './pages/AllOppertinitesUser';
+import NearbyOpportunitiesUser from './pages/NearbyOpportunitiesUser';
+import JobOpportunities  from './pages/JobOpportunities';
+import VolunteerOpportunities from './pages/VolunteerOpportunities';
+import ApplicationsScreen from './pages/ApplicationsScreen';
+import OpportunityFilters from './pages/OpportunityFilters';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
+import EvaluateScreen from './pages/EvaluateScreen';
 function App() {
   return (
     <Router>
@@ -43,6 +48,12 @@ function App() {
         <Route path="/FollowingScreen" element={<FollowingScreen />} />
         <Route path="/FriendsPost" element={<FriendsPost />} />
         <Route path="/AllOppertinitesUser" element={<AllOppertinitesUser />} />
+        <Route path="/NearbyOpportunitiesUser" element={<NearbyOpportunitiesUser />} />
+        <Route path="/JobOpportunities" element={<JobOpportunities />} />
+        <Route path="/VolunteerOpportunities" element={<VolunteerOpportunities />} />
+        <Route path="/ApplicationsScreen" element={<ApplicationsScreen />} />
+        <Route path="/EvaluateScreen/:participantId" element={<EvaluateScreen />} />
+        <Route path="/OpportunityFilters" element={<OpportunityFilters />} />
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>
