@@ -8,7 +8,7 @@ import { FiHome, FiUser, FiFileText, FiBriefcase, FiInfo, FiPhone, FiUsers, FiSe
 const Navbar = () => {
   const location = useLocation();
   const [userRole, setUserRole] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false); // ⬅️ لتتبع حالة القائمة في الشاشات الصغيرة
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const role = localStorage.getItem('userRole');
@@ -19,11 +19,38 @@ const Navbar = () => {
     setMenuOpen(!menuOpen);
   };
 
+  // تعريف دالة لفحص الروابط النشطة، مع التحقق من صفحات الفرص
+  const isActiveLink = (linkTo) => {
+    if (linkTo === '/ApplicationsScreen') {
+      // هنا تضع كل المسارات المتعلقة بالفرص
+      const opportunitiesPaths = [
+        '/ApplicationsScreen',
+        '/AllOppertinitesUser',
+        '/NearbyOpportunitiesUser',
+        '/JobOpportunities',
+        '/VolunteerOpportunities',
+      ];
+      return opportunitiesPaths.some(path => location.pathname.startsWith(path));
+    }
+
+    if (linkTo === '/manage-opportunities') {
+      const manageOpportunitiesPaths = [
+        '/manage-opportunities',
+        '/manage-opportunities/details',
+        '/manage-opportunities/edit',
+      ];
+      return manageOpportunitiesPaths.some(path => location.pathname.startsWith(path));
+    }
+
+    // لأي رابط آخر نقارن مباشرة
+    return location.pathname === linkTo;
+  };
+
   const userLinks = [
     { to: '/Homepage', icon: <FiHome />, label: 'Home' },
     { to: '/FollowingScreen', icon: <FiUser />, label: 'Profile' },
     { to: '/FriendsPost', icon: <FiFileText />, label: 'Posts' },
-    { to: '/AllOppertinitesUser', icon: <FiBriefcase />, label: 'Opportunities' },
+    { to: '/ApplicationsScreen', icon: <FiBriefcase />, label: 'Opportunities' },
     { to: '/about', icon: <FiInfo />, label: 'About' },
     { to: '/contact', icon: <FiPhone />, label: 'Contact' },
   ];
@@ -66,7 +93,11 @@ const Navbar = () => {
 
       <ul className={`nav-links ${menuOpen ? 'open' : ''}`}>
         {linksToRender.map((link) => (
-          <li key={link.to} className={location.pathname === link.to ? 'active' : ''} onClick={() => setMenuOpen(false)}>
+          <li
+            key={link.to}
+            className={isActiveLink(link.to) ? 'active' : ''}
+            onClick={() => setMenuOpen(false)}
+          >
             <Link to={link.to}>
               <span className="nav-icon">{link.icon}</span>
               {link.label}

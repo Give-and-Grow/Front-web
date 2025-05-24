@@ -1,49 +1,58 @@
 import React, { useEffect, useState } from "react";
 import FilterComponent from './FilterComponent';
 import OpportunityFilters from "./OpportunityFilters";
-import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
-import { useNavigate } from 'react-router-dom';
-export default function AllOpportunitiesUser() {
+import Navbar from './Navbar';  // عدل المسار حسب مكان ملف Navbar.js
+export default function VolunteerOpportunities() {
+
   const [opportunities, setOpportunities] = useState([]);
   const [filteredOpportunities, setFilteredOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-   const navigate = useNavigate();
-  //const [mainFilter, setMainFilter] = useState("All");
+  const [mainFilter, setMainFilter] = useState("Volunteer");
   const [summaries, setSummaries] = useState({});
   const [summaryLoading, setSummaryLoading] = useState({});
   const [participationStatus, setParticipationStatus] = useState({});
   const [expandedOpportunities, setExpandedOpportunities] = useState({});
   const [showMoreDetails, setShowMoreDetails] = useState({});
-  const [filter, setFilter] = useState('All');
+
   useEffect(() => {
     async function fetchOpportunities() {
       try {
         const token = localStorage.getItem("userToken");
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-        const response = await fetch(`http://localhost:5000/opportunities/list`, {
+  
+        const response = await fetch(`http://localhost:5000/recommendations/opportunities?type=volunteer`, {
           headers,
         });
-
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.msg || "Failed to fetch opportunities");
+        }
+  
         const data = await response.json();
-
-        if (response.ok && data.opportunities) {
+  
+        if (Array.isArray(data) && data.length > 0) {
+          setOpportunities(data);
+          setFilteredOpportunities(data);
+        } else if (data.opportunities && Array.isArray(data.opportunities)) {
           setOpportunities(data.opportunities);
           setFilteredOpportunities(data.opportunities);
         } else {
-          setError(data.msg || "No opportunities found.");
+          setError("No opportunities found.");
         }
       } catch (err) {
         console.error("Fetch error:", err);
-        setError("Failed to fetch opportunities.");
+        setError(err.message || "Failed to fetch opportunities.");
       } finally {
         setLoading(false);
       }
     }
-
+  
     fetchOpportunities();
   }, []);
+  
+      
 
   const applyFilters = (filters) => {
     const isEmpty = Object.values(filters).every(value => !value || value === "");
@@ -54,37 +63,44 @@ export default function AllOpportunitiesUser() {
     }
   
     const filtered = opportunities.filter((opp) => {
-      if (filters.status && (!opp.status || opp.status.toLowerCase() !== filters.status.toLowerCase())) return false;
+      // فلتر الحالة (status)
+      if (filters.status && opp.status !== filters.status) return false;
   
+      // فلتر نوع الفرصة (opportunity_type)
       if (filters.opportunity_type && opp.opportunity_type !== filters.opportunity_type) return false;
   
+      // فلتر الموقع (location)
       if (filters.location && opp.location !== filters.location) return false;
   
+      // فلتر المهارات (skill_id)
       if (filters.skill_id) {
         const skillIdStr = String(filters.skill_id);
-        if (!opp.skills || !opp.skills.some(s => String(s.id) === skillIdStr)) return false;
+        const hasSkill = opp.skills.some(s => String(s.id) === skillIdStr);
+        if (!hasSkill) return false;
       }
   
+      // فلتر المنظمة (organization_id)
       if (filters.organization_id && String(opp.organization_id) !== String(filters.organization_id)) return false;
   
-      const parseTime = (timeStr) => {
-        if (!timeStr) return null;
-        const [hours, minutes] = timeStr.split(':').map(Number);
-        return hours * 60 + minutes; // إجمالي الدقائق
-      };
-      
-      if (filters.start_time) {
-        if (!opp.start_time || parseTime(opp.start_time) < parseTime(filters.start_time)) return false;
-      }
-      
-      if (filters.end_time) {
-        if (!opp.end_time || parseTime(opp.end_time) > parseTime(filters.end_time)) return false;
-      }
-      
+      // فلتر التواريخ (start_date و end_date)
+      if (filters.start_date && filters.end_date) {
+        const toMinutesFromDate = (dateStr) => {
+          if (!dateStr) return 0;
+          const date = new Date(dateStr);
+          return date.getHours() * 60 + date.getMinutes();
+        };
   
-      if (filters.volunteer_days) {
-        if (!opp.volunteer_days || !opp.volunteer_days.includes(filters.volunteer_days)) return false;
+        const oppStart = toMinutesFromDate(opp.start_date);
+        const oppEnd = toMinutesFromDate(opp.end_date);
+        const filterStart = toMinutesFromDate(filters.start_date);
+        const filterEnd = toMinutesFromDate(filters.end_date);
+  
+        // نتحقق من تداخل الفترة
+        if (!(oppStart < filterEnd && oppEnd > filterStart)) return false;
       }
+  
+      // فلتر أيام التطوع (volunteer_days)
+      if (filters.volunteer_days && !opp.volunteer_days.includes(filters.volunteer_days)) return false;
   
       return true;
     });
@@ -92,10 +108,12 @@ export default function AllOpportunitiesUser() {
     setFilteredOpportunities(filtered);
   };
   
-  
-  
 
- 
+  const handleMainFilterSelect = (value, screen) => {
+    console.log('Selected Filter:', value, screen);
+    // هنا ممكن تحدث الحالة أو تعمل تحديث حسب الفلتر المختار
+  };
+  
   const handleJoin = async (opportunityId) => {
     try {
       const token = localStorage.getItem("userToken");
@@ -137,12 +155,10 @@ export default function AllOpportunitiesUser() {
       const result = await response.json();
       if (response.ok) {
         alert("❌ Left successfully!");
-        setParticipationStatus((prevStatus) => {
-          const newStatus = { ...prevStatus };
-          delete newStatus[opportunityId];
-          return newStatus;
-        });
-        
+        setParticipationStatus((prevStatus) => ({
+          ...prevStatus,
+          [opportunityId]: 'not joined',
+        }));
       } else {
         alert(result.msg || "Failed to leave.");
       }
@@ -198,22 +214,14 @@ export default function AllOpportunitiesUser() {
       [id]: !prev[id],
     }));
   };
-  const handleFilterChange = (value, screen) => {
-    console.log('Filter selected:', value, screen);
-    setFilter(value);
-    // ممكن هنا تجيب بيانات جديدة بحسب الفلتر لو عندك API منفصل
-    navigate(screen);
-  };
   
   return (
     < >
     <Navbar />
     <div style={styles.container}>
-    <OpportunityFilters
-  initialFilter="All"
-  onFilterSelect={handleFilterChange}
-/>
-      <h1 style={styles.title}>🌱 Available Opportunities</h1>
+    <OpportunityFilters onFilterSelect={handleMainFilterSelect} initialFilter="Volunteer" />
+
+      <h1 style={styles.title}>🌱 Volunteer Opportunities</h1>
 
       <div style={styles.contentWrapper}>
         {/* Sidebar Filters */}
@@ -246,7 +254,9 @@ export default function AllOpportunitiesUser() {
 
       <p><strong>🏢 Organization:</strong> {opp.organization_name || opp.organization_id}</p>
       <p><strong>🕓 Time:</strong> {opp.start_time} - {opp.end_time}</p>
+
       <p><strong>📝 Description:</strong> {opp.description}</p>
+     
 
       {/* Summary Section */}
       <div style={{ marginTop: 10 }}>
