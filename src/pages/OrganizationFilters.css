@@ -1,0 +1,59 @@
+.menu-toggle {
+  position: absolute; /* أو relative حسب السياق */
+  top: 70px; /* أو حسب ارتفاع شريط التنقل */
+  left: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+}
+.sidebar-menu {
+  transition: transform 0.3s ease;
+  transform: translateX(-100%);
+}
+
+.sidebar-menu.open {
+  transform: translateX(0);
+}
+
+.sidebar-menu {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 250px;
+  background-color: #f4f4f4;
+  border-radius: 0 10px 10px 0;
+  padding: 20px 10px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.menu-item:hover {
+  background-color: #ddd;
+}
+
+.menu-item.active {
+  background-color: #cce5ff;
+}
+
+.menu-icon {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.menu-label {
+  font-size: 16px;
+}

@@ -326,7 +326,8 @@ export default function AllOpportunitiesUser() {
     📌 Status:
   </p>
   <span style={styles.badge}>
-    {opp.status.value === "open" ? "🔓 Open" : "🔒 Closed"}
+   {opp.status?.value?.toLowerCase() === "closed" ? "🔒 closed" : "🔓 open"}
+
   </span>
 </div>
 
