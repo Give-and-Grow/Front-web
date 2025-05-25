@@ -22,6 +22,13 @@ import JobOpportunities  from './pages/JobOpportunities';
 import VolunteerOpportunities from './pages/VolunteerOpportunities';
 import ApplicationsScreen from './pages/ApplicationsScreen';
 import OpportunityFilters from './pages/OpportunityFilters';
+import OrganizationFilters from './pages/OrganizationFilters'
+import CreatevolunterOpportunity from './pages/CreatevolunterOpportunity';
+import OpportunityList from './pages/OpportunityList';
+import OrganizationRejectAcceptUser from  './pages/OrganizationRejectAcceptUser';
+
+import AttendanceScreen from './pages/AttendanceScreen';
+import RateParticipantsScreen from './pages/RateParticipantsScreen';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import EvaluateScreen from './pages/EvaluateScreen';
@@ -54,6 +61,12 @@ function App() {
         <Route path="/ApplicationsScreen" element={<ApplicationsScreen />} />
         <Route path="/EvaluateScreen/:participantId" element={<EvaluateScreen />} />
         <Route path="/OpportunityFilters" element={<OpportunityFilters />} />
+        <Route path="/OrganizationFilters" element={<OrganizationFilters />} />
+         <Route path="/CreatevolunterOpportunity" element={<CreatevolunterOpportunity />} />
+        <Route path="/OpportunityList" element={<OpportunityList />} />
+        <Route path="/OrganizationRejectAcceptUser" element={<OrganizationRejectAcceptUser />} />
+          <Route path="/AttendanceScreen" element={<AttendanceScreen />} />
+           <Route path="/RateParticipantsScreen" element={<RateParticipantsScreen />} />
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>
