@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: #f0fdf4;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  background: #ffffff;
+  padding: 30px;
+  max-width: 700px;
+  margin: 40px auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+}
+.input.description {
+  color: black;         /* الخط أسود */
+  text-align: left;     /* الكتابة تبدأ من الطرف الأيسر */
+  /* لو بدك تكتب بالعربي وتبدأ من اليمين استخدم: text-align: right; */
+}
+
+h2 {
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 15px;
+  border: 2px solid #c8e6c9;
+  border-radius: 15px;
+  background-color: #f9fff9;
+  transition: border-color 0.3s ease;
+  font-size: 15px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #66bb6a;
+}
+
+.description {
+  height: 120px;
+  resize: vertical;
+}
+
+.button {
+  background: linear-gradient(to right, #66bb6a, #43a047);
+  color: white;
+  padding: 12px 24px;
+  margin-top: 10px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 30px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+  background: linear-gradient(to right, #5fa962, #388e3c);
+  transform: scale(1.03);
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  margin: 25px 0 30px;
+}
+
+.step-circle {
+  width: 35px;
+  height: 35px;
+  background-color: #e0e0e0;
+  color: #666;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.step-circle.active {
+  background-color: #66bb6a;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(102, 187, 106, 0.3);
+}
+
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.skill-btn {
+  background-color: #e8f5e9;
+  color: #388e3c;
+  border: 2px solid #a5d6a7;
+  padding: 8px 16px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.skill-btn:hover {
+  background-color: #c8e6c9;
+}
+
+.skill-btn.selected {
+  background-color: #66bb6a;
+  color: white;
+  border-color: #4caf50;
+}
+
+.buttons-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+.description {
+  height: 120px; /* أو أي ارتفاع ثابت تريده */
+  resize: none;   /* يمنع تغيير الحجم نهائياً */
+  overflow-y: auto; /* لإظهار شريط تمرير عند الحاجة */
+}
+textarea::placeholder {
+  text-align: left; /* محاذاة لليسار */
+  vertical-align: top;
+  line-height: 1.2; /* لتقليل المسافة الرأسية */
+  color: #666;
+}
+textarea.description {
+  padding-top: 12px; /* مساحة من الأعلى */
+}
+.label {
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #2e7d32;
+  font-weight: 600;
+}
+.custom-select {
+  width: 80%;
+  max-width: 500px;
+  margin: 8px auto;
+}
+
+
+.custom-select .select__control {
+  border: 2px solid #66bb6a;
+  border-radius: 25px;
+  padding: 5px;
+  min-height: 50px;
+  background-color: #fff;
+}
+
+.custom-select .select__placeholder {
+  color: #777; /* أغمق من #999 */
+}
+
+.custom-select .select__multi-value {
+  background-color: #a5d6a7;
+  color: white;
+  border-radius: 20px;
+}
+
+.custom-select .select__multi-value__label {
+  color: white;
+}
+
+.custom-select .select__multi-value__remove {
+  color: white;
+}
+
