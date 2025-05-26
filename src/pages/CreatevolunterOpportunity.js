@@ -1,29 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-
-
 const CreateVolunteerOpportunity = () => {
   const [step, setStep] = useState(1);
+
+  // Step 1 fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
+
+  // Step 2 fields
+  const [contactEmail, setContactEmail] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [applicationLink, setApplicationLink] = useState('');
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const [availableSkills, setAvailableSkills] = useState([]);
-  const [maxParticipants, setMaxParticipants] = useState('');
-  const [basePoints, setBasePoints] = useState('');
+
+  // Step 3 fields
+  const [requiredVolunteers, setRequiredVolunteers] = useState('');
+  const [points, setPoints] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [volunteerDays, setVolunteerDays] = useState([]);
-  const [filter, setFilter] = useState('add_job');
-  const [activeTab, setActiveTab] = useState('creatvoulunter');
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [availableSkills, setAvailableSkills] = useState([]);
 
-  const timeOptions = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+  // Options for times and days
+  const timeOptions = [
+    '6:00 AM', '7:00 AM', '8:00 AM', '9:00 AM',
+    '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM',
+    '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
+    '6:00 PM', '7:00 PM', '8:00 PM',
+  ];
+
   const dayOptions = [
     { label: 'Sunday', value: 'sunday' },
     { label: 'Monday', value: 'monday' },
@@ -35,144 +42,289 @@ const CreateVolunteerOpportunity = () => {
   ];
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/skills/`)
+    // Fetch available skills from server on component mount
+    axios.get('http://localhost::5000/skills/')
       .then(res => setAvailableSkills(res.data))
-      .catch(err => alert('Failed to fetch skills'));
+      .catch(err => console.error('Failed to load skills:', err));
   }, []);
+function convertTo24HourFormat(time12h) {
+  // time12h مثل "9:00 AM" أو "12:30 PM"
+  const [time, modifier] = time12h.split(' '); // تفصل الوقت عن AM/PM
+  let [hours, minutes] = time.split(':');
 
-  const getToken = () => {
-    return localStorage.getItem('userToken');
-  };
+  if (hours === '12') {
+    hours = '00'; // في 12 AM يكون الساعة 00
+  }
 
-  const handleSubmit = async () => {
-    const token = getToken();
-    if (!token) {
-      alert('You must be logged in to create an opportunity.');
+  if (modifier.toUpperCase() === 'PM') {
+    hours = parseInt(hours, 10) + 12;
+  }
+
+  // نرجع الوقت بصيغة "HH:MM" مع التأكد من رقمين للساعات
+  return `${hours.toString().padStart(2, '0')}:${minutes}`;
+}
+
+  const handleSubmit = () => {
+    // Basic validation (add more if needed)
+    if (!title || !description || !location) {
+      alert('Please fill all fields in Step 1');
+      setStep(1);
+      return;
+    }
+    if (!contactEmail || !startDate || !endDate) {
+      alert('Please fill all fields in Step 2');
+      setStep(2);
+      return;
+    }
+    if (!requiredVolunteers || !points || !startTime || !endTime || volunteerDays.length === 0) {
+      alert('Please complete all fields in Step 3');
+      setStep(3);
       return;
     }
 
-    const formData = {
-      title,
-      description,
-      location,
-      start_date: startDate.trim(),
-      end_date: endDate.trim(),
-      status: 'open',
-      image_url: imageUrl,
-      application_link: applicationLink,
-      contact_email: contactEmail.trim(),
-      opportunity_type: 'volunteer',
-      skills: selectedSkills,
-      max_participants: parseInt(maxParticipants),
-      base_points: parseInt(basePoints),
-      start_time: startTime,
-      end_time: endTime,
-      volunteer_days: volunteerDays,
-    };
+    const data = {
+  title,
+  description,
+  location,
+  contact_email: contactEmail,
+  start_date: startDate,
+  end_date: endDate,
+  status: 'open', // ممكن تتحكم فيها إذا كانت ثابتة
+  image_url: '', // لو عندك رابط صورة حطها هنا
+  application_link: '', // لو عندك رابط تقديم حطها هنا
+  opportunity_type: 'volunteer', // ثابت أو حسب اختيار المستخدم
+  skills: selectedSkills, // تأكد أنهم IDs أرقام مش أسماء
+  max_participants: Number(requiredVolunteers),
+  base_points: Number(points),
+  start_time: convertTo24HourFormat(startTime),
+  end_time: convertTo24HourFormat(endTime),
+  volunteer_days: volunteerDays,
+};
 
-    try {
-      await axios.post(`http://localhost:5000/opportunities/create`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      alert('Opportunity created successfully!');
-      window.location.href = '/homepage'; // أو استخدم React Router للتنقل
-    } catch (err) {
-      alert('Failed to create opportunity');
-    }
-  };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <>
-            <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
-            <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
-            <input placeholder="Location" value={location} onChange={e => setLocation(e.target.value)} />
-            <button onClick={() => setStep(2)}>Next</button>
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <input placeholder="Start Date" value={startDate} onChange={e => setStartDate(e.target.value)} />
-            <input placeholder="End Date" value={endDate} onChange={e => setEndDate(e.target.value)} />
-            <input placeholder="Contact Email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} />
-            <button onClick={() => setStep(1)}>Back</button>
-            <button onClick={() => setStep(3)}>Next</button>
-          </>
-        );
-      case 3:
-        return (
-          <>
-            <input placeholder="Image URL" value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
-            <input placeholder="Application Link" value={applicationLink} onChange={e => setApplicationLink(e.target.value)} />
-            <input placeholder="Max Participants" type="number" value={maxParticipants} onChange={e => setMaxParticipants(e.target.value)} />
-            <input placeholder="Base Points" type="number" value={basePoints} onChange={e => setBasePoints(e.target.value)} />
-
-            <p>Start Time:</p>
-            {timeOptions.map(time => (
-              <button key={time} onClick={() => setStartTime(time)}>{time}</button>
-            ))}
-
-            <p>End Time:</p>
-            {timeOptions.map(time => (
-              <button key={time} onClick={() => setEndTime(time)}>{time}</button>
-            ))}
-
-            <p>Volunteer Days:</p>
-            {dayOptions.map(day => (
-              <button
-                key={day.value}
-                onClick={() =>
-                  volunteerDays.includes(day.value)
-                    ? setVolunteerDays(volunteerDays.filter(d => d !== day.value))
-                    : setVolunteerDays([...volunteerDays, day.value])
-                }
-              >
-                {day.label}
-              </button>
-            ))}
-
-            <p>Select Skills:</p>
-            {availableSkills.map(skill => (
-              <button
-                key={skill.id}
-                onClick={() =>
-                  selectedSkills.includes(skill.id)
-                    ? setSelectedSkills(selectedSkills.filter(id => id !== skill.id))
-                    : setSelectedSkills([...selectedSkills, skill.id])
-                }
-              >
-                {skill.name}
-              </button>
-            ))}
-
-            <button onClick={() => setStep(2)}>Back</button>
-            <button onClick={handleSubmit}>Submit</button>
-          </>
-        );
-      default:
-        return null;
-    }
+    axios.post('http://localhost:5000/opportunities/create', data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+    .then(() => {
+      alert('Volunteer opportunity created successfully!');
+      // Reset form or redirect as needed
+    })
+    .catch(err => {
+      alert('Failed to create opportunity: ' + err.message);
+    });
   };
 
   return (
-   
-      <div className="create-opportunity-container">
-        <img src="/images/volunteroppertunites.webp" alt="Volunteer Banner" style={{ width: '100%', height: 'auto' }} />
-        <h2>Create Opportunity</h2>
-        <div className="step-indicator">
-          {[1, 2, 3].map(n => (
-            <span key={n} style={{ fontWeight: step === n ? 'bold' : 'normal' }}>{`Step ${n}`}</span>
-          ))}
-        </div>
-        {renderStep()}
-      </div>
-    
+    <div style={{ maxWidth: 600, margin: 'auto', padding: 20, fontFamily: 'Arial, sans-serif' }}>
+      {step === 1 && (
+        <>
+          <h2>Create Volunteer Opportunity - Step 1</h2>
+          <label style={labelStyle}>Title</label>
+          <input
+            type="text"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            style={inputStyle}
+            placeholder="Enter opportunity title"
+          />
+
+          <label style={labelStyle}>Description</label>
+          <textarea
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            style={{ ...inputStyle, height: 100 }}
+            placeholder="Describe the opportunity"
+          />
+
+          <label style={labelStyle}>Location</label>
+          <input
+            type="text"
+            value={location}
+            onChange={e => setLocation(e.target.value)}
+            style={inputStyle}
+            placeholder="Enter location"
+          />
+
+          <button onClick={() => setStep(2)} style={buttonStyle}>Next</button>
+        </>
+      )}
+
+      {step === 2 && (
+        <>
+          <h2>Create Volunteer Opportunity - Step 2</h2>
+
+          <label style={labelStyle}>Contact Email</label>
+          <input
+            type="email"
+            value={contactEmail}
+            onChange={e => setContactEmail(e.target.value)}
+            style={inputStyle}
+            placeholder="Enter contact email"
+          />
+
+          <label style={labelStyle}>Start Date</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={e => setStartDate(e.target.value)}
+            style={inputStyle}
+          />
+
+          <label style={labelStyle}>End Date</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
+            style={inputStyle}
+          />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+            <button onClick={() => setStep(1)} style={buttonStyle}>Back</button>
+            <button onClick={() => setStep(3)} style={buttonStyle}>Next</button>
+          </div>
+        </>
+      )}
+
+      {step === 3 && (
+        <>
+          <h2>Create Volunteer Opportunity - Step 3</h2>
+
+          <label style={labelStyle}>Number of Volunteers Needed</label>
+          <input
+            type="number"
+            min={1}
+            value={requiredVolunteers}
+            onChange={e => setRequiredVolunteers(e.target.value)}
+            style={inputStyle}
+            placeholder="Enter number of volunteers"
+          />
+
+          <label style={labelStyle}>Points</label>
+          <input
+            type="number"
+            min={0}
+            value={points}
+            onChange={e => setPoints(e.target.value)}
+            style={inputStyle}
+            placeholder="Enter points for volunteers"
+          />
+
+          <label style={labelStyle}>Start Time</label>
+          <div style={{ display: 'flex', overflowX: 'auto', gap: 8, marginBottom: 10 }}>
+            {timeOptions.map(time => (
+              <div
+                key={time}
+                onClick={() => setStartTime(time)}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: 5,
+                  cursor: 'pointer',
+                  backgroundColor: startTime === time ? '#66bb6a' : '#eee',
+                  color: startTime === time ? 'white' : 'black',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {time}
+              </div>
+            ))}
+          </div>
+
+          <label style={labelStyle}>End Time</label>
+          <div style={{ display: 'flex', overflowX: 'auto', gap: 8, marginBottom: 10 }}>
+            {timeOptions.map(time => (
+              <div
+                key={time}
+                onClick={() => setEndTime(time)}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: 5,
+                  cursor: 'pointer',
+                  backgroundColor: endTime === time ? '#66bb6a' : '#eee',
+                  color: endTime === time ? 'white' : 'black',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {time}
+              </div>
+            ))}
+          </div>
+
+          <label style={labelStyle}>Volunteer Days</label>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
+            {dayOptions.map(day => (
+              <div key={day.value} style={{ display: 'flex', alignItems: 'center' }}>
+                <input
+                  type="checkbox"
+                  id={day.value}
+                  checked={volunteerDays.includes(day.value)}
+                  onChange={() => {
+                    if (volunteerDays.includes(day.value)) {
+                      setVolunteerDays(volunteerDays.filter(d => d !== day.value));
+                    } else {
+                      setVolunteerDays([...volunteerDays, day.value]);
+                    }
+                  }}
+                />
+                <label htmlFor={day.value} style={{ marginLeft: 5 }}>{day.label}</label>
+              </div>
+            ))}
+          </div>
+
+          <label style={labelStyle}>Required Skills</label>
+          <select
+            multiple
+            value={selectedSkills}
+            onChange={e => {
+              const options = Array.from(e.target.selectedOptions).map(o => o.value);
+              setSelectedSkills(options);
+            }}
+            style={{ ...inputStyle, height: 100 }}
+          >
+            {availableSkills.map(skill => (
+              <option key={skill._id} value={skill._id}>
+                {skill.name}
+              </option>
+            ))}
+          </select>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+            <button onClick={() => setStep(2)} style={buttonStyle}>Back</button>
+            <button onClick={handleSubmit} style={{ ...buttonStyle, backgroundColor: '#388e3c' }}>
+              Create Opportunity
+            </button>
+          </div>
+        </>
+      )}
+    </div>
   );
+};
+
+const inputStyle = {
+  width: '100%',
+  padding: 10,
+  marginBottom: 15,
+  borderRadius: 5,
+  border: '1px solid #ccc',
+  fontSize: 16,
+  boxSizing: 'border-box',
+};
+
+const labelStyle = {
+  marginBottom: 5,
+  fontWeight: 'bold',
+  color: '#2e7d32',
+};
+
+const buttonStyle = {
+  padding: '10px 20px',
+  backgroundColor: '#66bb6a',
+  color: 'white',
+  border: 'none',
+  borderRadius: 5,
+  cursor: 'pointer',
+  fontWeight: 'bold',
 };
 
 export default CreateVolunteerOpportunity;
