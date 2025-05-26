@@ -1,44 +1,178 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap');
+
+/* إعادة تعيين التنسيقات الأساسية */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   overflow-x: hidden;
+  font-family: 'Poppins', 'Times New Roman', Times, serif;
 }
-/* Dropdown container */
+
+.logo-container {
+  display: flex;
+  align-items: center; /* لمحاذاة النص مع الصورة عموديًا */
+  justify-content: center; /* لتوسيط الكل داخل الحاوية */
+  gap: 10px; /* مسافة بين الصورة والنص */
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+}
+
+.logo-text {
+  font-size: 24px; /* حجم الخط */
+  font-weight: bold; /* جعل الخط عريض */
+  color: #2e7d32; /* لون النص */
+}
+
+/* تنسيقات شريط التنقل الرئيسي */
+.navbar {
+  height: 64px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  background: linear-gradient(90deg, #e6f2e6, #d0e8d0);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 1100;
+  box-shadow: 0 3px 15px rgba(76, 175, 80, 0.25);
+  backdrop-filter: saturate(180%) blur(8px);
+}
+
+/* تنسيقات الشعار */
+.logo {
+  height: 50px;
+  border-radius: 10px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.1);
+}
+
+/* تنسيقات رأس النافبار */
+.navbar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* زر تبديل القائمة (للشاشات الصغيرة) */
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #2e7d32;
+  cursor: pointer;
+  display: none;
+}
+
+/* تنسيقات قائمة الروابط */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links li a,
+.logout-link {
+  text-decoration: none;
+  color: #2e7d32;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.nav-links li a:hover,
+.logout-link:hover {
+  background-color: #a5d6a7;
+  color: #1b5e20;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+}
+
+.nav-links li.active a {
+  background-color: #4caf50;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(67, 160, 71, 0.5);
+}
+
+/* تنسيقات الأيقونات */
+.nav-icon {
+  font-size: 18px;
+  color: #2e7d32;
+  margin-right: 8px;
+}
+
+/* تنسيقات القائمة المنسدلة (Dropdown) */
 .dropdown {
   position: relative;
 }
 
-/* زر القائمة المنسدلة */
 .dropdown-toggle {
   background: none;
   border: none;
-  color: inherit;
+  color: #2e7d32;
   cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 0;
-  font: inherit;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
 
-/* القائمة الفرعية */
+.dropdown-toggle:hover {
+  background-color: #a5d6a7;
+  color: #1b5e20;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+}
+
+.dropdown.open .dropdown-toggle {
+  background-color: #4caf50;
+  color: white;
+}
+
 .dropdown-menu {
   position: absolute;
   top: 100%;
   left: 0;
   background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 5px 0;
   min-width: 220px;
-  z-index: 1000;
+  border-radius: 4px;
+  z-index: 1200;
 }
 
-/* عناصر القائمة الفرعية */
 .dropdown-menu li {
-  padding: 10px 15px;
+  padding: 10px 20px;
 }
 
 .dropdown-menu li:hover {
@@ -50,98 +184,193 @@ html, body {
   text-decoration: none;
   display: flex;
   align-items: center;
+  font-size: 15px;
+  font-family: 'Poppins', sans-serif;
 }
 
-.nav-icon {
-  margin-right: 8px;
+.dropdown-menu li.active a {
+  color: #4caf50;
+  font-weight: bold;
 }
 
-.navbar {
-  height: 64px; /* أو أي ارتفاع مناسب مع padding */
-  padding: 0 20px; /* خلي padding عمودي 0 عشان ما يزود ارتفاع */
-  box-sizing: border-box;
-  background: linear-gradient(90deg, #e6f2e6, #d0e8d0); /* تدرج أخضر فاتح */ 
+/* تنسيقات الإشعارات */
+.notification-container {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  position: fixed;
-  width: 100%;
-  top: 0;
-  z-index: 1100;
-  box-shadow: 0 3px 15px rgba(76, 175, 80, 0.25);
-  font-family: 'Times New Roman', Times, serif;
-  backdrop-filter: saturate(180%) blur(8px);
-  width: 100vw; /* عرض كامل */
+}
+
+.notification-container .nav-icon {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.notification-count {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  padding: 1px 5px;
+  border-radius: 50%;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1200;
+  border-radius: 5px;
+  transition: max-height 0.3s ease, width 0.3s ease;
+}
+
+.notification-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.notification-item:hover {
+  background-color: #f9f9f9;
+}
+
+.notification-item.unseen {
+  background-color: #e8f5e9;
+  font-weight: 600;
+  position: relative;
+}
+
+.notification-item.unseen::before {
+  content: '';
+  position: absolute;
   left: 0;
   top: 0;
-  position: fixed; /* أو absolute إذا مو تبغى تتبع التمرير */
-  z-index: 999;
-  will-change: transform;
-}
-.logo {
-  height: 50px;
-  border-radius: 10px;
-  object-fit: cover;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  /* لا حاجة لتعديل هنا */
+  bottom: 0;
+  width: 4px;
+  background-color: #4caf50; /* شريط أخضر للإشعارات غير المقروءة */
 }
 
-
-.nav-links li:first-child a {
-  margin-left: 8px; /* مسافة صغيرة بين الشعار والكلمة الأولى */
-}
- 
-
-
-.logo:hover {
-  transform: scale(1.1);
+.notification-item:last-child {
+  border-bottom: none;
 }
 
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 28px;
-  margin: 0;
-  padding: 0;
-  margin-left: 0px; /* مسافة من الشعار */
+.notification-item strong {
+  display: block;
+  color: #333;
 }
 
+.notification-item p {
+  margin: 5px 0 0;
+  color: #666;
+  font-size: 14px;
+}
 
-.nav-links li a {
-  text-decoration: none;
-  color: #2e7d32;
+/* تنسيقات زر "Mark All as Seen" */
+.mark-all-seen-button {
+  background: none;
+  border: 1px solid #4caf50;
+  color: #4caf50;
+  font-size: 14px;
   font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 20px;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 0 0 rgba(0,0,0,0);
-  display: inline-block;
-  font-size: 20px !important;
+  cursor: pointer;
+  padding: 8px 12px;
+  margin: 5px 0;
+  width: 100%;
+  text-align: center;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.nav-links li a:hover {
-  background-color: #a5d6a7; /* أخضر فاتح */
-  color: #1b5e20;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(76,175,80,0.2);
-}
-
-.nav-links li.active a {
+.mark-all-seen-button:hover {
   background-color: #4caf50;
   color: white;
-  box-shadow: 0 6px 12px rgba(67,160,71,0.5);
-  transform: translateY(-3px);
 }
 
+/* تنسيقات تفاصيل الإشعار */
+.notification-details {
+  padding: 10px;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
 
+.notification-details h4 {
+  margin: 0 0 10px;
+  color: #333;
+  font-size: 16px;
+}
 
+.notification-details p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 14px;
+}
 
+.notification-details-content {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
 
+.notification-details-content p {
+  margin: 8px 0;
+}
 
+.notification-details-content p strong {
+  color: #2e7d32;
+  margin-right: 5px;
+}
 
-/* القائمة عند الشاشات الصغيرة */
+.back-button {
+  background: none;
+  border: none;
+  color: #4caf50;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  transition: color 0.2s ease;
+}
+
+.back-button:hover {
+  color: #2e7d32;
+}
+
+.no-notifications {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+/* أنميشن لظهور تفاصيل الإشعار */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* التنسيقات للشاشات الصغيرة */
 @media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
   .nav-links {
     flex-direction: column;
     position: absolute;
@@ -151,7 +380,7 @@ html, body {
     background: linear-gradient(90deg, #e6f2e6, #d0e8d0);
     padding: 16px 0;
     gap: 12px;
-    transform: translateY(-200%);
+    transform: translateY(-100%);
     transition: transform 0.3s ease-in-out;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   }
@@ -160,121 +389,27 @@ html, body {
     transform: translateY(0);
   }
 
-  .menu-toggle {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #2e7d32;
-    cursor: pointer;
-  }
-
   .nav-links li {
     text-align: center;
+    justify-content: center;
   }
 
-  .nav-links li a {
-    display: flex;
-    justify-content: center; /* ⭐ هذا السطر يوسّط الأيقونة والكلمة */
-    align-items: center;
-    gap: 12px;
-    padding: 10px 20px;
-    font-size: 16px;
-  }
-
-  .navbar-header {
+  .dropdown-menu {
+    position: static;
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    box-shadow: none;
+    background: #f9f9f9;
   }
-}
 
-.nav-links li a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #444;
-  transition: all 0.3s ease;
-}
+  .notification-dropdown {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    width: 100%;
+    max-width: 300px;
+  }
 
-.nav-icon {
-  font-size: 22px;
-  color:rgb(13, 119, 30);
-  
-  padding: 6px;
-  border-radius: 50%;
-}
-
-
-/* تعديل زر القائمة المنسدلة ليشبه روابط النافبار */
-.dropdown-toggle {
-  background: none;
-  border: none;
-  color: #070707; /* نفس لون النص في النافبار */
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 10px 15px;
- 
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  transition: background-color 0.3s ease;
-  width: 100%;
-  text-align: left;
-  font-family: 'Times New Roman', Times, serif;
-}
-
-.dropdown-toggle:hover,
-.dropdown-toggle:focus {
- background-color: linear-gradient(90deg, #e6f2e6, #d0e8d0);; 
-  outline: none;
-}
-
-/* تعديل شكل الأيقونة داخل الزر */
-.dropdown-toggle .nav-icon {
-  margin-right: 8px;
-  font-size: 18px;
-  display: inline-flex;
-  align-items: center;
-}
-
-/* قائمة Dropdown */
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: #fff;
- 
-  list-style: none;
-  margin: 0;
-  padding: 5px 0;
-  min-width: 220px;
-  border-radius: 4px;
-  z-index: 1000;
-}
-
-/* عناصر القائمة الفرعية */
-.dropdown-menu li {
-  padding: 10px 20px;
-}
-
-.dropdown-menu li:hover {
-  background-color: #f0f0f0;
-}
-
-.dropdown-menu li a {
-  
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 15px;
-}
-
-.dropdown-menu li a .nav-icon {
-  margin-right: 10px;
-  font-size: 18px;
+  .notification-details {
+    width: 100%;
+  }
 }
