@@ -43,15 +43,15 @@ const LoginPage = () => {
             localStorage.setItem('userToken', token);
             localStorage.setItem('userRole', role);
 
-            // * اطلب توكين FCM *
+            // ** اطلب توكين FCM **
             const fcmToken = await requestFCMToken();
             if (fcmToken) {
-            // * ابعت التوكين للسيرفر *
+            // ** ابعت التوكين للسيرفر **
             await axios.post('http://localhost:5000/user/fcm-token', {
                 fcm_token: fcmToken
             }, {
                 headers: {
-                Authorization: Bearer ${token}
+                Authorization: `Bearer ${token}`
                 }
             });
             }
