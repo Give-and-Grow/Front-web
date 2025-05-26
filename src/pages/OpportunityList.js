@@ -1,8 +1,9 @@
+// OpportunitiesList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './OpportunityList.css';
-import Navbar from '../pages/Navbar';
-
+import { FaMapMarkerAlt, FaInfoCircle, FaEye, FaTrashAlt } from 'react-icons/fa';
+import Navbar from './Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 const OpportunitiesList = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,63 +11,63 @@ const OpportunitiesList = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
   const [modalType, setModalType] = useState(null);
-  const [formData, setFormData] = useState({
+  const [filters, setFilters] = useState({ location: '', status: '' });
+  const [showDeleted, setShowDeleted] = useState(false);
+
+  // حقول التحديث
+  const [updatedData, setUpdatedData] = useState({
     title: '',
     description: '',
     location: '',
     start_date: '',
     end_date: '',
-    max_participants: '',
-    base_points: '',
-    required_points: '',
+    status: ''
   });
 
-  useEffect(() => {
-    const fetchOpportunities = async () => {
-      try {
-        const token = localStorage.getItem('userToken');
-        if (!token) {
-          setError('Token not found');
-          setLoading(false);
-          return;
-        }
-
-        const response = await axios.get(`http://localhost:5000/opportunities/organization`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const updatedOpportunities = response.data.opportunities.map((op) => ({
-          ...op,
-          required_points: op.required_points || 0,
-        }));
-
-        setOpportunities(updatedOpportunities);
-      } catch (e) {
-        setError('Failed to load opportunities');
-      } finally {
+ useEffect(() => {
+  const fetchOpportunities = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        setError('Token not found');
         setLoading(false);
+        return;
       }
-    };
 
-    fetchOpportunities();
-  }, []);
+      const response = await axios.get(`http://localhost:5000/opportunities/organization?is_deleted=${showDeleted}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log('showDeleted:', showDeleted);
+      console.log('Raw opportunities from API:', response.data.opportunities);
+
+      const updated = response.data.opportunities.map(o => ({
+        ...o,
+        required_points: o.required_points || 0,
+      }));
+
+      setOpportunities(updated);
+    } catch (err) {
+      setError('Failed to load opportunities');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchOpportunities();
+}, [showDeleted]);
+
+
 
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('userToken');
-      if (!token) {
-        setError('Token not found');
-        return;
-      }
-
-      const response = await axios.delete(`http://localhost:5000/opportunities/${id}`, {
+      await axios.delete(`http://localhost:5000/opportunities/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      if (response.status === 200) {
-        setOpportunities(opportunities.filter((op) => op.id !== id));
-        alert('Opportunity deleted successfully');
-      }
+      setOpportunities(prev => prev.filter(o => o.id !== id));
+      alert('Deleted successfully');
     } catch {
       setError('Failed to delete opportunity');
     }
@@ -78,224 +79,229 @@ const OpportunitiesList = () => {
     setModalVisible(true);
   };
 
-  const handleUpdatePress = (opportunity) => {
-    setSelectedOpportunity(opportunity);
-    setFormData({
-      title: opportunity.title,
-      description: opportunity.description,
-      location: opportunity.location,
-      start_date: opportunity.start_date,
-      end_date: opportunity.end_date,
+  const handleEdit = (opportunity) => {
+  setSelectedOpportunity(opportunity);
+  const commonFields = {
+    title: opportunity.title,
+    description: opportunity.description,
+    location: opportunity.location,
+    start_date: opportunity.start_date,
+    end_date: opportunity.end_date,
+  };
+
+  if (opportunity.opportunity_type === 'volunteer') {
+    setUpdatedData({
+      ...commonFields,
       max_participants: opportunity.max_participants || '',
-      base_points: opportunity.base_points || '',
-      required_points: opportunity.required_points || '',
+      base_points: opportunity.base_points || ''
     });
-    setModalType('update');
-    setModalVisible(true);
-  };
+  } else if (opportunity.opportunity_type === 'job') {
+    setUpdatedData({
+      ...commonFields,
+      required_points: opportunity.required_points || ''
+    });
+  }
 
-  const handleInputChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  setModalType('edit');
+  setModalVisible(true);
+};
 
-  const handleUpdateSubmit = async () => {
-    try {
-      const token = localStorage.getItem('userToken');
-      if (!token) return setError('Token not found');
 
-      const id = selectedOpportunity.id;
-      const isJob = selectedOpportunity.opportunity_type === 'Job';
+ const handleUpdate = async () => {
+  try {
+    const token = localStorage.getItem('userToken');
+    const type = selectedOpportunity.opportunity_type;
 
-      const payload = isJob
-        ? {
-            title: formData.title,
-            description: formData.description,
-            location: formData.location,
-            start_date: formData.start_date,
-            end_date: formData.end_date,
-            required_points: parseInt(formData.required_points),
-          }
-        : {
-            title: formData.title,
-            description: formData.description,
-            location: formData.location,
-            start_date: formData.start_date,
-            end_date: formData.end_date,
-            max_participants: parseInt(formData.max_participants),
-            base_points: parseInt(formData.base_points),
-          };
+    const allowedFields =
+      type === 'volunteer'
+        ? ['title', 'description', 'location', 'start_date', 'end_date', 'max_participants', 'base_points']
+        : ['title', 'description', 'location', 'start_date', 'end_date', 'required_points'];
 
-      const response = await axios.put(
-        `http://localhost:5000/opportunities/${id}`,
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (response.status === 200) {
-        alert('Opportunity updated successfully');
-        setModalVisible(false);
-        setSelectedOpportunity(null);
-        setModalType(null);
-
-        // إعادة تحميل البيانات
-        const refreshed = await axios.get(`http://localhost:5000/opportunities/organization`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setOpportunities(refreshed.data.opportunities);
+    const filteredData = {};
+    for (const key of allowedFields) {
+      if (updatedData[key] !== undefined) {
+        filteredData[key] = updatedData[key];
       }
-    } catch {
-      setError('Failed to update opportunity');
     }
-  };
+
+    await axios.put(`http://localhost:5000/opportunities/${selectedOpportunity.id}`, filteredData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    setOpportunities(prev =>
+      prev.map(o => o.id === selectedOpportunity.id ? { ...o, ...filteredData } : o)
+    );
+
+    closeModal();
+    alert('Updated successfully');
+  } catch (err) {
+    alert('Update failed');
+  }
+};
+
+const handleRestore = async (id) => {
+  try {
+    const token = localStorage.getItem('userToken');
+    await axios.put(`http://localhost:5000/opportunities/${id}/restore`, {}, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setOpportunities(prev =>
+      prev.map(o => o.id === id ? { ...o, is_deleted: false } : o)
+    );
+
+    alert('Opportunity restored successfully');
+  } catch (err) {
+    setError('Failed to restore opportunity');
+  }
+};
 
   const closeModal = () => {
     setModalVisible(false);
     setSelectedOpportunity(null);
-    setModalType(null);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div style={{ color: 'red' }}>{error}</div>;
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+  };
+
+  const filteredOpportunities = opportunities.filter(o =>
+    o.location.toLowerCase().includes(filters.location.toLowerCase()) &&
+    o.status.toLowerCase().includes(filters.status.toLowerCase())
+  );
+
+  if (loading) return <div className="loading-spinner" aria-label="Loading"></div>;
+
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <>
-      <Navbar />
-      <div style={{ padding: '20px', maxWidth: '1200px', margin: 'auto', backgroundColor: '#ffffff' }}>
-        <h2 style={{ textAlign: 'center', color: '#34c69a', marginBottom: '30px' }}>
-          🌟 Available Opportunities
-        </h2>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-          {opportunities.map((opportunity) => (
-            <div key={opportunity.id} style={{
-              backgroundColor: '#fff',
-              borderRadius: '12px',
-              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.1)',
-              padding: '20px',
-              position: 'relative',
-              border: '1px solid #e0e0e0',
-              transition: 'transform 0.2s',
-            }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              {opportunity.image_url && (
-                <div style={{
-                  border: '2px solid #b9fbc0',
-                  borderRadius: '10px',
-                  padding: '6px',
-                  marginBottom: '16px',
-                }}>
-                  <img src={opportunity.image_url} alt={opportunity.title} style={{
-                    width: '100%', height: '200px', objectFit: 'cover', borderRadius: '6px'
-                  }} />
-                </div>
-              )}
-
-              <h3 style={{ color: '#057547', marginBottom: '12px' }}>📌 {opportunity.title}</h3>
-              <p><b>Description:</b> {opportunity.description}</p>
-              <p><b>Location:</b> {opportunity.location}</p>
-              <p><b>Start:</b> {opportunity.start_date}</p>
-              <p><b>End:</b> {opportunity.end_date}</p>
-              <p><b>Type:</b> {opportunity.opportunity_type}</p>
-              <p><b>Status:</b> {opportunity.status}</p>
-              <p><b>Skills Required:</b>{' '}
-                {opportunity.skills.map((skill, index) => (
-                  <span key={skill.id}>💡 {skill.name}{index < opportunity.skills.length - 1 && ' / '}</span>
-                ))}
-              </p>
-
-              <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
-                <button onClick={() => handleMorePress(opportunity)} style={{
-                  backgroundColor: '#b9fbc0', color: '#065f46', padding: '8px 16px',
-                  border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'
-                }}>🔍 More Details</button>
-
-                <button onClick={() => handleUpdatePress(opportunity)} style={{
-                  backgroundColor: '#fbbf24', color: '#5a3800', padding: '8px 12px',
-                  border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'
-                }}>✏️ Update</button>
-
-                <button onClick={() => handleDelete(opportunity.id)} style={{
-                  backgroundColor: '#f87171', color: 'white', padding: '8px 12px',
-                  border: 'none', borderRadius: '8px', cursor: 'pointer'
-                }}>🗑️</button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {modalVisible && selectedOpportunity && modalType === 'update' && (
-          <div onClick={closeModal} style={{
-            position: 'fixed', top: 0, left: 0, height: '100vh', width: '100vw',
-            backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center',
-            alignItems: 'center', zIndex: 1000
-          }}>
-            <div onClick={(e) => e.stopPropagation()} style={{
-              backgroundColor: '#fff', borderRadius: '12px', padding: '20px',
-              width: '90%', maxWidth: '600px', maxHeight: '80vh', overflowY: 'auto'
-            }}>
-              <h3 style={{ color: '#057547' }}>✏️ Update Opportunity</h3>
-
-              <input name="title" placeholder="Title" value={formData.title} onChange={handleInputChange} className="input" />
-              <textarea name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} className="input" />
-              <input name="location" placeholder="Location" value={formData.location} onChange={handleInputChange} className="input" />
-              <input name="start_date" type="date" value={formData.start_date} onChange={handleInputChange} className="input" />
-              <input name="end_date" type="date" value={formData.end_date} onChange={handleInputChange} className="input" />
-
-              {selectedOpportunity.opportunity_type === 'Job' ? (
-                <input name="required_points" placeholder="Required Points" value={formData.required_points} onChange={handleInputChange} className="input" />
-              ) : (
-                <>
-                  <input name="max_participants" placeholder="Max Participants" value={formData.max_participants} onChange={handleInputChange} className="input" />
-                  <input name="base_points" placeholder="Base Points" value={formData.base_points} onChange={handleInputChange} className="input" />
-                </>
-              )}
-
-              <div style={{ textAlign: 'right', marginTop: '10px' }}>
-                <button onClick={handleUpdateSubmit} style={{
-                  backgroundColor: '#34d399', padding: '10px 16px', border: 'none',
-                  borderRadius: '6px', color: '#065f46', fontWeight: 'bold'
-                }}>✅ Save</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {modalVisible && selectedOpportunity && modalType === 'details' && (
-          <div onClick={closeModal} style={{
-            position: 'fixed', top: 0, left: 0, height: '100vh', width: '100vw',
-            backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center',
-            alignItems: 'center', zIndex: 1000
-          }}>
-            <div onClick={(e) => e.stopPropagation()} style={{
-              backgroundColor: '#fff', borderRadius: '12px', padding: '20px',
-              width: '80%', maxWidth: '600px', maxHeight: '80vh', overflowY: 'auto'
-            }}>
-              <h3 style={{ color: '#057547', marginBottom: '20px' }}>📋 Opportunity Details</h3>
-              {Object.entries(selectedOpportunity).map(([key, value]) => {
-                if (key === 'skills') return null;
-                return (
-                  <p key={key}>
-                    <b>{key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}:</b> {String(value)}
-                  </p>
-                );
-              })}
-              <div style={{ textAlign: 'right' }}>
-                <button onClick={closeModal} style={{
-                  marginTop: '15px', backgroundColor: '#b9fbc0', color: '#065f46',
-                  padding: '8px 16px', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'
-                }}>✖ Close</button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+  
+    <Navbar />
+    <div className="container">
+      <h2 className="title">Available Opportunities</h2>
+<button className="toggle-btn" onClick={() => setShowDeleted(!showDeleted)}>
+  {showDeleted ? (
+    <>
+      <FaEye /> Show Active Opportunities
     </>
+  ) : (
+    <>
+      <FaTrashAlt /> Show Deleted Opportunities
+    </>
+  )}
+</button>
+
+{/* الفلاتر */}
+<div className="filters">
+  <div className="filter-input">
+    <FaMapMarkerAlt />
+    <input
+      type="text"
+      name="location"
+      placeholder="Filter by location"
+      value={filters.location}
+      onChange={handleFilterChange}
+    />
+  </div>
+
+  <div className="filter-input">
+    <FaInfoCircle />
+    <input
+      type="text"
+      name="status"
+      placeholder="Filter by status"
+      value={filters.status}
+      onChange={handleFilterChange}
+    />
+  </div>
+</div>
+
+      <div className="cards">
+        {filteredOpportunities.map(op => (
+          <div key={op.id} className="card">
+            {op.image_url && <img src={op.image_url} alt="opportunity" className="card-image" />}
+           <div className="card-content">
+  <h3>{op.title}</h3>
+  <p>{op.description}</p>
+  <p><strong>Location:</strong> {op.location}</p>
+  <p><strong>Start Date:</strong> {op.start_date}</p>
+  <p><strong>End Date:</strong> {op.end_date}</p>
+  <p><strong>Status:</strong> {op.status}</p>
+
+  {/* skills section */}
+  {op.skills && op.skills.length > 0 && (
+  <div className="skills-container">
+    <p className="skills-title">🛠️ Skills Required:</p>
+    {op.skills.map((skill) => (
+      <span key={skill.id} className="skill-badge">
+        💡 {skill.name}
+      </span>
+    ))}
+  </div>
+)}
+
+
+ <div className="buttons">
+  <button className="btn details" onClick={() => handleMorePress(op)}>Details</button>
+  <button className="btn update" onClick={() => handleEdit(op)}>Edit</button>
+  
+  {op.is_deleted ? (
+    <button className="btn restore" onClick={() => handleRestore(op.id)}>Restore</button>
+  ) : (
+    <button className="btn delete" onClick={() => handleDelete(op.id)}>Delete</button>
+  )}
+</div>
+
+</div>
+
+          </div>
+        ))}
+      </div>
+
+      {/* مودال التفاصيل أو التعديل */}
+      {modalVisible && selectedOpportunity && (
+        <div className="modal">
+          <div className="modal-content">
+            {modalType === 'details' ? (
+              <>
+                <h3>Opportunity Details</h3>
+                {Object.entries(selectedOpportunity).map(([key, value]) => (
+  key !== 'skills' && (
+    <p key={key}><strong>{key.replace(/_/g, ' ')}:</strong> {String(value)}</p>
+  )
+))}
+
+                <button className="btn close" onClick={closeModal}>Close</button>
+              </>
+            ) : (
+              <>
+                <h3>Edit Opportunity</h3>
+               {Object.keys(updatedData).map(key => (
+  <div key={key}>
+    <label>{key.replace(/_/g, ' ')}:</label>
+    <input
+      type="text"
+      value={updatedData[key]}
+      onChange={e => setUpdatedData({ ...updatedData, [key]: e.target.value })}
+    />
+  </div>
+))}
+
+                <button className="btn update" onClick={handleUpdate}>Update</button>
+                <button className="btn close" onClick={closeModal}>Cancel</button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+     </>
   );
+ 
+  
+ 
 };
 
 export default OpportunitiesList;

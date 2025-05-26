@@ -1,145 +1,403 @@
-.opportunities-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
-  max-width: 900px;
-  margin: auto;
-  padding: 0 10px;
+.container {
+  padding: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0fdf4;
+  min-height: 100vh;
 }
 
-.opportunity-card {
-  background: linear-gradient(145deg, #e9f7ee, #d0ebd5);
-  border-radius: 15px;
-  box-shadow: 0 6px 15px rgba(45, 153, 91, 0.15);
-  padding: 18px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.title {
+  text-align: center;
+  color: #1b4332;
+  margin-bottom: 30px;
+}
+
+.filters {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: none;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
-.opportunity-card:hover {
-  transform: translateY(-5px) scale(1.03);
-  box-shadow: 0 15px 30px rgba(45, 153, 91, 0.35);
+.filters input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 200px;
 }
 
-.opportunity-image-container {
-  width: 100%;
-  height: 140px;
-  overflow: hidden;
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #ffffff;
   border-radius: 12px;
-  border: 1.5px solid #97d8a9;
-  margin-bottom: 15px;
-  background-color: #f3fff5;
-  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.6);
-  transition: box-shadow 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 100, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+  border-left: 6px solid #2d6a4f;
 }
 
-.opportunity-image-container img {
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 15px;
+}
+
+.card-content h3 {
+  color: #2d6a4f;
+  margin-bottom: 10px;
+}
+
+.card-content p {
+  margin: 5px 0;
+  color: #444;
+}
+
+.buttons {
+  margin-top: 15px;
+}
+
+.btn {
+  padding: 8px 16px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.btn.details {
+  background-color: #95d5b2;
+  color: #1b4332;
+}
+
+.btn.details:hover {
+  background-color: #74c69d;
+}
+
+.btn.update {
+  background-color: #40916c;
+  color: white;
+}
+
+.btn.update:hover {
+  background-color: #2d6a4f;
+}
+
+.btn.delete {
+  background-color: #d00000;
+  color: white;
+}
+
+.btn.delete:hover {
+  background-color: #9d0208;
+}
+
+.btn.close {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.opportunity-card:hover .opportunity-image-container img {
-  transform: scale(1.07);
-  box-shadow: 0 0 10px rgba(45, 153, 91, 0.3);
-}
-
-.opportunity-title {
-  margin: 8px 0 6px 0;
-  color: #1e592c;
-  font-weight: 800;
-  font-size: 1.25rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.05);
-}
-
-.opportunity-description {
-  margin: 5px 0 12px 0;
-  color: #3a3a3a;
-  line-height: 1.4;
-  min-height: 60px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  flex-grow: 1;
-  font-size: 0.95rem;
-}
-.input {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.opportunity-actions {
-  margin-top: auto;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
-.opportunity-button {
-  background-color: #2d995b;
-  color: #fff;
-  border: none;
-  padding: 9px 18px;
+.modal-content {
+  background-color: white;
+  padding: 30px;
   border-radius: 10px;
-  font-size: 0.9rem;
-  cursor: pointer;
+  width: 500px;
+  max-width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 20px;
+  color: #333;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 30px;
+  font-size: 18px;
+}
+ .skills-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.skill-badge {
+  display: inline-block;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 12px;
+  padding: 5px 10px;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.skills-title {
+  font-weight: bold;
+  color: #388e3c;
+  margin-bottom: 4px;
+}
+
+/* مودال */
+.modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 16px; /* زيادة الانحناء */
+  padding: 30px 30px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  position: relative;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  animation: fadeInScale 0.3s ease forwards;
+}
+
+/* عنوان المودال */
+.modal-content h3 {
+  margin-bottom: 25px;
+  color: #2c3e50;
   font-weight: 700;
-  box-shadow: 0 3px 8px rgba(45, 153, 91, 0.5);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+  font-size: 1.8rem; /* أكبر شوي */
+  text-align: center;
+  letter-spacing: 0.04em;
 }
 
-.opportunity-button:hover {
-  background-color: #1e6f3f;
-  box-shadow: 0 5px 15px rgba(30, 111, 63, 0.6);
+/* نص التفاصيل */
+.modal-content p {
+  margin: 10px 0;
+  color: #34495e;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
-.opportunity-button:active {
-  transform: scale(0.97);
+/* عناصر الإدخال */
+.modal-content label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
 }
 
-.opportunity-button.delete {
-  background-color: #d9534f;
-  box-shadow: 0 3px 8px rgba(217, 83, 79, 0.5);
+/* الحقول النصية بشكل بيضاوي */
+.modal-content input[type="text"] {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 25px; /* شكل بيضاوي */
+  border: 1.8px solid #bdc3c7;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-weight: 500;
+  color: #2c3e50;
+  background-color: #fafafa;
 }
 
-.opportunity-button.delete:hover {
-  background-color: #b63730;
-  box-shadow: 0 5px 15px rgba(182, 55, 48, 0.7);
+.modal-content input[type="text"]::placeholder {
+  color: #a5a5a5;
+  font-style: italic;
 }
 
-/* Responsive for mobile */
-@media (max-width: 480px) {
-  .opportunities-grid {
-    grid-template-columns: 1fr;
-    max-width: 100%;
-    padding: 0 15px;
+.modal-content input[type="text"]:focus {
+  outline: none;
+  border-color: #27ae60; /* أخضر */
+  box-shadow: 0 0 8px rgba(39, 174, 96, 0.6);
+  background-color: #fff;
+}
+
+/* أزرار المودال */
+.modal-content .btn {
+  padding: 12px 28px;
+  border-radius: 25px; /* بيضاوي */
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border: none;
+  margin: 10px 10px 0 0;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+/* زر الإغلاق */
+.modal-content .btn.close {
+  background-color: #e74c3c; /* أحمر */
+  color: #fff;
+}
+
+.modal-content .btn.close:hover {
+  background-color: #c0392b;
+  box-shadow: 0 6px 14px rgba(192, 57, 43, 0.7);
+}
+
+/* زر التحديث */
+.modal-content .btn.update {
+  background-color: #27ae60; /* أخضر */
+  color: #fff;
+}
+
+.modal-content .btn.update:hover {
+  background-color: #219150;
+  box-shadow: 0 6px 14px rgba(33, 145, 80, 0.7);
+}
+
+/* تنسيق أزرار جانبي */
+.modal-content .btn + .btn {
+  margin-left: 12px;
+  min-width: 110px;
+}
+
+/* تنسيق الحاويات داخل المودال */
+.modal-content div {
+  margin-bottom: 14px;
+}
+
+/* scrollbar للمودال */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #27ae60;
+  border-radius: 10px;
+}
+
+/* تحسين عرض الحقول لجعلها متناسقة */
+.modal-content input[type="text"]:disabled {
+  background-color: #e5e8eb;
+  color: #7f8c8d;
+  cursor: not-allowed;
+}
+/* OpportunityList.css */
+
+/* زر التبديل */
+.toggle-btn {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  font-size: 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 8px rgba(46, 125, 50, 0.4);
+  transition: background 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background: linear-gradient(135deg, #388e3c, #1b5e20);
+}
+
+/* أيقونة */
+.toggle-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+/* الفلاتر */
+.filters {
+  margin: 20px 0;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* حقل الإدخال مع أيقونة */
+.filter-input {
+  position: relative;
+  width: 220px;
+}
+
+.filter-input input {
+  width: 100%;
+  padding: 10px 35px 10px 35px;
+  border: 1.8px solid #4caf50;
+  border-radius: 25px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.filter-input input:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 8px #2e7d32;
+}
+
+/* الأيقونة داخل الحقل */
+.filter-input svg {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  fill: #4caf50;
+  pointer-events: none;
+}
+/* Spinner style */
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1); /* إطار خفيف */
+  border-left-color: #4caf50; /* اللون الأخضر */
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+  margin: 50px auto; /* وسط الشاشة */
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-
-  .opportunity-card {
-    padding: 15px;
-  }
-
-  .opportunity-title {
-    font-size: 1.1rem;
-  }
-
-  .opportunity-description {
-    min-height: auto;
-    height: auto;
-    
-  }
 }
+
+

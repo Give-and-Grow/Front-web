@@ -26,7 +26,7 @@ import OrganizationFilters from './pages/OrganizationFilters'
 import CreatevolunterOpportunity from './pages/CreatevolunterOpportunity';
 import OpportunityList from './pages/OpportunityList';
 import OrganizationRejectAcceptUser from  './pages/OrganizationRejectAcceptUser';
-
+import CreateJobOpportunity from './pages/CreateJobOpportunity';
 import AttendanceScreen from './pages/AttendanceScreen';
 import RateParticipantsScreen from './pages/RateParticipantsScreen';
 import './App.css';
@@ -67,6 +67,7 @@ function App() {
         <Route path="/OrganizationRejectAcceptUser" element={<OrganizationRejectAcceptUser />} />
           <Route path="/AttendanceScreen" element={<AttendanceScreen />} />
            <Route path="/RateParticipantsScreen" element={<RateParticipantsScreen />} />
+             <Route path="/CreateJobOpportunity" element={<CreateJobOpportunity />} />
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>

@@ -314,15 +314,20 @@ const styles = {
     color: '#fff',
   },
   card: {
-  backgroundColor: '#ffffff',
-  borderRadius: 20,
-  padding: 30,
-  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-  maxWidth: 1000,      // عرض أكبر (يمكنك تعديل الرقم)
-  width: '100%',       // عرض نسبي (اختياري مع maxWidth)
-  height: 500,        // ارتفاع ثابت (يمكنك تعديل الرقم)
-  margin: '0 auto',
-},
+  backgroundColor: '#2e7d32;',
+  borderRadius: 16,
+  padding: 24,
+  boxShadow: '0 6px 15px rgba(56, 142, 60, 0.15)',
+  maxWidth: 800,
+  width: '100%',
+  minHeight: 350,
+  margin: '20px auto',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+}
+
+
 
 };
 

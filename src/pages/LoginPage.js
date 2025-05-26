@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './LoginPage.css'; // تأكد من أن ملف CSS موجود
 import { useNavigate } from 'react-router-dom';
+import { requestFCMToken } from '../firebase';  // استورد دالة طلب التوكين
+
 
 const images = [
     require('../images/volunter1.jpg'),
@@ -30,35 +32,47 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/auth/login', {
-                username,
-                password,
-            });
+        const response = await axios.post('http://localhost:5000/auth/login', {
+            username,
+            password,
+        });
 
-            if (response.status === 200) {
-                const { token, role } = response.data;
+        if (response.status === 200) {
+            const { token, role } = response.data;
 
-                // تخزين التوكين والrole في localStorage
-                localStorage.setItem('userToken', token);
-                localStorage.setItem('userRole', role);
+            localStorage.setItem('userToken', token);
+            localStorage.setItem('userRole', role);
 
-                alert('Login successful!');
-
-                // مثال: توجه المستخدم بناءً على الدور
-                if (role === 'ADMIN') {
-                    navigate('/admin-dashboard');
-                } else {
-                    navigate('/homepage');
+            // * اطلب توكين FCM *
+            const fcmToken = await requestFCMToken();
+            if (fcmToken) {
+            // * ابعت التوكين للسيرفر *
+            await axios.post('http://localhost:5000/user/fcm-token', {
+                fcm_token: fcmToken
+            }, {
+                headers: {
+                Authorization: Bearer ${token}
                 }
-            } else {
-                alert(response.data.message || 'Invalid credentials');
+            });
             }
+
+            alert('Login successful!');
+
+            if (role === 'ADMIN') {
+            navigate('/admin-dashboard');
+            } else {
+            navigate('/homepage');
+            }
+        } else {
+            alert(response.data.message || 'Invalid credentials');
+        }
         } catch (error) {
-            console.error('Login error:', error);
-            const message = error.response?.data?.message || 'Failed to connect to the server';
-            alert(message);
+        console.error('Login error:', error);
+        const message = error.response?.data?.message || 'Failed to connect to the server';
+        alert(message);
         }
     };
+
 
     return (
         <div className="login-container">
