@@ -81,18 +81,21 @@ const handleSkillsChange = (selectedOptions) => {
 
       {step === 1 && (
         <>
+         <label className="label">Title</label>
           <input
             className="input"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+            <label className="label">Description</label>
           <textarea
             className="input description"
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+           <label className="label">Location</label>
           <input
             className="input"
             placeholder="Location"
@@ -105,6 +108,7 @@ const handleSkillsChange = (selectedOptions) => {
 
       {step === 2 && (
         <>
+        <label className="label">Start Date</label>
           <input
             className="input"
             type="date"
@@ -112,6 +116,7 @@ const handleSkillsChange = (selectedOptions) => {
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
+            <label className="label">End Date</label>
           <input
             className="input"
             type="date"
@@ -119,12 +124,14 @@ const handleSkillsChange = (selectedOptions) => {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
+            <label className="label">Contact Email</label>
           <input
             className="input"
             placeholder="Contact Email"
             value={contactEmail}
             onChange={(e) => setContactEmail(e.target.value)}
           />
+            <label className="label">Required Points</label>
           <input
             className="input"
             placeholder="Required Points"

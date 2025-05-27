@@ -162,8 +162,8 @@ const Navbar = () => {
     { to: '/FollowingScreen', icon: <FiUser />, label: 'Profile' },
     { to: '/FriendsPost', icon: <FiFileText />, label: 'Posts' },
     { to: '/ApplicationsScreen', icon: <FiBriefcase />, label: 'Opportunities' },
-    { to: '/about', icon: <FiInfo />, label: 'About' },
-    { to: '/contact', icon: <FiPhone />, label: 'Contact' },
+    { to: '/About', icon: <FiInfo />, label: 'About' },
+    { to: '/Contact', icon: <FiPhone />, label: 'Contact' },
   ];
 
   const organizationLinks = [
@@ -171,8 +171,8 @@ const Navbar = () => {
     { to: '/FollowScreenOrganization', icon: <FiUser />, label: 'Profile' },
     { to: '/FriendsPost', icon: <FiFileText />, label: 'Posts' },
     { to: '#', icon: <FiBriefcase />, label: 'Manage Opportunities', isDropdown: true },
-    { to: '/about', icon: <FiInfo />, label: 'About' },
-    { to: '/contact', icon: <FiPhone />, label: 'Contact' },
+    { to: '/About', icon: <FiInfo />, label: 'About' },
+    { to: '/Contact', icon: <FiPhone />, label: 'Contact' },
   ];
 
   const adminLinks = [
@@ -191,15 +191,24 @@ const Navbar = () => {
     { label: 'Manage Participants', value: 'manage_participants', screen: '/OrganizationRejectAcceptUser', icon: <MdGroupAdd /> },
     { label: 'Attendance', value: 'attendance', screen: '/AttendanceScreen', icon: <MdEventAvailable /> },
   ];
+const userToken = localStorage.getItem('userToken');
 
   let linksToRender = [];
-  if (userRole === 'admin') {
-    linksToRender = adminLinks;
-  } else if (userRole === 'organization') {
-    linksToRender = organizationLinks;
-  } else {
-    linksToRender = userLinks;
-  }
+ if (!userToken) {
+  // Public user (غير مسجل دخول)
+  linksToRender = [
+    { to: '/Homepage', icon: <FiHome />, label: 'Home' },
+    { to: '/About', icon: <FiInfo />, label: 'About' },
+    { to: '/Contact', icon: <FiPhone />, label: 'Contact' },
+    { to: '/LoginPage', icon: <FiUser />, label: 'Login' },
+  ];
+} else if (userRole === 'admin') {
+  linksToRender = adminLinks;
+} else if (userRole === 'organization') {
+  linksToRender = organizationLinks;
+} else {
+  linksToRender = userLinks;
+}
 
   return (
     <nav className="navbar fixed-navbar">
@@ -262,7 +271,8 @@ const Navbar = () => {
             </li>
           );
         })}
-
+      {userToken && (
+  <>
         <li onClick={() => { setMenuOpen(false); handleLogout(); }}>
           <div className="logout-link">
             <span className="nav-icon"><FiX /></span> Logout
@@ -341,8 +351,12 @@ const Navbar = () => {
             </div>
           )}
         </li>
+         </>
+          )}
       </ul>
+       
     </nav>
+    
   );
 };
 

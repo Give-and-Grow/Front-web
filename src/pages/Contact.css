@@ -1,0 +1,141 @@
+/* خلفية الصفحة ناعمة ومريحة */
+.contact-page {
+  background-color: #e8f5e9;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+}
+
+/* الفورم */
+.contact-page form {
+  background-color:#e8f5e9;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  transition: box-shadow 0.3s ease;
+}
+
+.contact-page form:hover {
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* العنوان */
+.contact-page form h2 {
+  margin-bottom: 25px;
+  color: #2e7d32;
+  font-weight: 700;
+  font-size: 1.9rem;
+  text-align: center;
+}
+
+/* الليبل */
+.contact-page label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+  font-size: 1rem;
+}
+
+/* الحقول - input, textarea */
+.contact-page input[type="text"],
+.contact-page input[type="email"],
+.contact-page textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1.8px solid #c4c4c4;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  resize: vertical;
+}
+
+.contact-page input[type="text"]:focus,
+.contact-page input[type="email"]:focus,
+.contact-page textarea:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+}
+
+.contact-page button {
+  width: 100%;
+  background-color: #4caf50;
+  color: white;
+  font-weight: 700;
+  padding: 14px 0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  margin-top: 18px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.contact-page button:hover {
+  background-color: #388e3c;
+  transform: scale(1.05);
+}
+
+.contact-page button:active {
+  transform: scale(0.95);
+}
+
+/* رسالة الحالة */
+.contact-page p {
+  margin-top: 20px;
+  font-size: 1rem;
+  color: #388e3c;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ثبات حجم textarea */
+.contact-page textarea {
+  resize: none; /* يمنع تكبير/تصغير الحقل */
+  height: 120px; /* حجم ثابت مناسب */
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* حركة تفاعل عند التركيز على textarea */
+.contact-page textarea:focus {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px rgba(76, 175, 80, 0.5);
+}
+
+/* Placeholder مع تأثير تدرج لوني ناعم */
+.contact-page input::placeholder,
+.contact-page textarea::placeholder {
+  background: linear-gradient(90deg, #a8d5ba, #4caf50);
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  font-style: italic;
+  transition: background 0.3s ease;
+}
+
+/* بديل للمتصفحات اللي ما بتدعم background-clip */
+.contact-page input::placeholder,
+.contact-page textarea::placeholder {
+  color: rgba(76, 175, 80, 0.6);
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* عند التركيز، تخفيف لون placeholder */
+.contact-page input:focus::placeholder,
+.contact-page textarea:focus::placeholder {
+  color: rgba(76, 175, 80, 0.3);
+}

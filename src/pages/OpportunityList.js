@@ -21,7 +21,9 @@ const OpportunitiesList = () => {
     location: '',
     start_date: '',
     end_date: '',
-    status: ''
+    status: '',
+     max_participants: '',
+     base_points: ''
   });
 
  useEffect(() => {

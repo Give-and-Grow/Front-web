@@ -29,6 +29,9 @@ import OrganizationRejectAcceptUser from  './pages/OrganizationRejectAcceptUser'
 import CreateJobOpportunity from './pages/CreateJobOpportunity';
 import AttendanceScreen from './pages/AttendanceScreen';
 import RateParticipantsScreen from './pages/RateParticipantsScreen';
+import OppertinetisPublicUser from './pages/OppertinetisPublicUser';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import EvaluateScreen from './pages/EvaluateScreen';
@@ -36,7 +39,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<WelcomeScreen />} />
+        <Route path="/" element={<Homepage />} />
         <Route path="/LoginPage" element={<LoginPage />} />
         <Route path="/SignupScreen" element={<SignupScreen />} />
         <Route path="/ResetPasswordScreen" element={<ResetPasswordScreen />} />
@@ -68,6 +71,9 @@ function App() {
           <Route path="/AttendanceScreen" element={<AttendanceScreen />} />
            <Route path="/RateParticipantsScreen" element={<RateParticipantsScreen />} />
              <Route path="/CreateJobOpportunity" element={<CreateJobOpportunity />} />
+             <Route path="/OppertinetisPublicUser" element={<OppertinetisPublicUser />} />
+                <Route path="/About" element={<About />} />
+               <Route path="/Contact" element={<Contact />} />
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>

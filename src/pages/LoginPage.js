@@ -3,7 +3,7 @@ import axios from 'axios';
 import './LoginPage.css'; // تأكد من أن ملف CSS موجود
 import { useNavigate } from 'react-router-dom';
 import { requestFCMToken } from '../firebase';  // استورد دالة طلب التوكين
-
+import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 
 const images = [
     require('../images/volunter1.jpg'),
@@ -75,7 +75,9 @@ const LoginPage = () => {
 
 
     return (
+
         <div className="login-container">
+              <Navbar />
             <div className="image-container">
                 <img
                     src={images[imageIndex]}
