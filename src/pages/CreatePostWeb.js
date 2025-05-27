@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './CreatePostWeb.css';
 import Navbar from '../pages/Navbar'; 
 import { FaHeading, FaPenFancy, FaTags, FaPlus, FaImage } from 'react-icons/fa';
@@ -11,6 +11,14 @@ const CreatePostWeb = () => {
   const [tags, setTags] = useState([]);
   const [imageLinks, setImageLinks] = useState(['']);
   const [token, setToken] = useState('');
+  const [imageFiles, setImageFiles] = useState([]); // ملفات الصور
+  const fileInputRef = useRef(null);
+
+  const handleAddImageClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click(); // يفتح نافذة اختيار ملف جديدة
+    }
+  };
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +33,40 @@ const CreatePostWeb = () => {
       setTagInput('');
     }
   };
+const handleImageChange = async (e) => {
+  const files = Array.from(e.target.files);
+  if (files.length === 0) return;
+
+  // ارفع الصور الجديدة فقط
+  const uploadedUrls = await Promise.all(files.map(async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'my_unsigned_preset'); // عدلها
+
+    const res = await fetch('https://api.cloudinary.com/v1_1/dhrugparh/image/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (data.secure_url) {
+      return data.secure_url;
+    } else {
+      alert('Failed to upload image: ' + (data.error?.message || 'Unknown error'));
+      return null;
+    }
+  }));
+
+  // فلتر الروابط الصحيحة فقط
+  const validUrls = uploadedUrls.filter(url => url !== null);
+
+  // ضف الصور الجديدة على الصور القديمة
+  setImageLinks(prevLinks => [...prevLinks.filter(link => link !== ''), ...validUrls]);
+
+  // مهم: رجع قيمة input للملفات فارغة حتى يمكن رفع نفس الملفات مرة أخرى لو أردت
+  e.target.value = null;
+};
+
 
   const handleRemoveTag = (tagToRemove) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
@@ -55,7 +97,7 @@ const CreatePostWeb = () => {
       title,
       content,
       tags,
-      images: imageLinks.filter(Boolean),
+      images: imageLinks,
     };
 
     try {
@@ -136,19 +178,26 @@ const CreatePostWeb = () => {
 </div>
 
 <div className="form-group">
-  <label><FaImage style={{marginRight: '8px', color: '#388e3c'}} /> Image Links</label>
-  {imageLinks.map((link, index) => (
-    <input
-      key={index}
-      type="text"
-      value={link}
-      onChange={e => handleChangeImageLink(index, e.target.value)}
-      placeholder={`Image URL ${index + 1}`}
-    />
-  ))}
-  <button onClick={handleAddImageLink} className="add-image-btn" style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
-    <FaPlus /> Add Another Image
-  </button>
+  <label><FaImage style={{marginRight: '8px', color: '#388e3c'}} /> Upload Images</label>
+ <input
+  type="file"
+  multiple
+  accept="image/*"
+  onChange={handleImageChange}
+  ref={fileInputRef}   // ربط الـ ref هنا
+  style={{ display: 'none' }} // نخفيه، لأننا نريد فتحه بالزر فقط
+/>
+
+  <div className="preview-images">
+    {imageLinks.map((link, idx) => (
+      <img key={idx} src={link} alt={`uploaded-${idx}`} style={{width: '100px', marginRight: '8px'}} />
+    ))}
+  </div>
+  <button onClick={handleAddImageClick} className="add-image-btn" style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
+  <FaPlus /> Add Another Image
+</button>
+
+
 </div>
 
 <button onClick={handleSubmit} className="submit-btn" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'}}>

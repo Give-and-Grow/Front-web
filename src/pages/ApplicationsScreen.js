@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import OpportunityFilters from './OpportunityFilters';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ApplicationsScreen = () => {
   const [applications, setApplications] = useState([]);
@@ -41,16 +42,59 @@ const ApplicationsScreen = () => {
     }
   };
 
-  const downloadCertificate = (applicationId) => {
-    navigate(`/certificate/${applicationId}`);
+  const confirmCertificateDownload = (onConfirm) => {
+    const ToastContent = () => (
+      <div>
+        <p>The certificate will be sent to your email. Do you want to proceed?</p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
+          <button
+            onClick={() => {
+              toast.dismiss();
+              onConfirm();
+            }}
+            style={{ padding: '6px 12px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer' }}
+          >
+            Yes
+          </button>
+          <button
+            onClick={() => toast.dismiss()}
+            style={{ padding: '6px 12px', backgroundColor: '#f44336', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer' }}
+          >
+            No
+          </button>
+        </div>
+      </div>
+    );
+
+    toast.info(<ToastContent />, {
+      position: 'top-center',
+      autoClose: false,
+      closeOnClick: false,
+      closeButton: false,
+      draggable: false,
+    });
   };
+
+  const downloadCertificate = (applicationId) => {
+    confirmCertificateDownload(async () => {
+      try {
+        await axios.get(
+          `http://127.0.0.1:5000/certificates/download-certificate/${applicationId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        toast.success("The certificate has been sent to your email.");
+      } catch (error) {
+        console.error(error);
+        toast.error("An error occurred while sending the certificate.");
+      }
+    });
+  };
+
   const handleFilterChange = (value, screen) => {
-    console.log('Filter selected:', value, screen);
     setFilter(value);
-    // ممكن هنا تجيب بيانات جديدة بحسب الفلتر لو عندك API منفصل
     navigate(screen);
   };
-  
+
   const renderItem = (item) => {
     const today = new Date();
     const endDate = new Date(item.opportunity.end_date);
@@ -66,7 +110,9 @@ const ApplicationsScreen = () => {
         <p style={styles.date}>
           From <strong>{item.opportunity.start_date}</strong> to <strong>{item.opportunity.end_date}</strong>
         </p>
-        <p style={styles.status}>Status: <span style={{textTransform: 'capitalize'}}>{item.status}</span></p>
+        <p style={styles.status}>
+          Status: <span style={{ textTransform: 'capitalize' }}>{item.status}</span>
+        </p>
 
         {item.can_evaluate && (
           <button
@@ -82,7 +128,7 @@ const ApplicationsScreen = () => {
         {showCertificateButton && (
           <button
             style={{ ...styles.button, ...styles.certificateButton }}
-            onClick={() => downloadCertificate(item.id)}
+            onClick={() => downloadCertificate(item.opportunity.id)}
             onMouseEnter={e => e.currentTarget.style.backgroundColor = '#2e7d32'}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = '#388e3c'}
           >
@@ -96,11 +142,7 @@ const ApplicationsScreen = () => {
   return (
     <div style={styles.container}>
       <Navbar />
-      <OpportunityFilters
-  initialFilter="Eval"
-  onFilterSelect={handleFilterChange}
-/>
-
+      <OpportunityFilters initialFilter="Eval" onFilterSelect={handleFilterChange} />
       <h1 style={styles.screenTitle}>My Applications</h1>
 
       {loading ? (
@@ -116,6 +158,18 @@ const ApplicationsScreen = () => {
           )}
         </>
       )}
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

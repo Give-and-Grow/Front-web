@@ -345,6 +345,21 @@
   .clickable-follow:hover::after {
     transform: scaleX(1);
   }
+
+
+  .edit-profile-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #333;
+  margin-left: 10px;
+}
+
+.edit-profile-btn:hover {
+  color: #030303;
+}
+
   
   
   

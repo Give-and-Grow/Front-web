@@ -170,9 +170,13 @@ const FollowingScreen = () => {
 
           )}
           <h2>{userData?.username}</h2>
-          <button onClick={() => navigate('/profile')}>
-  <FaUserCog size={20} />
-</button>
+     <button 
+      onClick={() => navigate('/profile')}
+      className="edit-profile-btn"
+    >
+      <FaUserCog size={20} />
+    </button>
+
 
         </div>
 

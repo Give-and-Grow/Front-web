@@ -15,6 +15,22 @@ body, html {
   color: #2F4F2F;
  
 }
+.upload-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  background-color: #4caf50; /* أخضر */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.upload-btn:hover {
+  background-color: #388e3c;
+}
 
 
 .appbar {
@@ -27,14 +43,31 @@ body, html {
   
 }
 
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4CAF50;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 0.8s linear infinite;
+  margin: 10px auto;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 .profile-content {
-  max-width: 1000px; /* أو 100% */
+  max-width: 1000px;
   margin: 0 auto;
   background: white;
   border-radius: 18px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   padding: 35px 40px 50px 40px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 
@@ -112,10 +145,6 @@ body, html {
 
 
 
-.button-group {
-  text-align: center;
-  margin-top: 48px;
-}
 
 .action-button {
   background-color: #3F9E3F;
@@ -134,11 +163,7 @@ body, html {
   box-shadow: 0 10px 28px rgba(45, 116, 45, 0.7);
 }
 
-.action-button svg {
-  font-size: 26px;
-  margin-right: 14px;
-  color: #C9F7C9;
-}
+
 .input-with-icon {
   position: relative;
   width: 100%;
@@ -181,4 +206,134 @@ body, html {
   outline: none;
   box-shadow: 0 0 12px #88C488;
 }
+
+.upload-button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.upload-button:hover {
+  background-color: #45a049;
+}
+
+.loader {
+  margin-top: 10px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4CAF50;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.profile-picture-section {
+  display: block; /* بدل inline-block */
+  margin: 0 auto;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #eee;
+}
+
+
+
+
+/* زر أيقونة القلم */
+.edit-icon-button {
+  position: absolute;
+  bottom: 8px;  /* مكان الأيقونة في الأسفل يمين الصورة */
+  right: 8px;
+  background-color: rgba(0,0,0,0.6);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition: background-color 0.3s ease;
+}
+
+.edit-icon-button:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+
+.profile-picture-section img.profile-image {
+  width: 110%;
+  height: 125%;
+  object-fit: cover;
+  object-position: center center; /* أو center top، center bottom حسب الحاجة */
+  border-radius: 50%;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+
+.profile-picture-section img.profile-image:hover {
+  transform: scale(1.2);
+}
+.edit-icon-button {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background-color: #4caf50; /* أخضر */
+  border: none;
+  color: white;
+  border-radius: 50%;
+  padding: 12px;  /* زيادة الحشو لتكبير الزر */
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;  /* عرض أكبر للزر */
+  height: 44px; /* ارتفاع أكبر للزر */
+}
+
+.edit-icon-button:hover {
+  background-color: #388e3c;
+  transform: scale(1.15);
+}
+
+.edit-icon-button:focus {
+  outline: 3px solid #a4d08a;
+  outline-offset: 2px;
+}
+
+
+
+.button-group {
+  display: flex;
+  gap: 12px; /* مسافة بين الأزرار */
+}
+.action-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  font-size: 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 150px;
+  margin-top: 20px; /* المسافة الصغيرة فوق الكبسة */
+}
+.action-button svg {
+  margin-right: 8px;
+}
+
 
