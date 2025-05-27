@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaSave, FaLock, FaUser, FaUserCircle, FaEnvelope, FaPhone, FaCity, FaHome, FaVenusMars, FaBirthdayCake, FaInfoCircle, FaBook } from 'react-icons/fa';
@@ -10,6 +10,9 @@ const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [token, setToken] = useState('');
     const navigate = useNavigate();
+    const fileInputRef = useRef(null);
+
+const [isUploading, setIsUploading] = useState(false);
 
     useEffect(() => {
       const getToken = async () => {
@@ -81,36 +84,71 @@ const Profile = () => {
         setProfile({ ...profile, [field]: value });
     };
 
-    const handleSave = async () => {
-        const editableFields = [
-            'username', 'name', 'last_name', 'phone_number', 'gender','country',
-            'city', 'village', 'bio', 'experience', 'date_of_birth', 'profile_picture',
-            'identity_picture', 'skills'
-        ];
+   const handleSave = async () => {
+  const editableFields = [
+    'username', 'name', 'last_name', 'phone_number', 'gender','country',
+    'city', 'village', 'bio', 'experience', 'date_of_birth', 'profile_picture',
+    'identity_picture', 'skills'
+  ];
 
-        const cleanedProfile = {};
-        editableFields.forEach((key) => {
-            if (profile[key] !== undefined && profile[key] !== null) {
-                cleanedProfile[key] = profile[key];
-            }
-        });
-
-        try {
-            const res = await axios.put('http://localhost:5000/profile/', cleanedProfile, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            console.log('Profile updated:', res.data);
-            setIsEditing(false);
-            fetchProfile(token);
-        } catch (err) {
-            if (err.response) {
-                console.error('Validation error:', err.response.data);
-                alert(JSON.stringify(err.response.data.errors || err.response.data.msg, null, 2));
-            } else {
-                console.error('Unknown error:', err.message);
-            }
+  const cleanedProfile = {};
+  editableFields.forEach((key) => {
+    if (profile[key] !== undefined && profile[key] !== null) {
+      if (key === 'skills') {
+        if (Array.isArray(profile.skills)) {
+          // تأكد أن كل عنصر string صالح
+          cleanedProfile.skills = profile.skills.filter(s => typeof s === 'string' && s.trim() !== '');
+        } else if (typeof profile.skills === 'string') {
+          // إذا كانت نص قم بتحويله لمصفوفة
+          cleanedProfile.skills = profile.skills.split(',').map(s => s.trim()).filter(s => s !== '');
+        } else {
+          cleanedProfile.skills = [];
         }
-    };
+      } else {
+        cleanedProfile[key] = profile[key];
+      }
+    }
+  });
+
+  try {
+    const res = await axios.put('http://localhost:5000/profile/', cleanedProfile, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log('Profile updated:', res.data);
+    setIsEditing(false);
+    fetchProfile(token);
+  } catch (err) {
+    if (err.response) {
+      console.error('Validation error:', err.response.data);
+      alert(JSON.stringify(err.response.data.errors || err.response.data.msg, null, 2));
+    } else {
+      console.error('Unknown error:', err.message);
+    }
+  }
+};
+
+
+const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'my_unsigned_preset');  // ← غيّرها
+  formData.append('cloud_name', 'dhrugparh');          // ← غيّرها
+
+  try {
+    setIsUploading(true); // ← تشغيل اللودر
+    const res = await axios.post('https://api.cloudinary.com/v1_1/dhrugparh/image/upload', formData);
+    const imageUrl = res.data.secure_url;
+    setProfile((prev) => ({ ...prev, profile_picture: imageUrl }));
+  } catch (err) {
+    console.error('Error uploading image:', err);
+    alert('Failed to upload image');
+  } finally {
+    setIsUploading(false); // ← إيقاف اللودر
+  }
+};
 
     return (
         <div className="profile-container">
@@ -118,9 +156,50 @@ const Profile = () => {
            
 
             <div className="profile-content">
-                {profile.profile_picture && (
-                    <img src={profile.profile_picture} alt="Profile" className="profile-image" />
-                )}
+         <div className="profile-picture-section" style={{ position: 'relative' }}>
+  {profile.profile_picture ? (
+    <img src={profile.profile_picture} alt="Profile" className="profile-image" />
+  ) : (
+    <p>No profile picture</p>
+  )}
+
+  {isEditing && (
+    <>
+     <button
+  className="edit-icon-button"
+  onClick={() => fileInputRef.current.click()}
+  aria-label="Edit profile picture"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    fill="none"
+    stroke="white"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    viewBox="0 0 24 24"
+  >
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+  </svg>
+</button>
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+      />
+      {isUploading && <div className="loader"></div>}
+    </>
+  )}
+</div>
+
+
+
 
                 {/* Basic Info */}
 <div className="card">
@@ -234,13 +313,14 @@ const Profile = () => {
 
   <div className="input-with-icon">
     <FaBirthdayCake className="input-icon" />
-    <input
-      type="text"
-      value={profile.date_of_birth || ''}
-      onChange={(e) => handleChange('date_of_birth', e.target.value)}
-      disabled={!isEditing}
-      placeholder="Date of Birth"
-    />
+   <input
+  type="date"
+  value={profile.date_of_birth || ''}
+  onChange={(e) => handleChange('date_of_birth', e.target.value)}
+  disabled={!isEditing}
+  placeholder="Date of Birth"
+/>
+
   </div>
 
   <div className="input-with-icon">
@@ -279,13 +359,15 @@ const Profile = () => {
                         </button>
                     )}
 
-                    <button
-                        onClick={() => navigate('/ChangePasswordProfile')}
-                        className="action-button"
-                    >
-                        <FaLock style={{ marginRight: '8px' }} />
-                        Update Password
-                    </button>
+                   <button
+  onClick={() => navigate('/ChangePasswordProfile')}
+  className="action-button"
+  style={{ backgroundColor: '#3F9E3F', color: 'white' }}
+>
+  <FaLock style={{ marginRight: '8px', color: 'white', fontSize: '22px' }} />
+  Update Password
+</button>
+
                 </div>
             </div>
         </div>

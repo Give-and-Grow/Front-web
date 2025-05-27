@@ -174,9 +174,15 @@ const FollowingScreen = () => {
 
           )}
           <h2>{userData?.username}</h2>
-          <button onClick={() => navigate('/ProfileOrganizationScreen')}>
+    <button 
+  onClick={() => navigate('/ProfileOrganizationScreen')}
+  className="edit-profile-btn"
+>
   <FaUserCog size={20} />
 </button>
+
+
+
 
         </div>
 

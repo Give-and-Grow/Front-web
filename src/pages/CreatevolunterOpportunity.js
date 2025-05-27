@@ -23,6 +23,7 @@ const dayOptions = [
 ];
 
 const CreateVolunteerOpportunity = () => {
+   const [uploading, setUploading] = useState(false); // حالة لعرض حالة الرفع
   const [step, setStep] = useState(1);
 const navigate = useNavigate();
   const [title, setTitle] = useState('');
@@ -127,6 +128,29 @@ const handleSkillsChange = (selectedOptions) => {
       ))}
     </div>
   );
+const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'my_unsigned_preset'); // غيره إلى ال upload preset الخاص بك
+
+    try {
+      const response = await axios.post(
+        'https://api.cloudinary.com/v1_1/dhrugparh/image/upload',
+        formData
+      );
+      setImageUrl(response.data.secure_url); // حفظ رابط الصورة من Cloudinary
+      setUploading(false);
+    } catch (error) {
+      alert('Failed to upload image');
+      console.error(error);
+      setUploading(false);
+    }
+  };
 
   return (
      
@@ -201,13 +225,22 @@ const handleSkillsChange = (selectedOptions) => {
       {step === 3 && (
         <>
         
-<label style={styles.label}>Image:</label>
+<label style={styles.label}>Upload Image:</label>
           <input
+           type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            disabled={uploading}
             style={styles.input}
-            placeholder="Image URL"
-            value={imageUrl}
-            onChange={e => setImageUrl(e.target.value)}
           />
+          {uploading && <p>Uploading image...</p>}
+          {imageUrl && (
+            <>
+              <p>Uploaded Image Preview:</p>
+              <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%', marginBottom: 20 }} />
+            </>
+          )}
+          
           <label style={styles.label}>Application Link:</label>
           <input
             style={styles.input}

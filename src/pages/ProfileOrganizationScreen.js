@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 //import AsyncStorage from '@react-native-async-storage/async-storage'; // استخدم مكتبة تخزين مناسبة للويب لو لم تكن تستخدم React Native Web
 import { useNavigate } from 'react-router-dom'; // لو تستخدم react-router-dom على الويب
@@ -27,7 +27,8 @@ const ProfileOrganizationScreen = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [token, setToken] = useState('');
   const navigate = useNavigate();
-
+   const fileInputRef = useRef(null);
+const [isUploading, setIsUploading] = useState(false);
   useEffect(() => {
     const getToken = async () => {
       try {
@@ -43,7 +44,27 @@ const ProfileOrganizationScreen = () => {
 
     getToken();
   }, []);
+const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'my_unsigned_preset');  // ← غيّرها
+  formData.append('cloud_name', 'dhrugparh');          // ← غيّرها
+
+  try {
+    setIsUploading(true); // ← تشغيل اللودر
+    const res = await axios.post('https://api.cloudinary.com/v1_1/dhrugparh/image/upload', formData);
+    const imageUrl = res.data.secure_url;
+    setProfile((prev) => ({ ...prev, proof_image: imageUrl }));
+  } catch (err) {
+    console.error('Error uploading image:', err);
+    alert('Failed to upload image');
+  } finally {
+    setIsUploading(false); // ← إيقاف اللودر
+  }
+};
   const fetchProfile = async (token) => {
     try {
       const res = await axios.get(`http://localhost:5000/organization/profile`, {
@@ -90,9 +111,44 @@ const ProfileOrganizationScreen = () => {
     <>
       <Navbar />
       <main className="container">
-        {profile.logo && (
-          <img src={profile.logo} alt="Organization Logo" className="profileImage" />
-        )}
+    <div className="profile-picture-section">
+ {profile.proof_image ? (
+  <img src={profile.proof_image} alt="Profile" className="profileImage" />
+) : (
+  <img
+    src="/logo.png" // <-- غيّر المسار حسب مكان الشعار في مشروعك
+    alt="Default Logo"
+    className="profileImage"
+    onClick={isEditing ? () => fileInputRef.current.click() : undefined}
+    title={isEditing ? "Click to upload image" : ""}
+    style={{ cursor: isEditing ? 'pointer' : 'default' }}
+  />
+)}
+
+
+  {isEditing && (
+    <>
+      <button
+        className="edit-icon-button"
+        onClick={() => fileInputRef.current.click()}
+        aria-label="Edit profile picture"
+      >
+        ✎
+      </button>
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+      />
+
+      {isUploading && <div className="loader"></div>}
+    </>
+  )}
+</div>
+
 
         <section className="card">
           <h3>Organization Information</h3>
@@ -150,12 +206,7 @@ const ProfileOrganizationScreen = () => {
           </div>
         </section>
 
-        {profile.proof_image && (
-          <section className="card">
-            <h3>Proof Image</h3>
-            <img src={profile.proof_image} alt="Proof" className="profileImage" />
-          </section>
-        )}
+       
 
         <div className="buttonGroup">
           <button
