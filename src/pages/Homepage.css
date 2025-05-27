@@ -6,6 +6,11 @@
   color: #2e7d32;
   width:100%;
 }
+.hero-section,
+.values-cards {
+  max-width: 100%;
+  box-sizing: border-box;
+}
 
 .hero-section {
   display: flex;
@@ -113,4 +118,45 @@
   font-size: 2rem;
   margin-bottom: 25px;
   color: #2e7d32;
+}
+/* --- Perfectly Centered Minimal Footer --- */
+.minimal-footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 10px 20px;
+  border-top: 1px solid #e0e0e0;
+  background-color: transparent;
+  margin-top: 60px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.footer-inner {
+  text-align: center;
+  color: #555;
+}
+
+.footer-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2e7d32;
+  margin-bottom: 8px;
+}
+
+.footer-slogan {
+  font-size: 1rem;
+  font-style: italic;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.footer-meta p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.footer-meta strong {
+  color: #388e3c;
 }

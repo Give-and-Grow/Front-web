@@ -138,19 +138,21 @@ const handleSkillsChange = (selectedOptions) => {
 
       {step === 1 && (
         <>
+        <label style={styles.label}>Title:</label>
           <input
             style={styles.input}
             placeholder="Title"
             value={title}
             onChange={e => setTitle(e.target.value)}
           />
+          <label style={styles.label}>Description:</label>
           <textarea
   style={{ ...styles.input, height: 100, resize: 'none' }}
   placeholder="Description"
   value={description}
   onChange={e => setDescription(e.target.value)}
 />
-
+<label style={styles.label}>Location:</label>
           <input
             style={styles.input}
             placeholder="Location"
@@ -163,13 +165,16 @@ const handleSkillsChange = (selectedOptions) => {
 
       {step === 2 && (
         <>
-          <input
+        <label style={styles.label}>Start Date:</label>
+<input
   style={styles.input}
   placeholder="Select start date (Day, Month, Year)"
   type="date"
   value={startDate}
   onChange={e => setStartDate(e.target.value)}
 />
+
+<label style={styles.label}>End Date:</label>
 <input
   style={styles.input}
   placeholder="Select end date (Day, Month, Year)"
@@ -178,6 +183,7 @@ const handleSkillsChange = (selectedOptions) => {
   onChange={e => setEndDate(e.target.value)}
 />
 
+<label style={styles.label}>Contact Email:</label>
           <input
             style={styles.input}
             placeholder="Contact Email"
@@ -194,18 +200,22 @@ const handleSkillsChange = (selectedOptions) => {
 
       {step === 3 && (
         <>
+        
+<label style={styles.label}>Image:</label>
           <input
             style={styles.input}
             placeholder="Image URL"
             value={imageUrl}
             onChange={e => setImageUrl(e.target.value)}
           />
+          <label style={styles.label}>Application Link:</label>
           <input
             style={styles.input}
             placeholder="Application Link"
             value={applicationLink}
             onChange={e => setApplicationLink(e.target.value)}
           />
+           <label style={styles.label}>Max Participants:</label>
           <input
             style={styles.input}
             placeholder="Max Participants"
@@ -213,6 +223,7 @@ const handleSkillsChange = (selectedOptions) => {
             value={maxParticipants}
             onChange={e => setMaxParticipants(e.target.value)}
           />
+           <label style={styles.label}>Base Points:</label>
           <input
             style={styles.input}
             placeholder="Base Points"
@@ -221,7 +232,7 @@ const handleSkillsChange = (selectedOptions) => {
             onChange={e => setBasePoints(e.target.value)}
           />
 
-          <label style={styles.label}>Start Time</label>
+          <label style={styles.label}>Start Time:</label>
           <div style={styles.horizontalScroll}>
             {timeOptions.map(time => (
               <button
@@ -237,7 +248,7 @@ const handleSkillsChange = (selectedOptions) => {
             ))}
           </div>
 
-          <label style={styles.label}>End Time</label>
+          <label style={styles.label}>End Time:</label>
           <div style={styles.horizontalScroll}>
             {timeOptions.map(time => (
               <button
@@ -253,7 +264,7 @@ const handleSkillsChange = (selectedOptions) => {
             ))}
           </div>
 
-          <label style={styles.label}>Volunteer Days</label>
+          <label style={styles.label}>Volunteer Days:</label>
           <div style={styles.daysContainer}>
             {dayOptions.map(day => (
               <button
@@ -271,7 +282,7 @@ const handleSkillsChange = (selectedOptions) => {
             ))}
           </div>
 
-         <label style={styles.label}>Select Skills</label>
+         <label style={styles.label}>Select Skills:</label>
           <Select
             options={availableSkills}
             value={selectedSkills}
@@ -404,7 +415,11 @@ const styles = {
     flexWrap: 'wrap',
     marginBottom: 20,
   },
+
+
+
 };
+
 
 
 

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import FilterComponent from './FilterComponent';
-import OpportunityFilters from "./OpportunityFilters";
 import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 import { useNavigate } from 'react-router-dom';
-export default function AllOpportunitiesUser() {
+export default function OppertinetisPublicUser() {
   const [opportunities, setOpportunities] = useState([]);
   const [filteredOpportunities, setFilteredOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -94,11 +93,13 @@ export default function AllOpportunitiesUser() {
   
   
   
-
+  const isLoggedIn = !!localStorage.getItem("userToken");
  
   const handleJoin = async (opportunityId) => {
     try {
       const token = localStorage.getItem("userToken");
+    
+
       const response = await fetch(`http://localhost:5000/user-participation/${opportunityId}/join`, {
         method: "POST",
         headers: {
@@ -204,15 +205,26 @@ export default function AllOpportunitiesUser() {
     // ممكن هنا تجيب بيانات جديدة بحسب الفلتر لو عندك API منفصل
     navigate(screen);
   };
-  
+  const handleJoinClick = (id) => {
+    if (!isLoggedIn) {
+      navigate('/LoginPage');
+    } else {
+      handleJoin(id);
+    }
+  };
+
+   const handleLeaveClick = (id) => {
+    if (!isLoggedIn) {
+      navigate('/LoginPage');
+    } else {
+      handleLeave(id);
+    }
+  };
   return (
     < >
     <Navbar />
     <div style={styles.container}>
-    <OpportunityFilters
-  initialFilter="All"
-  onFilterSelect={handleFilterChange}
-/>
+   
       <h1 style={styles.title}>🌱 Available Opportunities</h1>
 
       <div style={styles.contentWrapper}>
@@ -320,7 +332,6 @@ export default function AllOpportunitiesUser() {
     </span>
   ))}
 </div>
-
 <div style={{ marginTop: '8px' }}>
   <p style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
     📌 Status:
@@ -329,7 +340,6 @@ export default function AllOpportunitiesUser() {
     {opp.status?.toLowerCase() === "closed" ? "🔒 closed" : "🔓 open"}
   </span>
 </div>
-
 
           </div>
 
@@ -340,23 +350,24 @@ export default function AllOpportunitiesUser() {
         
         </>
       )}
+
   <div style={styles.joinWithdrawContainer} className="joinWithdrawContainer">
-            {participationStatus[opp.id] === "joined" ? (
-              <button
-                style={{ ...styles.joinWithdrawButton, ...styles.leaveButton }}
-                onClick={() => handleLeave(opp.id)}
-              >
-                ✗ Withdraw
-              </button>
-            ) : (
-              <button
-                style={{ ...styles.joinWithdrawButton, ...styles.joinButton }}
-                onClick={() => handleJoin(opp.id)}
-              >
-                ✓ Join
-              </button>
-            )}
-          </div>
+      {participationStatus[opp.id] === "joined" ? (
+        <button
+          style={{ ...styles.joinWithdrawButton, ...styles.leaveButton }}
+          onClick={() => handleLeaveClick(opp.id)}
+        >
+          ✗ Withdraw
+        </button>
+      ) : (
+        <button
+          style={{ ...styles.joinWithdrawButton, ...styles.joinButton }}
+          onClick={() => handleJoinClick(opp.id)}
+        >
+          ✓ Join
+        </button>
+      )}
+    </div>
       {/* CSS for spinner */}
       <style>{`
         @keyframes spin {

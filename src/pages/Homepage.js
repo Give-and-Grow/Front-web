@@ -2,11 +2,18 @@ import React from 'react';
 import './Homepage.css';
 import volunteerImage from '../images/volunter1.jpg'; // Adjust path to your image
 import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
+import { useNavigate } from 'react-router-dom';
 const Home = () => {
+  const navigate = useNavigate();
+
+   const handleClick = () => {
+    navigate('/OppertinetisPublicUser');
+  };
   return (
 
     <div className="home-container">
-        <Navbar />
+   
+      <Navbar />
       <section className="hero-section">
         <div className="hero-text">
           <h1>Together We Build a Better Community</h1>
@@ -14,7 +21,9 @@ const Home = () => {
             Volunteering is a bridge of love and connection. Through it, we help others and make a real difference in their lives. 
             Join us and discover the power of giving and its impact on your life and those around you.
           </p>
-          <button className="btn-primary">Start Volunteering Now</button>
+         <button className="btn-primary" onClick={handleClick}>
+           Start Volunteering Now
+         </button>
         </div>
         <div className="hero-image">
           <img src={volunteerImage} alt="Volunteering and Work" />
@@ -37,12 +46,18 @@ const Home = () => {
             <p>Be part of the solution and help improve the community around you.</p>
           </div>
         </div>
-      </section>
+      </section>  
+        <footer className="minimal-footer">
+  <div className="footer-inner">
+    <h3 className="footer-title">Give & Grow</h3>
+    <p className="footer-slogan">Empowering communities, one act at a time.</p>
+    <div className="footer-meta">
+      <p>Crafted with ❤️ by <strong>Areej</strong> & <strong>Bara'a</strong></p>
+      <p>© {new Date().getFullYear()} Give & Grow. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
 
-      <section className="call-to-action">
-        <h2>Ready to Start Your Volunteering Journey?</h2>
-        <button className="btn-primary">Register Now</button>
-      </section>
     </div>
   );
 };
