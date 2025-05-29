@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import UserEvaluationCard from './UserEvaluationCard'; // عدّل المسار حسب موقعه
 
 import Navbar from '../pages/Navbar';
 import './FollowingScreen.css'; // create this CSS file for styles
@@ -20,28 +21,31 @@ const FollowingScreen = () => {
   useEffect(() => {
     const getTokenAndFetch = async () => {
       const savedToken = localStorage.getItem('userToken');
+    
+
       if (savedToken) {
         setToken(savedToken);
         fetchProfile(savedToken);
         fetchPosts(savedToken);
         fetchFollowers(savedToken);
         fetchFollowing(savedToken);
+      
       }
     };
     getTokenAndFetch();
+
   }, []);
 
-  const fetchProfile = async (token) => {
-    try {
-      const res = await axios.get(`http://localhost:5000/profile/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUserData(res.data);
-    } catch (err) {
-      console.error('Profile error:', err);
-    }
-  };
-
+ const fetchProfile = async (token) => {
+  try {
+    const res = await axios.get(`http://localhost:5000/profile/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setUserData(res.data);
+  } catch (err) {
+    console.error('Profile error:', err);
+  }
+};
   const fetchPosts = async (token) => {
     try {
       const res = await axios.get(`http://localhost:5000/posts/`, {
@@ -156,12 +160,21 @@ const FollowingScreen = () => {
       </div>
     </div>
   );
+  
+ const goToEvaluation = () => {
+  if (userData?.id) {
+    navigate(`/UserEvaluationCard/${userData.id}`);
+  } else {
+    alert('User data is not loaded yet.');
+  }
+};
 
   return (
     <>
     <Navbar />  
     <div className="following-screen">
       <div className="profile-header">
+
         <div className="profile-info">
           {userData?.profile_picture ? (
             <img src={userData.profile_picture} className="avatar-big" />
@@ -169,13 +182,80 @@ const FollowingScreen = () => {
             <FaUserCircle size={40} className="avatar-placeholder" />
 
           )}
-          <h2>{userData?.username}</h2>
+  <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', fontSize: '1.5rem' }}>
+  {userData?.username}
+  {userData?.identity_verification_status === "approved" && (
+    <span
+      className="verified-status"
+      style={{ display: 'flex', alignItems: 'center', marginLeft: '8px' }}
+    >
+      <svg
+        className="verified-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        width="40"
+        height="40"
+        viewBox="0 0 64 64"
+        fill="none"
+      >
+        {/* الدائرة المزخرفة */}
+        <circle
+          cx="32"
+          cy="32"
+          r="30"
+          stroke="#2e7d32"
+          strokeWidth="4"
+          fill="#2e7d32"
+          filter="url(#fancyShadow)"
+        />
+        {/* زخرفة نقاط حول الدائرة */}
+        {[...Array(12)].map((_, i) => {
+          const angle = (i * 30) * (Math.PI / 180);
+          const x = 32 + 28 * Math.cos(angle);
+          const y = 32 + 28 * Math.sin(angle);
+          return <circle key={i} cx={x} cy={y} r="2" fill="#81c784" />;
+        })}
+        {/* علامة الصح */}
+        <path
+          d="M20 33 L28 41 L44 25"
+          stroke="white"
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+        <defs>
+          <filter id="fancyShadow" x="-10" y="-10" width="84" height="84" >
+            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#1b5e20" floodOpacity="0.7" />
+          </filter>
+        </defs>
+      </svg>
+    </span>
+  )}
+</h2>
+<h2>
+  <h2>
+    <h2>
+      <h2>
+        <h2>
+<h2>
+  <p>
+    </p>
+</h2>
+        </h2>
+        </h2>
+      </h2>
+  </h2>
+  </h2>
+
      <button 
       onClick={() => navigate('/profile')}
       className="edit-profile-btn"
     >
       <FaUserCog size={20} />
     </button>
+
+
+
 
 
         </div>
@@ -202,8 +282,12 @@ const FollowingScreen = () => {
         <div className="bio">
           ✍️ {userData?.bio || 'No bio available'}
         </div>
-      </div>
+<section className="evaluation-section">
+  {userData && <UserEvaluationCard userId={userData.account_id} />}
+</section>
 
+      </div>
+ 
       <button className="add-post-btn" onClick={() => navigate('/CreatePostWeb')}>
   <FaPlus size={16} /> Add Post
 </button>

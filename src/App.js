@@ -32,6 +32,8 @@ import RateParticipantsScreen from './pages/RateParticipantsScreen';
 import OppertinetisPublicUser from './pages/OppertinetisPublicUser';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import UserEvaluationCard from './pages/UserEvaluationCard';
+import UserEvaluationCardWrapper from './pages/UserEvaluationCardWrapper';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import EvaluateScreen from './pages/EvaluateScreen';
@@ -74,6 +76,11 @@ function App() {
              <Route path="/OppertinetisPublicUser" element={<OppertinetisPublicUser />} />
                 <Route path="/About" element={<About />} />
                <Route path="/Contact" element={<Contact />} />
+<Route path="/UserEvaluationCard/:userId" element={<UserEvaluationCardWrapper />} />
+
+
+
+
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>

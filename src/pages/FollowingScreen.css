@@ -359,6 +359,44 @@
 .edit-profile-btn:hover {
   color: #030303;
 }
+.evaluation-section {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.evaluation-title {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #2c3e50;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 4px;
+}
+.verified-status {
+  display: flex;
+  align-items: center;
+  color: #28a745;
+  font-weight: 500;
+}
+
+.verified-status svg {
+  margin-right: 4px;
+}
+
+.verified-icon {
+  transition: all 0.3s ease;
+  opacity: 0.8; /* خفف اللون بشكل افتراضي */
+  cursor: pointer;
+}
+
+.verified-icon:hover {
+  opacity: 1;       /* تصبح واضحة 100% عند التمرير */
+  transform: scale(1.15);  /* تكبر شوي */
+  filter: drop-shadow(0 0 5px #2e7d32); /* ظل أخضر خفيف */
+}
+
 
   
   
