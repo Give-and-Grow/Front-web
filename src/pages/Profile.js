@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaSave, FaLock, FaUser, FaUserCircle, FaEnvelope, FaPhone, FaCity, FaHome, FaVenusMars, FaBirthdayCake, FaInfoCircle, FaBook } from 'react-icons/fa';
+import {FaTools, FaEdit, FaSave, FaLock, FaUser, FaUserCircle, FaEnvelope, FaPhone, FaCity, FaHome, FaVenusMars, FaBirthdayCake, FaInfoCircle, FaBook } from 'react-icons/fa';
 import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 import './Profile.css';
+
 
 const Profile = () => {
     const [profile, setProfile] = useState({});
@@ -359,14 +360,22 @@ const handleImageUpload = async (e) => {
                         </button>
                     )}
 
-                   <button
+
+  <button
   onClick={() => navigate('/ChangePasswordProfile')}
   className="action-button"
-  style={{ backgroundColor: '#3F9E3F', color: 'white' }}
 >
-  <FaLock style={{ marginRight: '8px', color: 'white', fontSize: '22px' }} />
-  Update Password
+  <FaTools style={{ marginRight: '8px' }} />
+  <span>Update Password</span>
 </button>
+<button onClick={() => navigate('/SkillsSection')} className="action-button">
+  <FaTools style={{ marginRight: '8px' }} />
+  <span>Skills</span>
+</button>
+
+
+
+
 
                 </div>
             </div>

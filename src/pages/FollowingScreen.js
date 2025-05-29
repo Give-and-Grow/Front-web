@@ -5,7 +5,8 @@ import UserEvaluationCard from './UserEvaluationCard'; // عدّل المسار 
 
 import Navbar from '../pages/Navbar';
 import './FollowingScreen.css'; // create this CSS file for styles
-import { FaUserCog, FaUsers, FaUserPlus, FaPlus, FaEdit, FaTrash, FaUserCircle } from 'react-icons/fa';
+import { FaUserCog, FaUsers, FaUserPlus, FaPlus, FaEdit, FaTrash, FaUserCircle, FaTools} from 'react-icons/fa';
+import { motion, AnimatePresence } from "framer-motion"; 
 
 const FollowingScreen = () => {
   const navigate = useNavigate();
@@ -17,6 +18,10 @@ const FollowingScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState('');
   const [activeTab, setActiveTab] = useState('following');
+ const [showSkills, setShowSkills] = useState(true);
+  const toggleSkills = () => {
+    setShowSkills(prev => !prev);
+  };
 
   useEffect(() => {
     const getTokenAndFetch = async () => {
@@ -168,6 +173,120 @@ const FollowingScreen = () => {
     alert('User data is not loaded yet.');
   }
 };
+const skillIcons = {
+  html: "🌐",
+  css: "🎨",
+  javascript: "⚡",
+  js: "⚡",
+  react: "⚛️",
+  "react native": "📱",
+  "node.js": "🟩",
+  node: "🟩",
+  python: "🐍",
+  java: "☕",
+  sql: "🗄️",
+  mysql: "🗄️",
+  mongodb: "🍃",
+  "data analysis": "📊",
+  "data entry": "⌨️",
+  "data visualization": "📈",
+  excel: "📊",
+  "web development": "🕸️",
+  "graphic design": "🎨",
+  "ui/ux design": "🖌️",
+  design: "🖌️",
+  figma: "🎨",
+  canva: "🖼️",
+  "adobe photoshop": "🖼️",
+  "adobe illustrator": "✒️",
+  django: "🌐",
+  fastapi: "🚀",
+  flutter: "💙",
+  laravel: "🟥",
+  git: "🔧",
+  github: "🐙",
+  "project management": "📋",
+  "event planning": "🎉",
+  "event coordination": "🎯",
+  "teamwork": "🤝",
+  "leadership": "🧠",
+  "communication": "🗣️",
+  "public speaking": "📢",
+  "marketing": "📣",
+  "content writing": "✍️",
+  "copywriting": "📝",
+  "social media management": "📱",
+  "teaching": "👩‍🏫",
+  "fundraising": "💰",
+  "presentation skills": "🖥️",
+  "mentoring": "👨‍🏫",
+  "translation": "🌍",
+  "customer service": "💬",
+  "finance": "💵",
+  accounting: "📒",
+  "research": "🔍",
+  "problem solving": "🧩",
+  "critical thinking": "🧠",
+  "cloud computing": "☁️",
+  aws: "☁️",
+  azure: "🔷",
+  "ai/ml": "🤖",
+  ai: "🤖",
+  ml: "🤖",
+  "ai/ml basics": "🤖",
+  "cybersecurity": "🛡️",
+  "networking": "🌐",
+  "wordpress": "📝",
+  "mobile app development": "📱",
+  "video editing": "🎬",
+  "photo editing": "🖼️",
+  "3d modeling": "📐",
+  autocad: "📏",
+  robotics: "🤖",
+  "arduino programming": "🛠️",
+  "raspberry pi": "🍓",
+  "science education": "🔬",
+  "mathematics tutoring": "➕",
+  "language tutoring": "🗣️",
+  "sign language": "👋",
+  "first aid": "⛑️",
+  "basic first aid": "⛑️",
+  "childcare": "🧸",
+  "elder care": "🧓",
+  "environmental awareness": "🌱",
+  "renewable energy": "⚡",
+  "recycling coordination": "♻️",
+  "volunteer coordination": "🙋",
+  "virtual assistance": "💻",
+  "slack management": "💬",
+  "trello/jira use": "📌",
+  "google workspace": "📂",
+  "logistics": "🚚",
+  "supply chain": "🏭",
+  "email marketing": "📧",
+  seo: "🔍",
+  "technical writing": "🧾",
+  "report writing": "🧾",
+  editing: "✂️",
+  proofreading: "🔍",
+  "event hosting": "🎙️",
+  "conflict mediation": "🤝",
+  "typing": "⌨️",
+  "wall painting": "🎨",
+  "inventory management": "📦",
+  "transportation assistance": "🚗",
+  "food preparation": "🍲",
+};
+
+const getSkillIcon = (skillName) => {
+  const lower = skillName.toLowerCase();
+
+  for (let key in skillIcons) {
+    if (lower.includes(key)) return skillIcons[key];
+  }
+
+  return "✨"; // default icon
+};
 
   return (
     <>
@@ -182,8 +301,10 @@ const FollowingScreen = () => {
             <FaUserCircle size={40} className="avatar-placeholder" />
 
           )}
+          
   <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', fontSize: '1.5rem' }}>
-  {userData?.username}
+  {userData?.full_name}
+  
   {userData?.identity_verification_status === "approved" && (
     <span
       className="verified-status"
@@ -282,6 +403,44 @@ const FollowingScreen = () => {
         <div className="bio">
           ✍️ {userData?.bio || 'No bio available'}
         </div>
+   <div className="bio text-center mb-6">
+      <h2
+        className="text-2xl font-bold tracking-wide mb-5 flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+        onClick={toggleSkills}
+      >
+        <FaTools className="text-3xl text-green-400" />
+        <span className="text-green-400 underline decoration-dotted">Skills</span>
+      </h2>
+
+      <AnimatePresence>
+       
+          <motion.div
+            className="flex flex-wrap justify-center gap-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+          >
+            {userData?.skills?.length > 0 ? (
+              userData.skills.map((skill, index) => (
+                <motion.div
+                  key={index}
+                  whileHover={{ scale: 1.1, boxShadow: "0 8px 20px rgba(0,0,0,0.15)" }}
+                  className="flex items-center gap-2 bg-white border-2 border-pink-300 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-transform duration-200"
+                >
+                  <span>{skill.name}</span>
+                  <span className="text-lg">{getSkillIcon(skill.name)}</span>
+                </motion.div>
+              ))
+            ) : (
+              <span className="text-gray-500 italic">No skills available</span>
+            )}
+          </motion.div>
+      
+      </AnimatePresence>
+    </div>
+
+
 <section className="evaluation-section">
   {userData && <UserEvaluationCard userId={userData.account_id} />}
 </section>

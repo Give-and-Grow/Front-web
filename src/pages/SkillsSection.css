@@ -1,0 +1,125 @@
+/* Container */
+div.p-6 {
+  background-color: #f9fafb; /* خلفية فاتحة هادية */
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* العنوان الرئيسي */
+h2.text-2xl {
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: #66bb6a; /* لون تركواز غامق */
+  margin-bottom: 1rem;
+  text-align: center;
+  letter-spacing: 1.2px;
+}
+
+/* المهارات المضافة */
+.flex.flex-wrap.gap-2.mb-6 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+/* كل مهارة */
+.flex.flex-wrap.gap-2.mb-6 > span {
+  background-color: #38a169; /* أخضر متوسّط */
+  color: #e6fffa; /* لون أبيض مائل للأزرق */
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(56, 161, 105, 0.4);
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+/* زر الحذف (×) */
+.flex.flex-wrap.gap-2.mb-6 > span > button {
+  margin-left: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #e53e3e; /* أحمر فاتح */
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.flex.flex-wrap.gap-2.mb-6 > span > button:hover {
+  color: #9b2c2c; /* أحمر داكن عند المرور */
+}
+
+/* عنوان القسم الفرعي */
+h3.text-xl {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #66bb6a; /* تركواز غامق */
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+/* صندوق الاختيار */
+select.border.rounded.px-3.py-2.flex-grow {
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  border: 2px solid #2c7a7b; /* تركواز */
+  border-radius: 8px;
+  background-color: #e6fffa; /* أخضر فاتح */
+  color: #234e52;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  outline-offset: 2px;
+}
+
+select.border.rounded.px-3.py-2.flex-grow:hover,
+select.border.rounded.px-3.py-2.flex-grow:focus {
+  border-color: #38a169; /* أخضر متوسّط */
+  outline: none;
+}
+
+/* عرض النص (المهارات كسلسلة نص) */
+pre.mt-6 {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #f0fdf4; /* أخضر فاتح جدا */
+  border-radius: 8px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  color: #22543d; /* أخضر غامق */
+  white-space: pre-wrap;
+  max-height: 150px;
+  overflow-y: auto;
+  user-select: text;
+}
+
+/* Responsive: ضبط عرض المكون للشاشات الصغيرة */
+@media (max-width: 480px) {
+  div.p-6 {
+    max-width: 95%;
+    padding: 1rem 1.2rem;
+  }
+
+  h2.text-2xl {
+    font-size: 1.5rem;
+  }
+
+  h3.text-xl {
+    font-size: 1.1rem;
+  }
+
+  select.border.rounded.px-3.py-2.flex-grow {
+    font-size: 0.9rem;
+  }
+}

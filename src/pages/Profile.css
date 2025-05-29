@@ -144,20 +144,6 @@ body, html {
 }
 
 
-
-
-.action-button {
-  background-color: #3F9E3F;
-  color: white;
-  padding: 18px 38px;
-  border-radius: 20px;
-  font-size: 19px;
-  font-weight: 700;
-  margin: 0 16px;
-  box-shadow: 0 7px 20px rgba(63, 158, 63, 0.5);
-  transition: background-color 0.4s ease, box-shadow 0.4s ease;
-}
-
 .action-button:hover {
   background-color: #2D742D;
   box-shadow: 0 10px 28px rgba(45, 116, 45, 0.7);
@@ -337,3 +323,30 @@ body, html {
 }
 
 
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3F9E3F;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  gap: 10px;
+  width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.action-button:hover {
+  background-color: #358a35;
+}
+
+.action-button svg {
+  font-size: 20px;
+  color: white;
+}

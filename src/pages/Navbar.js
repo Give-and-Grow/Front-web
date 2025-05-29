@@ -3,8 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../images/hands.png';
 import {
-  FiBell, FiHome, FiUser, FiFileText, FiBriefcase, FiInfo, FiPhone, FiUsers, FiSettings, FiMenu, FiX
+  FiBell, FiHome, FiUser, FiFileText, FiBriefcase, FiInfo, FiPhone, FiUsers, FiSettings, FiMenu, FiX,FiLogOut
 } from 'react-icons/fi';
+
 import {
   MdVolunteerActivism, MdWork, MdStarRate, MdList, MdGroupAdd, MdEventAvailable
 } from 'react-icons/md';
@@ -161,7 +162,7 @@ const Navbar = () => {
     { to: '/Homepage', icon: <FiHome />, label: 'Home' },
     { to: '/FollowingScreen', icon: <FiUser />, label: 'Profile' },
     { to: '/FriendsPost', icon: <FiFileText />, label: 'Posts' },
-    { to: '/ApplicationsScreen', icon: <FiBriefcase />, label: 'Opportunities' },
+    { to: '/AllOppertinitesUser', icon: <FiBriefcase />, label: 'Opportunities' },
     { to: '/About', icon: <FiInfo />, label: 'About' },
     { to: '/Contact', icon: <FiPhone />, label: 'Contact' },
   ];
@@ -274,9 +275,10 @@ const userToken = localStorage.getItem('userToken');
       {userToken && (
   <>
         <li onClick={() => { setMenuOpen(false); handleLogout(); }}>
-          <div className="logout-link">
-            <span className="nav-icon"><FiX /></span> Logout
-          </div>
+         <div className="logout-link">
+  <span className="nav-icon"><FiLogOut /></span> Logout
+</div>
+
         </li>
 
         <li className="notification-container">

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './Signupscreen.css'; // استورد ملف CSS
 import volunteerImage from '../images/Signup.gif';
-
+import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 const SignupScreen = ({ role }) => {
   const navigate = useNavigate(); // Use useNavigate hook to get navigate function
   const [step, setStep] = useState(1);
@@ -149,6 +149,8 @@ const SignupScreen = ({ role }) => {
   };
 
   return (
+     <>
+      <Navbar />
     <div className="container">
       <img src={volunteerImage} alt="Signup" className="headerImage" />
       <div className="progressContainer">
@@ -228,6 +230,8 @@ const SignupScreen = ({ role }) => {
         </>
       )}
     </div>
+     </>
+   
   );
 };
 

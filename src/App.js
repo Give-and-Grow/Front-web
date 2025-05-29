@@ -37,6 +37,7 @@ import UserEvaluationCardWrapper from './pages/UserEvaluationCardWrapper';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import EvaluateScreen from './pages/EvaluateScreen';
+import SkillsSection from './pages/SkillsSection';
 function App() {
   return (
     <Router>
@@ -77,6 +78,7 @@ function App() {
                 <Route path="/About" element={<About />} />
                <Route path="/Contact" element={<Contact />} />
 <Route path="/UserEvaluationCard/:userId" element={<UserEvaluationCardWrapper />} />
+<Route path="/SkillsSection" element={<SkillsSection />} />
 
 
 

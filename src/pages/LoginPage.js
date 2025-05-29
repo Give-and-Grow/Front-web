@@ -75,7 +75,6 @@ const LoginPage = () => {
 
 
     return (
-
         <div className="login-container">
               <Navbar />
             <div className="image-container">
@@ -119,7 +118,7 @@ const LoginPage = () => {
                     </p>
                 </div>
             </div>
-        </div>
+        </div>       
     );
 };
 

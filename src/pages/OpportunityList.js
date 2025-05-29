@@ -13,6 +13,7 @@ const OpportunitiesList = () => {
   const [modalType, setModalType] = useState(null);
   const [filters, setFilters] = useState({ location: '', status: '' });
   const [showDeleted, setShowDeleted] = useState(false);
+const [newStatus, setNewStatus] = useState('');
 
   // حقول التحديث
   const [updatedData, setUpdatedData] = useState({
@@ -60,7 +61,25 @@ const OpportunitiesList = () => {
   fetchOpportunities();
 }, [showDeleted]);
 
+const handleChangeStatus = async () => {
+  try {
+    const token = localStorage.getItem('userToken');
+    await axios.put(`http://localhost:5000/opportunities/${selectedOpportunity.id}/change-status`, {
+      status: newStatus
+    }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
+    setOpportunities(prev =>
+      prev.map(o => o.id === selectedOpportunity.id ? { ...o, status: newStatus } : o)
+    );
+
+    closeModal();
+    alert('Status updated successfully');
+  } catch (err) {
+    alert('Failed to update status');
+  }
+};
 
   const handleDelete = async (id) => {
     try {
@@ -90,19 +109,20 @@ const OpportunitiesList = () => {
     start_date: opportunity.start_date,
     end_date: opportunity.end_date,
   };
-
-  if (opportunity.opportunity_type === 'volunteer') {
-    setUpdatedData({
-      ...commonFields,
-      max_participants: opportunity.max_participants || '',
-      base_points: opportunity.base_points || ''
-    });
-  } else if (opportunity.opportunity_type === 'job') {
-    setUpdatedData({
-      ...commonFields,
-      required_points: opportunity.required_points || ''
-    });
-  }
+if (opportunity.opportunity_type === 'volunteer') {
+  setUpdatedData({
+    ...commonFields,
+    status: opportunity.status || '',
+    max_participants: opportunity.max_participants || '',
+    base_points: opportunity.base_points || ''
+  });
+} else if (opportunity.opportunity_type === 'job') {
+  setUpdatedData({
+    ...commonFields,
+    status: opportunity.status || '',
+    required_points: opportunity.required_points || ''
+  });
+}
 
   setModalType('edit');
   setModalVisible(true);
@@ -115,9 +135,9 @@ const OpportunitiesList = () => {
     const type = selectedOpportunity.opportunity_type;
 
     const allowedFields =
-      type === 'volunteer'
-        ? ['title', 'description', 'location', 'start_date', 'end_date', 'max_participants', 'base_points']
-        : ['title', 'description', 'location', 'start_date', 'end_date', 'required_points'];
+  type === 'volunteer'
+    ? ['title', 'description', 'location', 'start_date', 'end_date', 'status', 'max_participants', 'base_points']
+    : ['title', 'description', 'location', 'start_date', 'end_date', 'status', 'required_points'];
 
     const filteredData = {};
     for (const key of allowedFields) {
@@ -249,11 +269,12 @@ const handleRestore = async (id) => {
   <button className="btn details" onClick={() => handleMorePress(op)}>Details</button>
   <button className="btn update" onClick={() => handleEdit(op)}>Edit</button>
   
-  {op.is_deleted ? (
+  {showDeleted ? (
     <button className="btn restore" onClick={() => handleRestore(op.id)}>Restore</button>
   ) : (
     <button className="btn delete" onClick={() => handleDelete(op.id)}>Delete</button>
   )}
+  
 </div>
 
 </div>
@@ -261,6 +282,24 @@ const handleRestore = async (id) => {
           </div>
         ))}
       </div>
+{modalType === 'status' && (
+  <>
+    <h3>Change Opportunity Status</h3>
+    <label htmlFor="statusSelect">Select Status:</label>
+    <select
+      id="statusSelect"
+      value={newStatus}
+      onChange={(e) => setNewStatus(e.target.value)}
+    >
+      <option value="open">Open</option>
+      <option value="closed">Closed</option>
+      <option value="filled">Filled</option>
+    </select>
+
+    <button className="btn update" onClick={handleChangeStatus}>Update Status</button>
+    <button className="btn close" onClick={closeModal}>Cancel</button>
+  </>
+)}
 
       {/* مودال التفاصيل أو التعديل */}
       {modalVisible && selectedOpportunity && (
@@ -280,16 +319,33 @@ const handleRestore = async (id) => {
             ) : (
               <>
                 <h3>Edit Opportunity</h3>
-               {Object.keys(updatedData).map(key => (
-  <div key={key}>
-    <label>{key.replace(/_/g, ' ')}:</label>
-    <input
-      type="text"
-      value={updatedData[key]}
-      onChange={e => setUpdatedData({ ...updatedData, [key]: e.target.value })}
-    />
+ {Object.keys(updatedData).map(key => (
+  <div key={key} className="form-group">
+    <label className="form-label">{key.replace(/_/g, ' ')}:</label>
+    {key === 'status' ? (
+     <select
+  className="styled-select"
+  value={updatedData.status}
+  onChange={e => setUpdatedData({ ...updatedData, status: e.target.value })}
+>
+  <option value="">-- Select Status --</option>
+  <option value="open">Open</option>
+  <option value="closed">Closed</option>
+  <option value="filled">Filled</option>
+</select>
+
+    ) : (
+      <input
+        type="text"
+        className="form-input"
+        value={updatedData[key]}
+        onChange={e => setUpdatedData({ ...updatedData, [key]: e.target.value })}
+      />
+    )}
   </div>
 ))}
+
+
 
                 <button className="btn update" onClick={handleUpdate}>Update</button>
                 <button className="btn close" onClick={closeModal}>Cancel</button>

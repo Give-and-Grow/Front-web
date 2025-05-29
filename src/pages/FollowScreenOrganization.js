@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import Navbar from '../pages/Navbar';
-import './FollowingScreen.css'; // create this CSS file for styles
+import './FollowingScreenOrg.css'; // create this CSS file for styles
 import { FaUserCog, FaUsers, FaUserPlus, FaPlus, FaEdit, FaTrash, FaUserCircle } from 'react-icons/fa';
 
 const FollowingScreen = () => {
@@ -167,13 +167,13 @@ const FollowingScreen = () => {
     <div className="following-screen">
       <div className="profile-header">
         <div className="profile-info">
-          {userData?.profile_picture ? (
-            <img src={userData.profile_picture} className="avatar-big" />
+          {userData?.logo ? (
+            <img src={userData.logo} className="avatar-big" />
           ) : (
             <FaUserCircle size={40} className="avatar-placeholder" />
 
           )}
-          <h2>{userData?.username}</h2>
+          <h2>{userData?.name}</h2>
     <button 
   onClick={() => navigate('/ProfileOrganizationScreen')}
   className="edit-profile-btn"
