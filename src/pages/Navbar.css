@@ -179,6 +179,10 @@ html, body {
   background-color: #f0f0f0;
 }
 
+.dropdown-menu li:hover a {
+  color: #1b5e20; /* Darker green for hover */
+}
+
 .dropdown-menu li a {
   color: #333;
   text-decoration: none;
@@ -188,8 +192,12 @@ html, body {
   font-family: 'Poppins', sans-serif;
 }
 
+.dropdown-menu li.active {
+  background-color: #4caf50; /* Match the active background */
+}
+
 .dropdown-menu li.active a {
-  color: #4caf50;
+  color: #ffffff !important; /* White text for active dropdown items */
   font-weight: bold;
 }
 
