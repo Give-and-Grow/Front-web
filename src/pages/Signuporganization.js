@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Signupscreen.css'; 
 import volunteerImage from '../images/organSingup.png';
-
+import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 const Signuporganization = ({ role }) => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -120,6 +120,8 @@ const Signuporganization = ({ role }) => {
   };
 
   return (
+     <>
+      <Navbar />
     <div className="container">
       <img src={volunteerImage} alt="Signup" className="headerImage" />
       <div className="progressContainer">
@@ -191,6 +193,8 @@ const Signuporganization = ({ role }) => {
         </>
       )}
     </div>
+     </>
+     
   );
 };
 

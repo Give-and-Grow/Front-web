@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Navbar from '../pages/Navbar';
 
 const About = () => {
-  // نخزن حالة hover لكل كرتة كمصفوفة من البوليانز
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   return (
@@ -10,18 +9,18 @@ const About = () => {
       <Navbar />
       <div style={styles.wrapper}>
         <div style={styles.container}>
-          <h1 style={styles.title}>About Give & Grow</h1>
+          <h1 style={styles.title}>About <span style={styles.brand}>Give & Grow</span></h1>
           <p style={styles.subtitle}>Empowering Volunteers to Make a Difference</p>
 
           <div style={styles.content}>
             <p style={styles.text}>
-              Our project, <strong>Give & Grow</strong>, is designed to motivate and reward volunteers by encouraging active participation in community service.
+              <strong>Give & Grow</strong> is a platform that empowers volunteers through motivation, rewards, and impactful community involvement.
             </p>
             <p style={styles.text}>
-              Volunteers earn points for every task they complete. These points help them unlock exciting job opportunities and rewards.
+              Volunteers collect points with each completed task. These points unlock job opportunities, exclusive rewards, and personal growth.
             </p>
             <p style={styles.text}>
-              We believe in celebrating dedication and perseverance. Those with the highest points and consistent effort will receive special incentives and recognition.
+              We celebrate commitment and consistency. Top contributors receive recognition and inspiring incentives.
             </p>
           </div>
 
@@ -67,76 +66,79 @@ const featureData = [
 
 const styles = {
   wrapper: {
-    background: 'linear-gradient(to bottom, #e8f5e9, #ffffff)',
+    background: 'linear-gradient(to bottom right, #d0f0dc, #ffffff)',
     minHeight: '100vh',
-    paddingTop: '60px',
+    paddingTop: '70px',
+   fontFamily: "Times New Roman, Times, serif"
+
   },
   container: {
-    maxWidth: '1000px',
+    maxWidth: '1100px',
     margin: '0 auto',
-    padding: '40px 30px',
-    fontFamily: "'Poppins', sans-serif",
-    color: '#2e7d32',
-    backgroundColor: '#f1f8f4',
-    borderRadius: '20px',
-    boxShadow: '0 10px 30px rgba(46, 125, 50, 0.2)',
-    transition: 'all 0.3s ease-in-out',
+    padding: '50px 40px',
+    backgroundColor: '#ffffff',
+    borderRadius: '25px',
+    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
   },
   title: {
-    fontSize: '3rem',
-    fontWeight: '900',
+    fontSize: '3.2rem',
+    fontWeight: '800',
     textAlign: 'center',
     marginBottom: '10px',
+    color: '#2e7d32',
+  },
+  brand: {
     color: '#1b5e20',
   },
   subtitle: {
-    fontSize: '1.4rem',
-    fontWeight: '600',
+    fontSize: '1.5rem',
+    fontWeight: '500',
     textAlign: 'center',
-    color: '#43a047',
-    marginBottom: '35px',
+    color: '#388e3c',
+    marginBottom: '40px',
     fontStyle: 'italic',
   },
   content: {
-    fontSize: '1.15rem',
-    lineHeight: '1.8',
-    marginBottom: '40px',
-    padding: '0 15px',
-    color: '#2e7d32',
+    fontSize: '1.2rem',
+    lineHeight: '1.9',
+    marginBottom: '50px',
+    padding: '0 20px',
+    color: '#2f4f4f',
   },
   text: {
-    marginBottom: '20px',
+    marginBottom: '22px',
   },
   features: {
     display: 'flex',
-    justifyContent: 'space-between',
-    gap: '25px',
     flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: '30px',
   },
   featureBox: {
-    backgroundColor: '#ffffff',
-    flex: '1 1 280px',
-    padding: '25px',
-    borderRadius: '15px',
-    boxShadow: '0 8px 20px rgba(76, 175, 80, 0.1)',
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-    cursor: 'pointer',
+    backgroundColor: '#f7fcf8',
+    flex: '1 1 300px',
+    padding: '30px 25px',
+    borderRadius: '18px',
+    boxShadow: '0 6px 20px rgba(76, 175, 80, 0.15)',
     textAlign: 'center',
+    transition: 'all 0.3s ease',
+    border: '2px solid transparent',
   },
   featureBoxHover: {
-    transform: 'translateY(-10px)',
-    boxShadow: '0 16px 40px rgba(76, 175, 80, 0.4)',
+    transform: 'translateY(-8px)',
+    borderColor: '#66bb6a',
+    boxShadow: '0 14px 35px rgba(76, 175, 80, 0.35)',
   },
   featureTitle: {
-    fontSize: '1.5rem',
+    fontSize: '1.6rem',
     fontWeight: '700',
     marginBottom: '15px',
-    color: '#388e3c',
+    color: '#2e7d32',
   },
   featureText: {
-    fontSize: '1rem',
-    color: '#4e4e4e',
-    lineHeight: '1.6',
+    fontSize: '1.05rem',
+    color: '#4b4b4b',
+    lineHeight: '1.7',
   },
 };
 
