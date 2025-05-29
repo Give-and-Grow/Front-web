@@ -181,7 +181,9 @@ const handleFilterChange = (value, screen) => {
             ) : participants.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#666' }}>No participants found.</p>
             ) : (
-              participants.map((p) => renderParticipant(p, item.id))
+              participants
+                .filter((p) => !filter || p.status === filter)
+                .map((p) => renderParticipant(p, item.id))
             )}
           </div>
         )}
@@ -200,6 +202,30 @@ const handleFilterChange = (value, screen) => {
         <div style={styles.content}>
           <div style={styles.card}>
             <h2 style={styles.title}>Volunteer Applications</h2>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              style={{
+                padding: '10px 16px',
+                borderRadius: '12px',
+                border: '2px solid #66bb6a',
+                fontSize: '16px',
+                backgroundColor: '#f1f8e9',
+                color: '#2e7d32',
+                fontWeight: 'bold',
+                outline: 'none',
+                boxShadow: '0 2px 6px rgba(102, 187, 106, 0.3)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="accepted">Accepted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
             <div>
               {opportunities.map(renderOpportunity)}
             </div>
