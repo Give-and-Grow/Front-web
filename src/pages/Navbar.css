@@ -19,6 +19,10 @@ html, body {
 .logo {
   width: 50px;
   height: 50px;
+  border-radius: 10px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
 .logo-text {
@@ -45,14 +49,7 @@ html, body {
   backdrop-filter: saturate(180%) blur(8px);
 }
 
-/* تنسيقات الشعار */
-.logo {
-  height: 50px;
-  border-radius: 10px;
-  object-fit: cover;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
+
 
 .logo:hover {
   transform: scale(1.1);
@@ -123,7 +120,10 @@ html, body {
 .nav-icon {
   font-size: 18px;
   color: #2e7d32;
-  margin-right: 8px;
+  margin: 0 10px 0 0; /* أو أي تعديل حسب الاتجاه */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 /* تنسيقات القائمة المنسدلة (Dropdown) */
@@ -421,3 +421,126 @@ html, body {
     width: 100%;
   }
 }
+/* Updated styles for chat dropdown */
+.chat-container {
+  position: relative;
+}
+
+.chat-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #f0fdf4; /* Updated background color */
+  border: 1px solid #90c9a5; /* Slightly darker border for contrast */
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  width: 320px;
+  min-height: 100px;
+  max-height: 500px;
+  overflow-y: auto;
+  z-index: 1000;
+  direction: ltr;
+  padding: 10px;
+}
+
+.chat-dropdown .chat-list-container {
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.chat-dropdown .chat-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.chat-dropdown .chat-list-title {
+  font-size: 18px;
+  margin: 0;
+  font-weight: bold;
+  color: #2E7D32;
+}
+
+.chat-dropdown .refresh-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #66BB6A;
+  font-size: 14px;
+}
+
+.chat-dropdown .chat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chat-dropdown .chat-item {
+  padding: 10px;
+  border-bottom: 1px solid #90c9a5; /* Adjusted to match border color */
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.chat-dropdown .chat-item:hover {
+  background-color: #b7e6cc; /* Slightly lighter shade for hover */
+}
+
+.chat-dropdown .chat-item.active {
+  background-color: #9ad5b3; /* Slightly darker shade for active */
+}
+
+.chat-dropdown .chat-item-content {
+  flex: 1;
+}
+
+.chat-dropdown .chat-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-dropdown .chat-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2E7D32;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-dropdown .chat-status {
+  color: #66BB6A;
+  margin-left: 5px;
+}
+
+.chat-dropdown .chat-date {
+  font-size: 12px;
+  color: #757575;
+  margin: 5px 0;
+  white-space: nowrap;
+}
+
+.chat-dropdown .chat-list-loading,
+.chat-dropdown .chat-list-error,
+.chat-dropdown .no-chats {
+  text-align: center;
+  font-size: 14px;
+  color: #757575;
+  padding: 10px;
+}
+
+.chat-dropdown .chat-list-error {
+  color: #D32F2F;
+}
+
+/* Ensure dropdowns are hidden when menu is open on mobile */
+.nav-links.open .notification-dropdown,
+.nav-links.open .chat-dropdown {
+  display: none;
+}
+
