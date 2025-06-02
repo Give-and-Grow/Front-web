@@ -3,6 +3,7 @@ import FilterComponent from './FilterComponent';
 import OpportunityFilters from "./OpportunityFilters";
 import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 import { useNavigate } from 'react-router-dom';
+
 export default function AllOpportunitiesUser() {
   const [opportunities, setOpportunities] = useState([]);
   const [filteredOpportunities, setFilteredOpportunities] = useState([]);
@@ -204,7 +205,28 @@ export default function AllOpportunitiesUser() {
     // ممكن هنا تجيب بيانات جديدة بحسب الفلتر لو عندك API منفصل
     navigate(screen);
   };
-  
+  const openLocationInMaps = (destination) => {
+  // الحصول على موقع المستخدم الحالي:
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const url = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${encodeURIComponent(destination)}`;
+        window.open(url, '_blank');
+      },
+      (error) => {
+        console.error("Error getting location", error);
+        // احتياطي: فتح الخريطة بدون نقطة البداية
+        const fallbackUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}`;
+        window.open(fallbackUrl, '_blank');
+      }
+    );
+  } else {
+    alert("Geolocation is not supported by this browser.");
+  }
+};
+
+
   return (
     < >
     <Navbar />
@@ -295,7 +317,12 @@ export default function AllOpportunitiesUser() {
           <div style={{ display: 'block', marginBottom: '10px' }}>
   <div style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
     📍 Location:
+    <button onClick={() => openLocationInMaps(opp.location)} style={styles.badge}>
+  View location
+</button>
+ 
   </div>
+    
   <div>
     <span style={styles.badge}>{opp.location}</span>
   </div>

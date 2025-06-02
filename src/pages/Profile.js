@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import {FaTools, FaEdit, FaSave, FaLock, FaUser, FaUserCircle, FaEnvelope, FaPhone, FaCity, FaHome, FaVenusMars, FaBirthdayCake, FaInfoCircle, FaBook } from 'react-icons/fa';
+import {FaIdCard, FaUpload,FaTools, FaEdit, FaSave, FaLock, FaUser, FaUserCircle, FaEnvelope, FaPhone, FaCity, FaHome, FaVenusMars, FaBirthdayCake, FaInfoCircle, FaBook } from 'react-icons/fa';
 import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 import './Profile.css';
 
@@ -12,8 +12,32 @@ const Profile = () => {
     const [token, setToken] = useState('');
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
+const identityInputRef = useRef(null);
 
 const [isUploading, setIsUploading] = useState(false);
+const handleUploadIdentityPicture = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'my_unsigned_preset');  // ← غيّرها
+  formData.append('cloud_name', 'dhrugparh');          // ← غيّرها
+  try {
+    setIsUploading(true);
+    const res = await fetch('https://api.cloudinary.com/v1_1/dhrugparh/image/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+    setProfile((prev) => ({ ...prev, identity_picture: data.secure_url }));
+  } catch (err) {
+    console.error('Upload failed:', err);
+  } finally {
+    setIsUploading(false);
+  }
+};
 
     useEffect(() => {
       const getToken = async () => {
@@ -299,18 +323,118 @@ const handleImageUpload = async (e) => {
 
 {/* Volunteer Info */}
 <div className="card">
-  <h2> Other information </h2>
+  <h2>Other Information</h2>
 
-  <div className="input-with-icon">
-    <FaVenusMars className="input-icon" />
-    <input
-      type="text"
-      value={profile.gender || ''}
-      onChange={(e) => handleChange('gender', e.target.value)}
-      disabled={!isEditing}
-      placeholder="Gender"
-    />
+  <div style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 0',
+    borderBottom: '1px solid #eee',
+    flexWrap: 'wrap',
+  }}>
+    {/* Left: Label with Icon */}
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <FaIdCard style={{ color: '#2e7d32', fontSize: '20px', marginRight: '8px' }} />
+      <span style={{ fontSize: '14px', color: '#2e7d32' }}>Identity Picture</span>
+    </div>
+
+    {/* Right: Image OR Text + Upload Button */}
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      {profile.identity_picture ? (
+        <a href={profile.identity_picture} target="_blank" rel="noopener noreferrer">
+          <img
+            src={profile.identity_picture}
+            alt="Identity"
+            style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '4px',
+              objectFit: 'cover',
+              border: '1px solid #ccc',
+            }}
+          />
+        </a>
+      ) : (
+        <span style={{ color: '#999', fontSize: '13px' }}>No ID uploaded</span>
+      )}
+
+      {isEditing && (
+        <>
+          <button
+            onClick={() => identityInputRef.current.click()}
+            aria-label="Upload identity"
+            style={{
+              backgroundColor: '#e8f5e9',
+              border: '1px solid #2e7d32',
+              borderRadius: '4px',
+              padding: '6px 8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <FaUpload style={{ color: '#2e7d32' }} />
+          </button>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleUploadIdentityPicture}
+            ref={identityInputRef}
+            style={{ display: 'none' }}
+          />
+        </>
+      )}
+    </div>
   </div>
+
+
+
+
+
+  <div
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    backgroundColor: isEditing ? '#fff' : '#e6f5ec',
+    border: '1px solid #4CAF50',
+    borderRadius: '8px',
+    padding: '8px 12px',
+    maxWidth: '320px',
+    boxShadow: '0 2px 6px rgba(76, 175, 80, 0.3)', // ظل أخضر
+  }}
+>
+  <FaVenusMars
+    style={{
+      color: '#4CAF50', // أخضر
+      fontSize: '20px',
+      flexShrink: 0,
+    }}
+  />
+  <select
+    value={profile.gender || ''}
+    onChange={(e) => handleChange('gender', e.target.value)}
+    disabled={!isEditing}
+    style={{
+      flex: 1,
+      border: 'none',
+      outline: 'none',
+      fontSize: '16px',
+      backgroundColor: 'transparent',
+      color: isEditing ? '#2e7d32' : '#9e9e9e', // أخضر غامق للنص
+      cursor: isEditing ? 'pointer' : 'not-allowed',
+    }}
+  >
+    <option value="">Select gender</option>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select>
+</div>
+
+
 
   <div className="input-with-icon">
     <FaBirthdayCake className="input-icon" />
