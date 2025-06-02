@@ -1,0 +1,236 @@
+.dashboard-container {
+  padding: 2rem;
+  background-color: #f4fbf7; /* أخضر فاتح جداً، قريب من لون أوراق النبات */
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #2a5d34; /* أخضر داكن حشيشي */
+  margin-left: 250px;
+}
+
+.dashboard-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* إحصائيات */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stats-card {
+  background-color: #d8f0d8; /* أخضر فاتح حشيشي */
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(42, 93, 52, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stats-card:hover {
+  transform: scale(1.05);
+}
+
+.stats-icon {
+  margin-bottom: 0.5rem;
+  color: #4a7c3a; /* أخضر حشيشي متوسط */
+}
+
+.stats-key {
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #4a7c3a; /* أخضر حشيشي */
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.stats-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2a5d34; /* أخضر داكن حشيشي */
+}
+
+/* الفلاتر */
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background-color: #d8f0d8; /* أخضر فاتح حشيشي */
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(42, 93, 52, 0.1);
+  justify-content: center;
+  margin-bottom: 2rem;
+  align-items: center;
+  position: relative;
+}
+
+.input-field,
+.select-field {
+  padding: 0.7rem 1rem;
+  border: 2px solid #7bd77a; /* أخضر فاتح حشيشي */
+  border-radius: 1rem;
+  font-size: 1rem;
+  color: #2a5d34;
+  outline: none;
+  transition: border-color 0.3s ease;
+  min-width: 200px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.input-field:focus,
+.select-field:focus {
+  border-color: #3a8f3a; /* أخضر متوسط حشيشي */
+  box-shadow: 0 0 8px #4a7c3a;
+}
+
+/* الجدول */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(42, 93, 52, 0.15);
+  background-color: white;
+}
+
+.accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  min-width: 700px;
+}
+
+.accounts-table thead {
+  background-color: #a8db9a; /* أخضر فاتح متوسط حشيشي */
+  color: #2a5d34;
+}
+
+.accounts-table th,
+.accounts-table td {
+  padding: 0.9rem 1.2rem;
+  border: 1px solid #c8e9b4; /* أخضر فاتح */
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.accounts-table tbody tr:hover {
+  background-color: #d8f0d8; /* أخضر فاتح حشيشي */
+  cursor: default;
+}
+
+/* الصفحات */
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  font-weight: 700;
+  color: #4a7c3a;
+}
+
+.pagination button {
+  background-color: transparent;
+  border: 2px solid #4a7c3a; /* أخضر متوسط */
+  color: #6cd16c; /* أخضر فاتح */
+  padding: 0.5rem 1.5rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  border-color: #cdecc7;
+  color: #cdecc7;
+}
+
+.pagination button:not(:disabled):hover {
+  background-color: #4a7c3a;
+  color: white;
+}
+
+.pagination span {
+  font-size: 1.1rem;
+}
+
+/* استجابة للشاشات الصغيرة */
+@media (max-width: 640px) {
+  .filters-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .accounts-table {
+    min-width: unset;
+  }
+
+  .accounts-table th,
+  .accounts-table td {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+}
+
+/* الأيقونة داخل حقل البحث */
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #3a8f3a; /* أخضر حشيشي */
+  pointer-events: none;
+}
+
+.search-input {
+  padding-left: 2.5rem; /* لإعطاء مكان للأيقونة */
+  border-radius: 1rem;
+}
+
+/* كروت الإحصائيات مع الأيقونات */
+.stats-card {
+  background-color: #d8f0d8;
+  border-radius: 1rem;
+  padding: 1rem 1rem 1.5rem 1rem;
+  box-shadow: 0 4px 8px rgba(42, 93, 52, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stats-icon {
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  color: #4a7c3a;
+}
+
+.stats-key {
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #4a7c3a;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.stats-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2a5d34;
+}

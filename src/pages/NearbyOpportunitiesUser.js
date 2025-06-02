@@ -204,14 +204,35 @@ export default function NearbyOpportunitiesUser() {
       [id]: !prev[id],
     }));
   };
-  
+ const openLocationInMaps = (destination) => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        const url = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${encodeURIComponent(destination)}`;
+        
+        // افتح الرابط في تبويب جديد
+        window.open(url, '_blank');
+      },
+      (error) => {
+        console.error("Error getting location", error);
+        const fallbackUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}`;
+        window.open(fallbackUrl, '_blank');
+      }
+    );
+  } else {
+    alert("المتصفح لا يدعم تحديد الموقع.");
+  }
+};
+
   return (
     < >
     <Navbar />
     <div style={styles.container}>
     <OpportunityFilters onFilterSelect={handleMainFilterSelect} initialFilter="Nearby" />
 
-      <h1 style={styles.title}>🌱 Nearbady Opportunities</h1>
+      <h1 style={styles.title}>🌱 Nearby Opportunities</h1>
 
       <div style={styles.contentWrapper}>
         {/* Sidebar Filters */}
@@ -296,6 +317,9 @@ export default function NearbyOpportunitiesUser() {
           <div style={{ display: 'block', marginBottom: '10px' }}>
   <div style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
     📍 Location:
+      <button onClick={() => openLocationInMaps(opp.location)} style={styles.badge}>
+        View location
+      </button>
   </div>
   <div>
     <span style={styles.badge}>{opp.location}</span>

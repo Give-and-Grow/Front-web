@@ -38,6 +38,12 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import EvaluateScreen from './pages/EvaluateScreen';
 import SkillsSection from './pages/SkillsSection';
+import AdminDashboard from './pages/AdminDashboard';
+import Sidebar from './pages/Sidebar';
+import AdminSkills from './pages/AdminSkills';
+import AdminIndustries from './pages/AdminIndustries';
+import AdminOpportunities from './pages/AdminOpportunities';
+import AccountsDashboard from './pages/AccountsDashboard';
 function App() {
   return (
     <Router>
@@ -77,12 +83,14 @@ function App() {
              <Route path="/OppertinetisPublicUser" element={<OppertinetisPublicUser />} />
                 <Route path="/About" element={<About />} />
                <Route path="/Contact" element={<Contact />} />
-<Route path="/UserEvaluationCard/:userId" element={<UserEvaluationCardWrapper />} />
-<Route path="/SkillsSection" element={<SkillsSection />} />
-
-
-
-
+              <Route path="/UserEvaluationCard/:userId" element={<UserEvaluationCardWrapper />} />
+           <Route path="/SkillsSection" element={<SkillsSection />} />
+           <Route path="/AdminDashboard" element={<AdminDashboard />} />
+             <Route path="/Sidebar" element={<Sidebar />} />
+             <Route path="/AdminSkills" element={<AdminSkills />} />
+             <Route path="/AdminIndustries" element={<AdminIndustries />} />
+                  <Route path="/AdminOpportunities" element={<AdminOpportunities />} />
+                      <Route path="/AccountsDashboard" element={<AccountsDashboard />} />
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>
