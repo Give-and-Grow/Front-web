@@ -1,0 +1,126 @@
+.admin-container {
+  min-height: 100vh;
+  background: #e6f4ea;
+  padding: 40px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #2f4f4f;
+}
+
+.admin-card {
+  background: #ffffff;
+  max-width: 600px;
+  margin: auto;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 24px rgba(0, 128, 0, 0.15);
+}
+
+.admin-title {
+  text-align: center;
+  font-size: 24px;
+  color: #2e7d32;
+  margin-bottom: 20px;
+}
+
+.admin-message {
+  background: #c8e6c9;
+  padding: 10px;
+  border-left: 5px solid #388e3c;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.admin-form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 4px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+}
+
+.admin-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.admin-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-btn svg {
+  font-size: 16px;
+}
+
+.admin-btn.green {
+  background-color: #4caf50;
+  color: white;
+}
+
+.admin-btn.green:hover {
+  background-color: #388e3c;
+}
+
+.admin-btn.teal {
+  background-color: #66bb6a;
+  color: white;
+}
+
+.admin-btn.teal:hover {
+  background-color: #43a047;
+}
+
+.admin-btn.light {
+  background-color: #a5d6a7;
+  color: #2e7d32;
+}
+
+.admin-btn.light:hover {
+  background-color: #81c784;
+}
+
+.admin-btn.dark {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.admin-btn.dark:hover {
+  background-color: #1b5e20;
+}
+
+.admin-btn.border {
+  background-color: white;
+  border: 2px solid #4caf50;
+  color: #4caf50;
+  grid-column: span 2;
+}
+
+.admin-btn.border:hover {
+  background-color: #c8e6c9;
+}
+
+.admin-token {
+  margin-top: 20px;
+  font-size: 14px;
+  word-break: break-word;
+  background: #f1f8e9;
+  padding: 10px;
+  border-radius: 6px;
+  border-left: 4px solid #aed581;
+}

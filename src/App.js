@@ -44,6 +44,8 @@ import AdminSkills from './pages/AdminSkills';
 import AdminIndustries from './pages/AdminIndustries';
 import AdminOpportunities from './pages/AdminOpportunities';
 import AccountsDashboard from './pages/AccountsDashboard';
+import SettingAdmin from './pages/SettingAdmin';
+import InviteUsersPage from './pages/InviteUsersPage';
 function App() {
   return (
     <Router>
@@ -91,6 +93,9 @@ function App() {
              <Route path="/AdminIndustries" element={<AdminIndustries />} />
                   <Route path="/AdminOpportunities" element={<AdminOpportunities />} />
                       <Route path="/AccountsDashboard" element={<AccountsDashboard />} />
+                        <Route path="/SettingAdmin" element={<SettingAdmin />} /> 
+                          <Route path="/InviteUsersPage" element={<InviteUsersPage />} /> 
+                   
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>
