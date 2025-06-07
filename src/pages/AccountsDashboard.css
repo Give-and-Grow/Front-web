@@ -234,3 +234,18 @@
   font-weight: 700;
   color: #2a5d34;
 }
+
+.verify-btn {
+  background-color: #2a641c;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 50%;
+  margin: 0 auto; /* يجعل الزر في المنتصف أفقيًا داخل الخلية */
+  display: block;
+}
+.verify-btn:hover {
+  background-color: #95dd66;
+}

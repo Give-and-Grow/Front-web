@@ -1,0 +1,90 @@
+.invite-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #e8f5e9;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 128, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  color: #2e7d32;
+}
+
+.invite-title {
+  text-align: center;
+  font-size: 26px;
+  margin-bottom: 25px;
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+.invite-message {
+  background-color: #c8e6c9;
+  color: #2e7d32;
+  border-left: 5px solid #66bb6a;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(102, 187, 106, 0.3);
+}
+
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #4caf50;
+  margin-top: 20px;
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.user-card {
+  background-color: #ffffff;
+  border: 1px solid #a5d6a7;
+  border-left: 6px solid #81c784;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(102, 187, 106, 0.2);
+}
+
+.user-info h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #2e7d32;
+}
+
+.user-info p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #4caf50;
+}
+
+.invite-button {
+  background-color: #66bb6a;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.invite-button:hover {
+  background-color: #43a047;
+}

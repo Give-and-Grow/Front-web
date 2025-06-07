@@ -124,10 +124,10 @@ export default function AdminIndustries() {
   };
 
   return (
-    <div className="dashboard-layout">
-      <Navbar />
-      <Sidebar />
-      <main className="main-content">
+     <>    
+     <Navbar />
+     <Sidebar /> 
+     <div className="container">
         <h2 className="header-text">🏭 Manage Industries</h2>
 
         {filter === 'all' && (
@@ -267,7 +267,9 @@ export default function AdminIndustries() {
           </>
         )}
         <ToastContainer position="bottom-right" autoClose={2000} />
-      </main>
-    </div>
+   
+      </div>
+ 
+     </>
   );
 }

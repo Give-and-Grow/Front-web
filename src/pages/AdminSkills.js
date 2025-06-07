@@ -128,10 +128,10 @@ export default function AdminSkills() {
   };
 
   return (
-    <div className="dashboard-layout">
-      <Navbar />
-      <Sidebar />
-      <main className="main-content">
+    <>    
+        <Navbar />
+        <Sidebar /> 
+        <div className="container">
         <h2 className="header-text">✨ Manage Skills</h2>
 
         {/* إضافة مهارة جديدة */}
@@ -306,7 +306,9 @@ export default function AdminSkills() {
           </>
         )}
         <ToastContainer position="bottom-right" autoClose={2000} />
-      </main>
-    </div>
+     
+      </div>
+ 
+     </>
   );
 }

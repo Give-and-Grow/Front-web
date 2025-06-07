@@ -53,6 +53,64 @@ export default function AccountsDashboard() {
       console.error("Failed to fetch accounts", error);
     }
   };
+  const verifyOrganization = async (orgId) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:5000/admin/organizations/proof/${orgId}/status`,
+      { status: "approved" },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    alert("Organization verification status updated successfully");
+    fetchAccounts();
+  } catch (error) {
+    if (error.response) {
+      console.error("Verification failed with response:", error.response.data);
+      alert(`Failed to verify organization: ${error.response.data.message || error.message}`);
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+      alert("No response from server. Please check your connection.");
+    } else {
+      console.error("Error during request setup:", error.message);
+      alert(`Failed to verify organization: ${error.message}`);
+    }
+  }
+};
+
+const verifyUser = async (userId) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:5000/admin/users/identity/${userId}/verification`,
+      { status: "approved" },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("Response from verifyUser:", response);
+    alert("Verification status updated successfully");
+    fetchAccounts();
+  } catch (error) {
+    if (error.response) {
+      // الخطأ جاء من الـ server مع رسالة أو كود
+      console.error("Verification failed with response:", error.response.data);
+      alert(`Failed to verify user: ${error.response.data.message || error.message}`);
+    } else if (error.request) {
+      // لم يصل رد من السيرفر
+      console.error("No response received:", error.request);
+      alert("No response from server. Please check your connection.");
+    } else {
+      // خطأ آخر
+      console.error("Error during request setup:", error.message);
+      alert(`Failed to verify user: ${error.message}`);
+    }
+  }
+};
+
 
   const fetchStats = async () => {
     try {
@@ -150,18 +208,34 @@ export default function AccountsDashboard() {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {accounts.map((acc) => (
-                <tr key={acc.id}>
-                  <td>{acc.email}</td>
-                  <td>{acc.username}</td>
-                  <td>{acc.role}</td>
-                  <td>{acc.is_active ? "Yes" : "No"}</td>
-                  <td>{acc.is_email_verified ? "Yes" : "No"}</td>
-                  <td>{new Date(acc.created_at).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
+           <tbody>
+  {accounts.map((acc) => (
+    <tr key={acc.id}>
+      <td>{acc.email}</td>
+      <td>{acc.username}</td>
+      <td>{acc.role}</td>
+      <td>{acc.is_active ? "Yes" : "No"}</td>
+      <td>
+  {acc.is_email_verified ? (
+    "Yes"
+  ) : acc.role === "user" ? (
+    <button onClick={() => verifyUser(acc.id)} className="verify-btn">
+      Verify User
+    </button>
+  ) : acc.role === "organization" ? (
+    <button onClick={() => verifyOrganization(acc.id)} className="verify-btn">
+      Verify Org
+    </button>
+  ) : (
+    "No"
+  )}
+</td>
+
+      <td>{new Date(acc.created_at).toLocaleDateString()}</td>
+    </tr>
+  ))}
+</tbody>
+
           </table>
         </div>
 

@@ -1,9 +1,13 @@
-/* ===== Global Base Styling ===== */
-body {
-  background-color: #f9fdfb;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
+/* Container & Layout */
+.container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 25px 30px;
+  background-color: #e6f4ea; /* أخضر فاتح جدًا */
+  border-radius: 14px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.12);
+  color: #2a4d32; /* أخضر غامق للنص */
 }
 
 /* ===== Main Header ===== */
@@ -27,7 +31,7 @@ body {
 }
 
 .skills-table thead {
-  background: linear-gradient(to right, #43a047, #66bb6a);
+  background: linear-gradient(to right, #69b16c, #66bb6a);
 }
 
 .skills-table thead th {
@@ -95,7 +99,7 @@ body {
 }
 
 .pagination-controls .btn {
-  background: linear-gradient(to right, #66bb6a, #43a047);
+  background: linear-gradient(to right, #69b16c, #43a047);
   color: white;
   font-size: 15px;
   font-weight: 500;
@@ -314,3 +318,26 @@ body {
   accent-color: #16a34a; /* أخضر جميل */
   cursor: pointer;
 }
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* تأكدي إن الـ Sidebar ما فيه position: fixed */
+.sidebar {
+  width: 240px;
+  background-color: #f1fdf4;
+  flex-shrink: 0;
+  height: 100vh;
+  position: relative; /* ✅ مهم */
+}
+
+/* المحتوى الرئيسي */
+.main-content {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: #fff;
+  overflow-x: hidden;
+}
+
