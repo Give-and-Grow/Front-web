@@ -17,7 +17,9 @@ import {
   FaVenusMars,
   FaBirthdayCake,
   FaInfoCircle,
-  FaBook
+  FaBook,
+  FaIdCard,
+  FaUpload
 } from 'react-icons/fa';
 
 import './ProfileOrganizationScreen.css';
@@ -28,6 +30,8 @@ const ProfileOrganizationScreen = () => {
   const [token, setToken] = useState('');
   const navigate = useNavigate();
    const fileInputRef = useRef(null);
+   const identityInputRef = useRef(null);
+
 const [isUploading, setIsUploading] = useState(false);
   useEffect(() => {
     const getToken = async () => {
@@ -44,6 +48,31 @@ const [isUploading, setIsUploading] = useState(false);
 
     getToken();
   }, []);
+  const handleUploadIdentityPicture = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'my_unsigned_preset');  // ← غيّرها
+  formData.append('cloud_name', 'dhrugparh');          // ← غيّرها
+  try {
+    setIsUploading(true);
+    const res = await fetch('https://api.cloudinary.com/v1_1/dhrugparh/image/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+    setProfile((prev) => ({ ...prev, proof_image: data.secure_url }));
+
+  } catch (err) {
+    console.error('Upload failed:', err);
+  } finally {
+    setIsUploading(false);
+  }
+};
+
 const handleImageUpload = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -57,7 +86,7 @@ const handleImageUpload = async (e) => {
     setIsUploading(true); // ← تشغيل اللودر
     const res = await axios.post('https://api.cloudinary.com/v1_1/dhrugparh/image/upload', formData);
     const imageUrl = res.data.secure_url;
-    setProfile((prev) => ({ ...prev, proof_image: imageUrl }));
+    setProfile((prev) => ({ ...prev, logo: imageUrl }));
   } catch (err) {
     console.error('Error uploading image:', err);
     alert('Failed to upload image');
@@ -112,8 +141,8 @@ const handleImageUpload = async (e) => {
       <Navbar />
       <main className="container">
     <div className="profile-picture-section">
- {profile.proof_image ? (
-  <img src={profile.proof_image} alt="Profile" className="profileImage" />
+ {profile.logo ? (
+  <img src={profile.logo} alt="Profile" className="profileImage" />
 ) : (
   <img
     src="/logo.png" // <-- غيّر المسار حسب مكان الشعار في مشروعك
@@ -166,6 +195,7 @@ const handleImageUpload = async (e) => {
 
             
           </div>
+
           <div>
             <label>Description</label>
             <div className="input-with-icon">
@@ -202,6 +232,63 @@ const handleImageUpload = async (e) => {
     disabled={!isEditing}
   />
 </div>
+{/* Left: Label with Icon */}
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <FaIdCard style={{ color: '#2e7d32', fontSize: '20px', marginRight: '8px' }} />
+      <span style={{ fontSize: '14px', color: '#2e7d32' }}>Identity Picture</span>
+    </div>
+
+    {/* Right: Image OR Text + Upload Button */}
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      {profile.proof_image ? (
+        <a href={profile.proof_image} target="_blank" rel="noopener noreferrer">
+          <img
+            src={profile.proof_image}
+            alt="Identity"
+            style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '4px',
+              objectFit: 'cover',
+              border: '1px solid #ccc',
+            }}
+          />
+        </a>
+      ) : (
+        <span style={{ color: '#999', fontSize: '13px' }}>No ID uploaded</span>
+      )}
+
+      {isEditing && (
+        <>
+          <button
+            onClick={() => identityInputRef.current.click()}
+            aria-label="Upload identity"
+            style={{
+              backgroundColor: '#e8f5e9',
+              border: '1px solid #2e7d32',
+              borderRadius: '4px',
+              padding: '6px 8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <FaUpload style={{ color: '#2e7d32' }} />
+          </button>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleUploadIdentityPicture}
+            ref={identityInputRef}
+            style={{ display: 'none' }}
+          />
+        </>
+      )}
+
+  </div>
+
 
           </div>
         </section>

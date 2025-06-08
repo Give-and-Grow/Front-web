@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Select from "react-select";
 
 import './SkillsSection.css'
-
 import Navbar from '../pages/Navbar';
+
 const SkillsSection = () => {
   const [mySkills, setMySkills] = useState([]);           // المهارات المضافة
   const [availableSkills, setAvailableSkills] = useState([]); // المهارات المتاحة للإضافة
@@ -93,61 +94,56 @@ const SkillsSection = () => {
     }
   };
 
+  // إعداد خيارات react-select من المهارات المتاحة
+  const skillOptions = availableSkills.map(skill => ({
+    value: skill.id,
+    label: skill.name,
+  }));
+
   return (
-     <>
-    <Navbar />  
-    <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-4">My Skills</h2>
+    <>
+      <Navbar />  
+      <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md">
+        <h2 className="text-2xl font-bold mb-4">My Skills</h2>
 
-      {/* عرض المهارات المضافة */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {mySkills.map((skill) => (
-          <span
-            key={skill.id}
-            className="bg-green-200 text-green-900 px-3 py-1 rounded-full flex items-center"
-          >
-            {skill.name}
-            <button
-              onClick={() => removeSkill(skill.id, skill.name)}
-              className="ml-2 text-red-600 hover:text-red-800 font-bold"
-              aria-label={`Remove ${skill.name}`}
+        {/* عرض المهارات المضافة */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {mySkills.map((skill) => (
+            <span
+              key={skill.id}
+              className="bg-green-200 text-green-900 px-3 py-1 rounded-full flex items-center"
             >
-              ×
-            </button>
-          </span>
-        ))}
-      </div>
-
-      <h3 className="text-xl font-semibold mb-2">Add a New Skill</h3>
-
-      {/* قائمة المهارات المتاحة للإضافة */}
-      <div className="flex gap-3">
-        <select
-          className="border rounded px-3 py-2 flex-grow"
-          onChange={(e) => {
-            const [id, name] = e.target.value.split("|");
-            if (id && name) addSkill(Number(id), name);
-          }}
-          defaultValue=""
-        >
-          <option value="" disabled>
-            Select a skill
-          </option>
-          {availableSkills.map((skill) => (
-            <option key={skill.id} value={`${skill.id}|${skill.name}`}>
               {skill.name}
-            </option>
+              <button
+                onClick={() => removeSkill(skill.id, skill.name)}
+                className="ml-2 text-red-600 hover:text-red-800 font-bold"
+                aria-label={`Remove ${skill.name}`}
+              >
+                ×
+              </button>
+            </span>
           ))}
-        </select>
-      </div>
+        </div>
 
-      {/* نص عرض المهارات كسلسلة نص (اختياري) */}
-      <pre className="mt-6 p-3 bg-gray-100 rounded whitespace-pre-wrap">
-        {profile.skills || "No skills selected"}
-      </pre>
-    </div>
-     </>
-   
+        <h3 className="text-xl font-semibold mb-2">Add a New Skill</h3>
+
+        {/* استخدام react-select مع خاصية البحث */}
+        <Select
+          options={skillOptions}
+          isSearchable={true}
+          placeholder="Select or search a skill"
+          onChange={(selectedOption) => {
+            if (selectedOption) addSkill(selectedOption.value, selectedOption.label);
+          }}
+          className="mb-4"
+        />
+
+        {/* نص عرض المهارات كسلسلة نص (اختياري) */}
+        <pre className="mt-6 p-3 bg-gray-100 rounded whitespace-pre-wrap">
+          {profile.skills || "No skills selected"}
+        </pre>
+      </div>
+    </>
   );
 };
 

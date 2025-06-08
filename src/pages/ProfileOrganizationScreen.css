@@ -171,8 +171,8 @@ body, html {
   
 }
 .proofImage {
-  width: 200px;
-  height: 200px;
+  width: 100px;
+  height: 100px;
   border-radius: 12px;
   object-fit: cover;
   margin: 20px auto;
@@ -230,4 +230,89 @@ body, html {
 .edit-icon-button:hover {
   background-color: #338033;
   transform: scale(1.1);
+}
+
+
+.picture-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: Arial, sans-serif;
+  max-width: 250px;
+}
+
+.picture-section label {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.profileImage {
+  width: 200px;
+  height: 250px;
+  object-fit: cover;
+  border: 2px solid #27ae60; /* لون أخضر */
+  border-radius: 4px; /* زوايا مستقيمة جداً مع انحناء بسيط */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.placeholder {
+  width: 200px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ecf0f1;
+  color: #7f8c8d;
+  border: 2px dashed #27ae60;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.edit-icon-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px; /* مستقيم */
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.edit-icon-button:hover {
+  background-color: #219150;
+}
+
+/* أيقونة قلم داخل الزر (تغيير ✎ إلى رمز أيقونة باستخدام CSS قبل) */
+.edit-icon-button::before {
+  content: '✎'; /* أيقونة قلم */
+  font-size: 1.2rem;
+  line-height: 1;
+  display: inline-block;
+  transform: translateY(1px);
+}
+
+/* Loader بسيط */
+.loader {
+  margin-top: 8px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #27ae60;
+  border-radius: 2px;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

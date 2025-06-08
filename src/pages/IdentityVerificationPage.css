@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap');
+
+.verification-container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 30px;
+  background: #f4fdf9;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 128, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  color: #1b5e20;
+  margin-bottom: 40px;
+  font-size: 28px;
+}
+
+.card {
+  background: #ffffff;
+  border: none;
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #2e7d32;
+  font-size: 20px;
+}
+
+.card p {
+  margin: 8px 0;
+  color: #555;
+}
+
+.card img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  margin-top: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.no-image {
+  margin-top: 10px;
+  font-style: italic;
+  color: #aaa;
+}
+
+.no-data {
+  text-align: center;
+  font-style: italic;
+  color: #999;
+  margin-bottom: 20px;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 15px;
+}
+
+button.approve,
+button.reject {
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+button.approve {
+  background: #4caf50;
+  color: white;
+}
+
+button.reject {
+  background: #e53935;
+  color: white;
+}
+
+button:hover {
+  filter: brightness(0.95);
+}
+
+.status {
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.status.approved {
+  color: #388e3c;
+}
+
+.status.rejected {
+  color: #d32f2f;
+}
+
+.status.pending {
+  color: #fbc02d;
+}
+.filter-section {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Filter Styles */
+.filter-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: #e8f5e9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 128, 0, 0.08);
+}
+
+.filter-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filter-option {
+  background-color: #ffffff;
+  border: 2px solid #4caf50;
+  color: #4caf50;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.filter-option.active,
+.filter-option:hover {
+  background-color: #4caf50;
+  color: white;
+}

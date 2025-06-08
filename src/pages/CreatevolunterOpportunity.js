@@ -5,6 +5,8 @@ import Select from 'react-select';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import enUS from 'date-fns/locale/en-US';  // استيراد اللغة الإنجليزية
 import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
+import InviteFrame from '../pages/InviteFrame';
+
 // تسجل اللغة الانجليزية مع المكتبة
 registerLocale('en-US', enUS);
 const timeOptions = [
@@ -41,6 +43,8 @@ const navigate = useNavigate();
   const [volunteerDays, setVolunteerDays] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
+const [showInviteFrame, setShowInviteFrame] = useState(false);
+const [createdOpportunityId, setCreatedOpportunityId] = useState(null);
 
   useEffect(() => {
     axios.get(`http://localhost:5000/skills/`)
@@ -74,9 +78,8 @@ const handleSkillsChange = (selectedOptions) => {
       setSelectedSkills([...selectedSkills, skillId]);
     }
   };
-
- const handleSubmit = async () => {
-  const token = localStorage.getItem('userToken');  // استدعاء التوكين
+const handleSubmit = async () => {
+  const token = localStorage.getItem('userToken');
 
   const formData = {
     title,
@@ -89,7 +92,7 @@ const handleSkillsChange = (selectedOptions) => {
     application_link: applicationLink,
     contact_email: contactEmail.trim(),
     opportunity_type: 'volunteer',
-   skills: selectedSkills.map(s => s.value),
+    skills: selectedSkills.map(s => s.value),
     max_participants: parseInt(maxParticipants),
     base_points: parseInt(basePoints),
     start_time: startTime,
@@ -98,19 +101,40 @@ const handleSkillsChange = (selectedOptions) => {
   };
 
   try {
-    await axios.post(`http://localhost:5000/opportunities/create`, formData, {
+    const response = await axios.post(`http://localhost:5000/opportunities/create`, formData, {
       headers: {
-        Authorization: `Bearer ${token}`,  // إضافة التوكين في الهيدر
+        Authorization: `Bearer ${token}`,
       }
     });
+
+    const newOpportunityId = response.data.opportunity_id;
     alert('Opportunity created successfully!');
-    // يمكن إعادة التوجيه أو تفريغ الحقول هنا
-     navigate('/homepage'); 
+
+    try {
+      const chatResponse = await axios.post(`http://127.0.0.1:5000/chat/opportunity/${newOpportunityId}/create`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      console.log("Chat created:", chatResponse.data);
+      alert('Chat created successfully for this opportunity!');
+
+      // ✅ أظهر الفريم واحتفظ بالـ ID
+      setCreatedOpportunityId(newOpportunityId);
+      setShowInviteFrame(true);
+
+    } catch (chatError) {
+      console.error('Failed to create chat', chatError);
+      alert('Opportunity created, but failed to create chat.');
+    }
+
   } catch (error) {
     alert('Failed to create opportunity!');
     console.error(error.response?.data || error);
   }
 };
+
 
 
   const renderStepIndicator = () => (
@@ -157,6 +181,7 @@ const handleImageUpload = async (event) => {
     <div style={styles.container}>
      
       <Navbar />
+    
       <h2 style={styles.heading}>Create Opportunity</h2>
       {renderStepIndicator()}
 
@@ -329,6 +354,12 @@ const handleImageUpload = async (event) => {
             <button style={styles.button} onClick={() => setStep(2)}>Back</button>
             <button style={styles.button} onClick={handleSubmit}>Submit</button>
           </div>
+            {showInviteFrame && (
+  <InviteFrame
+    onYes={() => navigate(`/inviteUsersPage?opportunityId=${createdOpportunityId}`)}
+    onNo={() => setShowInviteFrame(false)}
+  />
+)}
         </>
         
       )}
