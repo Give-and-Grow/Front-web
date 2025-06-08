@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../images/hands.png';
 import {
-  FiBell,
   FiHome,
   FiUser,
   FiFileText,
@@ -27,6 +26,7 @@ import {
 } from 'react-icons/md';
 import ChatList from '../components/ChatList';
 import ChatBox from '../components/ChatBox';
+import Notification from './Notification'; // Import the new Notification component
 import './Navbar.css';
 
 const Navbar = () => {
@@ -34,16 +34,10 @@ const Navbar = () => {
   const [userRole, setUserRole] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [manageDropdownOpen, setManageDropdownOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showChats, setShowChats] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [unseenCount, setUnseenCount] = useState(0);
-  const [selectedNotification, setSelectedNotification] = useState(null);
-  const [selectedChatId, setSelectedChatId] = useState(null);
   const [selectedChat, setSelectedChat] = useState(null);
-  const [userToken, setUserToken] = useState(localStorage.getItem('userToken')); // حالة لتخزين userToken
+  const [userToken, setUserToken] = useState(localStorage.getItem('userToken'));
 
-  // تحديث userRole و userToken عند التحميل
   useEffect(() => {
     const role = localStorage.getItem('userRole');
     const token = localStorage.getItem('userToken');
@@ -51,53 +45,9 @@ const Navbar = () => {
     setUserToken(token);
   }, []);
 
-  // جلب الإشعارات عند وجود userToken
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/notifications/list', {
-          headers: { Authorization: `Bearer ${userToken}` },
-        });
-        setNotifications(res.data);
-      } catch (err) {
-        console.error('Failed to fetch notifications', err);
-      }
-    };
-
-    const fetchUnseenCount = async () => {
-      try {
-        const res = await axios.get(
-          'http://localhost:5000/notifications/unseen-count',
-          {
-            headers: { Authorization: `Bearer ${userToken}` },
-          }
-        );
-        setUnseenCount(res.data.unseen_count);
-      } catch (err) {
-        console.error('Failed to fetch unseen notification count', err);
-      }
-    };
-
-    // جلب الإشعارات فقط إذا كان userToken موجودًا
-    if (userToken) {
-      fetchNotifications();
-      fetchUnseenCount();
-    } else {
-      // إذا لم يكن هناك userToken، قم بإعادة تعيين الإشعارات إلى قائمة فارغة
-      setNotifications([]);
-      setUnseenCount(0);
-    }
-  }, [userToken]); // الاعتماد على userToken
-
-  // باقي الكود يبقى كما هو
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        !e.target.closest('.notification-container') &&
-        !e.target.closest('.chat-container')
-      ) {
-        setShowNotifications(false);
-        setSelectedNotification(null);
+      if (!e.target.closest('.chat-container')) {
         setShowChats(false);
       }
     };
@@ -116,72 +66,28 @@ const Navbar = () => {
       );
       localStorage.removeItem('userToken');
       localStorage.removeItem('userRole');
-      setUserToken(null); // تحديث الحالة
+      setUserToken(null);
       setUserRole(null);
-      setNotifications([]); // إعادة تعيين الإشعارات
-      setUnseenCount(0); // إعادة تعيين عدد الإشعارات غير المرئية
       window.location.href = '/';
     } catch (err) {
       console.error('Logout failed:', err);
     }
   };
 
-  const markNotificationAsSeen = async (notificationId) => {
-    try {
-      const res = await axios.post(
-        'http://localhost:5000/notifications/mark-seen',
-        { notification_id: notificationId },
-        { headers: { Authorization: `Bearer ${userToken}` } }
-      );
-      if (res.status === 200) {
-        setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) =>
-            notif.id === notificationId ? { ...notif, seen: true } : notif
-          )
-        );
-        setUnseenCount((prevCount) => Math.max(prevCount - 1, 0));
-      }
-    } catch (err) {
-      console.error('Failed to mark notification as seen:', err);
-    }
-  };
-
-  const markAllNotificationsAsSeen = async () => {
-    try {
-      const res = await axios.post(
-        'http://localhost:5000/notifications/mark-all-seen',
-        null,
-        { headers: { Authorization: `Bearer ${userToken}` } }
-      );
-      if (res.status === 200) {
-        setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) => ({ ...notif, seen: true }))
-        );
-        setUnseenCount(0);
-      }
-    } catch (err) {
-      console.error('Failed to mark all notifications as seen:', err);
-    }
-  };
-
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
     if (manageDropdownOpen) setManageDropdownOpen(false);
-    setShowNotifications(false);
     setShowChats(false);
   };
 
   const toggleManageDropdown = () => {
     setManageDropdownOpen(!manageDropdownOpen);
-    setShowNotifications(false);
     setShowChats(false);
   };
 
   const toggleChats = (e) => {
     e.stopPropagation();
     setShowChats(!showChats);
-    setShowNotifications(false);
-    setSelectedNotification(null);
   };
 
   const isActiveLink = (linkTo) => {
@@ -383,84 +289,7 @@ const Navbar = () => {
                   </span>
                 </div>
               </li>
-              <li className="notification-container">
-                <div
-                  className="nav-icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowNotifications(!showNotifications);
-                    setSelectedNotification(null);
-                    setShowChats(false);
-                  }}
-                >
-                  <FiBell size={20} />
-                  {unseenCount > 0 && (
-                    <span className="notification-count">{unseenCount}</span>
-                  )}
-                </div>
-                {showNotifications && (
-                  <div className="notification-dropdown">
-                    {selectedNotification ? (
-                      <div className="notification-details">
-                        <button
-                          className="back-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedNotification(null);
-                          }}
-                        >
-                          Back
-                        </button>
-                        <h4>{selectedNotification.title}</h4>
-                        <p>{selectedNotification.body}</p>
-                        <div className="notification-details-content">
-                          <p>
-                            <strong>From:</strong>{' '}
-                            {selectedNotification.from_user_name}
-                          </p>
-                          <p>
-                            <strong>Date:</strong>{' '}
-                            {selectedNotification.created_at}
-                          </p>
-                          
-                        </div>
-                      </div>
-                    ) : notifications.length === 0 ? (
-                      <p className="no-notifications">No notifications</p>
-                    ) : (
-                      <>
-                        <button
-                          className="mark-all-seen-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            markAllNotificationsAsSeen();
-                          }}
-                        >
-                          Mark All as Seen
-                        </button>
-                        {notifications.map((notif) => (
-                          <div
-                            key={notif.id}
-                            className={`notification-item ${
-                              notif.seen ? '' : 'unseen'
-                            }`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (!notif.seen) {
-                                markNotificationAsSeen(notif.id);
-                              }
-                              setSelectedNotification(notif);
-                            }}
-                          >
-                            <strong>{notif.title}</strong>
-                            <p>{notif.body}</p>
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                )}
-              </li>
+              <Notification userToken={userToken} />
               {userRole !== 'admin' && (
                 <li className="chat-container">
                   <div className="nav-icon" onClick={toggleChats}>
