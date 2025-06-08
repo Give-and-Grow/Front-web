@@ -17,12 +17,26 @@ const messaging = getMessaging(app);
 
 export const requestFCMToken = async () => {
   try {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      console.log('Notification permission not granted.');
+      return null;
+    }
+
     const currentToken = await getToken(messaging, {
       vapidKey: 'BMmhMIJZfIPwZZazoerVM67q4lSjlMCfEb6y8po5DIkXg4PK6oCSEp9tQ3j8lV5__0VsQvh5Qm2Aer-ALjIW8Lo'
     });
-    return currentToken;
+
+    if (currentToken) {
+      console.log('FCM Token:', currentToken);
+      return currentToken;
+    } else {
+      console.log('No registration token available.');
+      return null;
+    }
   } catch (error) {
     console.error("Unable to get FCM token", error);
     return null;
   }
 };
+
