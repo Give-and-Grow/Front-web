@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';  // عدل المسار حسب مكان ملف Navbar.js
-
 import { useNavigate } from 'react-router-dom';
+
 const OrganizationRejectAcceptUser = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('orgrejectoraccept');
@@ -10,12 +10,7 @@ const OrganizationRejectAcceptUser = () => {
   const [expandedOpportunityId, setExpandedOpportunityId] = useState(null);
   const [participantsMap, setParticipantsMap] = useState({});
   const [loading, setLoading] = useState(false);
-const handleFilterChange = (value, screen) => {
-    console.log('Filter selected:', value, screen);
-    setFilter(value);
-    // ممكن هنا تجيب بيانات جديدة بحسب الفلتر لو عندك API منفصل
-    navigate(screen);
-  };
+
   // جلب الفرص
   const fetchOpportunities = async () => {
     try {
@@ -41,7 +36,7 @@ const handleFilterChange = (value, screen) => {
     }
   };
 
-  // جلب المشاركين لفرصة معينة
+  // جلب المشاركين لفرصة معينة بدون فلترة
   const fetchParticipants = async (opportunityId) => {
     if (!opportunityId) return;
     setLoading(true);
@@ -58,6 +53,32 @@ const handleFilterChange = (value, screen) => {
       }));
     } catch (error) {
       console.error('Error fetching participants:', error);
+      setParticipantsMap((prev) => ({ ...prev, [opportunityId]: [] }));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // جلب المشاركين مع فلترة حسب الحالة
+  const fetchParticipantsByStatus = async (opportunityId, status) => {
+    if (!opportunityId) return;
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('userToken');
+      // نرسل الحالة كـ query param 
+      const url = status
+        ? `http://localhost:5000/org/opportunities/${opportunityId}/participants?status=${status}`
+        : `http://localhost:5000/org/opportunities/${opportunityId}/participants`;
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setParticipantsMap((prev) => ({
+        ...prev,
+        [opportunityId]: Array.isArray(data) ? data : [],
+      }));
+    } catch (error) {
+      console.error('Error fetching participants by status:', error);
       setParticipantsMap((prev) => ({ ...prev, [opportunityId]: [] }));
     } finally {
       setLoading(false);
@@ -81,18 +102,20 @@ const handleFilterChange = (value, screen) => {
       );
       const result = await res.json();
       alert(result.message);
-      fetchParticipants(opportunityId);
+      // تحديث المشاركين بحسب الفلتر الحالي
+      fetchParticipantsByStatus(opportunityId, filter);
     } catch (error) {
       console.error('Error updating status:', error);
     }
   };
 
+  // فتح أو إغلاق تفاصيل فرصة
   const toggleExpand = (opportunityId) => {
     if (expandedOpportunityId === opportunityId) {
       setExpandedOpportunityId(null);
     } else {
       setExpandedOpportunityId(opportunityId);
-      fetchParticipants(opportunityId);
+      fetchParticipantsByStatus(opportunityId, filter);
     }
   };
 
@@ -100,8 +123,13 @@ const handleFilterChange = (value, screen) => {
     fetchOpportunities();
   }, []);
 
-  const handleFilterSelect = (selectedFilter) => {
+  // عند تغيير الفلتر نحدث المشاركين للفرصة المفتوحة حاليًا
+  const handleFilterChange = (e) => {
+    const selectedFilter = e.target.value;
     setFilter(selectedFilter);
+    if (expandedOpportunityId) {
+      fetchParticipantsByStatus(expandedOpportunityId, selectedFilter);
+    }
   };
 
   const renderParticipant = (item, opportunityId) => {
@@ -181,9 +209,7 @@ const handleFilterChange = (value, screen) => {
             ) : participants.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#666' }}>No participants found.</p>
             ) : (
-              participants
-                .filter((p) => !filter || p.status === filter)
-                .map((p) => renderParticipant(p, item.id))
+              participants.map((p) => renderParticipant(p, item.id))
             )}
           </div>
         )}
@@ -192,169 +218,134 @@ const handleFilterChange = (value, screen) => {
   };
 
   return (
-  <>
-  
-    <Navbar />
-    
-    <div className="container">
-     
-      <div style={styles.container}>
-        <div style={styles.content}>
-          <div style={styles.card}>
-            <h2 style={styles.title}>Volunteer Applications</h2>
+    <>
+      <Navbar />
+
+      <div className="container">
+        <div style={styles.container}>
+          <div style={styles.content}>
+            <div style={styles.card}>
+              <h2 style={styles.title}>Volunteer Applications</h2>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              style={{
-                padding: '10px 16px',
-                borderRadius: '12px',
-                border: '2px solid #66bb6a',
-                fontSize: '16px',
-                backgroundColor: '#f1f8e9',
-                color: '#2e7d32',
-                fontWeight: 'bold',
-                outline: 'none',
-                boxShadow: '0 2px 6px rgba(102, 187, 106, 0.3)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer'
-              }}
-            >
-              <option value="">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="accepted">Accepted</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-            <div>
-              {opportunities.map(renderOpportunity)}
+                <select
+                  value={filter}
+                  onChange={handleFilterChange}
+                  style={{
+                    padding: '10px 16px',
+                    borderRadius: '12px',
+                    border: '2px solid #66bb6a',
+                    fontSize: '16px',
+                    backgroundColor: '#f1f8e9',
+                    color: '#2e7d32',
+                    fontWeight: 'bold',
+                    outline: 'none',
+                    boxShadow: '0 2px 6px rgba(102, 187, 106, 0.3)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+              <div>
+                {opportunities.map(renderOpportunity)}
+              </div>
             </div>
           </div>
-          {/* يمكنك إضافة مكون BottomTabBar هنا إذا كان لديك */}
         </div>
       </div>
-    </div>
-  </>
-);
-
+    </>
+  );
 };
 
 const styles = {
   container: {
-    flex: 1,
-    backgroundColor: '#e8f5e9',
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
+    maxWidth: 1000,
+    margin: '0 auto',
+    padding: 20,
   },
   content: {
-    flex: 1,
-    padding: 16,
-    overflowY: 'auto',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+    padding: 20,
+  },
+  card: {
+    marginTop: 10,
   },
   title: {
-    fontSize: 26,
-    color: '#1b5e20',
-    fontWeight: '900',
-    marginBottom: 24,
     textAlign: 'center',
-    textShadow: '1px 1px 3px #a5d6a7',
+    color: '#2e7d32',
   },
   opportunityCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    marginBottom: 18,
-    boxShadow: '0 5px 8px rgba(56, 142, 60, 0.2)',
+    border: '1px solid #ddd',
+    borderRadius: 8,
+    marginBottom: 15,
   },
   opportunityHeader: {
+    padding: '12px 16px',
+    backgroundColor: '#c8e6c9',
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 18,
-    backgroundColor: '#a5d6a7',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    boxShadow: '0 3px 6px rgba(129, 199, 132, 0.4)',
     cursor: 'pointer',
+    userSelect: 'none',
   },
   opportunityTitle: {
-    fontSize: 20,
-    color: '#1b5e20',
-    fontWeight: 'bold',
     margin: 0,
+    fontWeight: 'bold',
   },
   participantsContainer: {
     padding: 10,
-    maxHeight: 300,
-    overflowY: 'auto',
+    backgroundColor: '#f1f8e9',
+    borderTop: '1px solid #ddd',
   },
   participantCard: {
     display: 'flex',
-    backgroundColor: '#e8f5e9',
-    borderRadius: 10,
+    marginBottom: 12,
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
     padding: 10,
-    marginBottom: 14,
-    boxShadow: '0 4px 6px rgba(56, 142, 60, 0.15)',
-    alignItems: 'center',
   },
   participantImage: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     borderRadius: '50%',
-    marginRight: 15,
     objectFit: 'cover',
+    marginRight: 15,
   },
   participantInfo: {
     flex: 1,
   },
   participantName: {
-    fontSize: 17,
-    fontWeight: '600',
     margin: 0,
+    fontWeight: 'bold',
   },
   participantStatus: {
-    fontSize: 14,
-    color: '#2e7d32',
-    margin: '6px 0',
+    margin: '4px 0',
   },
   buttons: {
-    display: 'flex',
-    gap: 12,
+    marginTop: 6,
   },
   button: {
-    borderRadius: 12,
-    padding: '6px 14px',
-    cursor: 'pointer',
+    padding: '6px 12px',
+    marginRight: 8,
+    borderRadius: 5,
     border: 'none',
+    cursor: 'pointer',
     fontWeight: 'bold',
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: 14,
   },
   accept: {
-    backgroundColor: '#388e3c',
-    color: '#fff',
+    backgroundColor: '#4caf50',
+    color: 'white',
   },
   reject: {
-    backgroundColor: '#c62828',
-    color: '#fff',
+    backgroundColor: '#f44336',
+    color: 'white',
   },
-  card: {
-  backgroundColor: '#2e7d32;',
-  borderRadius: 16,
-  padding: 24,
-  boxShadow: '0 6px 15px rgba(56, 142, 60, 0.15)',
-  maxWidth: 800,
-  width: '100%',
-  minHeight: 350,
-  margin: '20px auto',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-}
-
-
-
 };
 
 export default OrganizationRejectAcceptUser;

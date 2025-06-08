@@ -2,12 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../images/hands.png';
-import {FiBell,FiHome,FiUser,FiFileText,FiBriefcase,FiInfo,FiPhone,FiUsers,FiSettings,FiMenu,FiX,FiLogOut,FiMessageSquare,
+import {
+  FiBell,
+  FiHome,
+  FiUser,
+  FiFileText,
+  FiBriefcase,
+  FiInfo,
+  FiPhone,
+  FiUsers,
+  FiSettings,
+  FiMenu,
+  FiX,
+  FiLogOut,
+  FiMessageSquare,
 } from 'react-icons/fi';
-import {MdVolunteerActivism,MdWork,MdStarRate,MdList,MdGroupAdd,MdEventAvailable,
+import {
+  MdVolunteerActivism,
+  MdWork,
+  MdStarRate,
+  MdList,
+  MdGroupAdd,
+  MdEventAvailable,
 } from 'react-icons/md';
 import ChatList from '../components/ChatList';
-import ChatBox from '../components/ChatBox'; // Import the ChatBox component
+import ChatBox from '../components/ChatBox';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -22,38 +41,35 @@ const Navbar = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [userToken, setUserToken] = useState(localStorage.getItem('userToken')); // حالة لتخزين userToken
 
+  // تحديث userRole و userToken عند التحميل
   useEffect(() => {
     const role = localStorage.getItem('userRole');
+    const token = localStorage.getItem('userToken');
     setUserRole(role);
+    setUserToken(token);
   }, []);
 
+  // جلب الإشعارات عند وجود userToken
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const token = localStorage.getItem('userToken');
-        const res = await axios.get(
-          'http://localhost:5000/notifications/list',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axios.get('http://localhost:5000/notifications/list', {
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
         setNotifications(res.data);
       } catch (err) {
         console.error('Failed to fetch notifications', err);
       }
     };
-    fetchNotifications();
-  }, []);
 
-  useEffect(() => {
     const fetchUnseenCount = async () => {
       try {
-        const token = localStorage.getItem('userToken');
         const res = await axios.get(
           'http://localhost:5000/notifications/unseen-count',
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${userToken}` },
           }
         );
         setUnseenCount(res.data.unseen_count);
@@ -61,9 +77,19 @@ const Navbar = () => {
         console.error('Failed to fetch unseen notification count', err);
       }
     };
-    fetchUnseenCount();
-  }, []);
 
+    // جلب الإشعارات فقط إذا كان userToken موجودًا
+    if (userToken) {
+      fetchNotifications();
+      fetchUnseenCount();
+    } else {
+      // إذا لم يكن هناك userToken، قم بإعادة تعيين الإشعارات إلى قائمة فارغة
+      setNotifications([]);
+      setUnseenCount(0);
+    }
+  }, [userToken]); // الاعتماد على userToken
+
+  // باقي الكود يبقى كما هو
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -81,12 +107,19 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('userToken');
-      await axios.post('http://localhost:5000/auth/logout', null, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        'http://localhost:5000/auth/logout',
+        null,
+        {
+          headers: { Authorization: `Bearer ${userToken}` },
+        }
+      );
       localStorage.removeItem('userToken');
       localStorage.removeItem('userRole');
+      setUserToken(null); // تحديث الحالة
+      setUserRole(null);
+      setNotifications([]); // إعادة تعيين الإشعارات
+      setUnseenCount(0); // إعادة تعيين عدد الإشعارات غير المرئية
       window.location.href = '/';
     } catch (err) {
       console.error('Logout failed:', err);
@@ -95,11 +128,10 @@ const Navbar = () => {
 
   const markNotificationAsSeen = async (notificationId) => {
     try {
-      const token = localStorage.getItem('userToken');
       const res = await axios.post(
         'http://localhost:5000/notifications/mark-seen',
         { notification_id: notificationId },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${userToken}` } }
       );
       if (res.status === 200) {
         setNotifications((prevNotifications) =>
@@ -116,11 +148,10 @@ const Navbar = () => {
 
   const markAllNotificationsAsSeen = async () => {
     try {
-      const token = localStorage.getItem('userToken');
       const res = await axios.post(
         'http://localhost:5000/notifications/mark-all-seen',
         null,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${userToken}` } }
       );
       if (res.status === 200) {
         setNotifications((prevNotifications) =>
@@ -254,8 +285,6 @@ const Navbar = () => {
       icon: <MdEventAvailable />,
     },
   ];
-
-  const userToken = localStorage.getItem('userToken');
 
   let linksToRender = [];
   if (!userToken) {
@@ -393,21 +422,7 @@ const Navbar = () => {
                             <strong>Date:</strong>{' '}
                             {selectedNotification.created_at}
                           </p>
-                          <p>
-                            <strong>Status:</strong>{' '}
-                            {selectedNotification.status}
-                          </p>
-                          <p>
-                            <strong>Type:</strong> {selectedNotification.type}
-                          </p>
-                          <p>
-                            <strong>Opportunity ID:</strong>{' '}
-                            {selectedNotification.opportunity_id}
-                          </p>
-                          <p>
-                            <strong>Seen:</strong>{' '}
-                            {selectedNotification.seen ? 'Yes' : 'No'}
-                          </p>
+                          
                         </div>
                       </div>
                     ) : notifications.length === 0 ? (
@@ -454,7 +469,7 @@ const Navbar = () => {
                   {showChats && (
                     <div className="chat-dropdown">
                       <ChatList
-                        onSelectChat={(chat) => setSelectedChat(chat)}  
+                        onSelectChat={(chat) => setSelectedChat(chat)}
                         userRole={userRole}
                       />
                     </div>
