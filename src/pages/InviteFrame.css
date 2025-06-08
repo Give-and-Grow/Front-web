@@ -1,0 +1,58 @@
+.invite-frame {
+  max-width: 28rem; /* max-w-md */
+  margin: 2.5rem auto 0; /* mt-10 + mx-auto */
+  padding: 1.5rem; /* p-6 */
+  background-color: #ecfdf5; /* bg-green-50 */
+  border: 1px solid #bbf7d0; /* border-green-200 */
+  border-radius: 1.5rem; /* rounded-2xl */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* shadow-sm */
+  text-align: center;
+}
+
+.invite-frame h2 {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600; /* font-semibold */
+  color: #14532d; /* text-green-900 */
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+.invite-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem; /* space-x-4 */
+}
+
+.invite-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.invite-button svg {
+  margin-bottom: 0.25rem; /* mb-1 */
+}
+
+.invite-button.yes {
+  background-color: #34d399; /* bg-green-400 */
+  color: white;
+}
+
+.invite-button.yes:hover {
+  background-color: #22c55e; /* bg-green-500 */
+}
+
+.invite-button.no {
+  background-color: #bbf7d0; /* bg-green-200 */
+  color: #166534; /* text-green-800 */
+}
+
+.invite-button.no:hover {
+  background-color: #bef264; /* bg-green-300 */
+}

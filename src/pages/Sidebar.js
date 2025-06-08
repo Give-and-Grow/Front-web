@@ -57,10 +57,13 @@ export default function Sidebar() {
       <h2 className="sidebar-title">Admin Panel</h2>
       <SidebarItem icon={Home} label="Dashboard" to="/AdminDashboard" />
       <SidebarItem icon={Users} label="Manage Accounts" to="/AccountsDashboard" />
+        <SidebarItem icon={Users} label="User Identity Verification" to="/IdentityVerificationPage" />
       <SidebarItem icon={Briefcase} label="Volunteer Opportunities" to="/AdminOpportunities" />
       <SidebarItem icon={Layers} label="Skills" to="/AdminSkills" />
      <SidebarItem icon={Factory} label="Industries" to="/AdminIndustries" />
+
       <SidebarItem icon={Settings} label="Settings" to="/SettingAdmin" />
+   
       <div className="mt-auto">
         {/* هنا بدّلنا SidebarItem ليستخدم onClick لعملية logout */}
         <SidebarItem icon={LogOut} label="Logout" onClick={handleLogout} />

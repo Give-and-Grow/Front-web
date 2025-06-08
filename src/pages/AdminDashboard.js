@@ -51,7 +51,8 @@ const AdminsDashboard = () => {
   const [orgChartType, setOrgChartType] = useState("doughnut");
   const token = localStorage.getItem("userToken");
 
-  const greenShades = ["#2f5233", "#3c8d4a", "#56b668", "#7cd97c", "#a1e8a9"];
+const greenShades  = ["#f94144", "#f9c74f", "#43aa8b", "#577590", "#9b5de5"];
+
 
   const fetchWithToken = (url) => {
     return fetch(url, {
@@ -91,7 +92,7 @@ const AdminsDashboard = () => {
       {
         label: "Admins Status",
         data: [stats.active_admins, stats.inactive_admins],
-        backgroundColor: ["#417d33", "#92d683"],
+         backgroundColor: ["#43aa8b", "#f94144"], // أخضر وأحمر
         borderWidth: 1,
       },
     ],
@@ -115,29 +116,29 @@ const AdminsDashboard = () => {
       {
         label: "Organizations Status",
         data: [orgStats.active_organizations, orgStats.inactive_organizations],
-        backgroundColor: ["#3ca55c", "#a2d5a1"],
+        backgroundColor: ["#f9c74f", "#577590"], // أصفر وأزرق
         borderWidth: 1,
       },
     ],
   };
+const genderData = {
+  labels: userStats.users_by_gender.map((g) => g.gender),
+  datasets: [
+    {
+      label: "Users by Gender",
+      data: userStats.users_by_gender.map((g) => g.count),
+      backgroundColor: userStats.users_by_gender.map((_, i) => greenShades[i % greenShades.length]),
+      borderWidth: 1,
+    },
+  ],
+};
 
-  const genderData = {
-    labels: userStats.users_by_gender.map((g) => g.gender),
-    datasets: [
-      {
-        label: "Users by Gender",
-        data: userStats.users_by_gender.map((g) => g.count),
-        backgroundColor: ["#6bba62", "#9ed89f"],
-        borderWidth: 1,
-      },
-    ],
-  };
 const pendingData = {
   labels: ['Pending Users'],
   datasets: [{
     label: 'Pending',
     data: [userStats.pending_users],
-    backgroundColor: ['#356b29'],
+       backgroundColor: ["#9b5de5"], // بنفسجي
     borderRadius: 5
   }]
 };

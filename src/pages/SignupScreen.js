@@ -24,11 +24,13 @@ const SignupScreen = ({ role }) => {
     }
   
     // Validate the date format using regex (YYYY-MM-DD)
-    const birthdayRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!birthdayRegex.test(birthday)) {
-      alert('Please enter a valid birthday in the format YYYY-MM-DD');
-      return;
-    }
+ 
+   if (!birthday) {
+  alert('Please enter your birthday');
+  return;
+}
+// تاريخ بصيغة yyyy-mm-dd يكون صحيح بشكل تلقائي في input type=date
+
   
     // Create a new Date object from the input and check if it's a valid date
     const [year, month, day] = birthday.split('-');
@@ -165,7 +167,14 @@ const SignupScreen = ({ role }) => {
           <h1 className="title">Create Account</h1>
           <input type="text" placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} className="input" />
           <input type="text" placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} className="input" />
-          <input type="text" placeholder="Birthday (YYYY-MM-DD)" value={birthday} onChange={e => setBirthday(e.target.value)} className="input" />
+        <input
+  type="date"
+  placeholder="Birthday"
+  value={birthday}
+  onChange={e => setBirthday(e.target.value)}
+  className="input"
+/>
+
           
           <div className="genderContainer">
             <button className={`genderButton ${gender === 'Male' ? 'selectedGender' : ''}`} onClick={() => setGender('Male')}>Male</button>

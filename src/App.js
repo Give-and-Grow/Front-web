@@ -46,6 +46,8 @@ import AdminOpportunities from './pages/AdminOpportunities';
 import AccountsDashboard from './pages/AccountsDashboard';
 import SettingAdmin from './pages/SettingAdmin';
 import InviteUsersPage from './pages/InviteUsersPage';
+import IdentityVerificationPage from './pages/IdentityVerificationPage';
+import InviteFrame from './pages/InviteFrame';
 function App() {
   return (
     <Router>
@@ -95,7 +97,8 @@ function App() {
                       <Route path="/AccountsDashboard" element={<AccountsDashboard />} />
                         <Route path="/SettingAdmin" element={<SettingAdmin />} /> 
                           <Route path="/InviteUsersPage" element={<InviteUsersPage />} /> 
-                   
+                       <Route path="/IdentityVerificationPage" element={<IdentityVerificationPage />} /> 
+ <Route path="/InviteFrame" element={<InviteFrame />} /> 
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>

@@ -308,10 +308,15 @@ export default function AllOpportunitiesUser() {
       {/* Additional Details if showDetails is true */}
       {showDetails && (
         <>
-          <div style={styles.volunteerDaysContainer}>
-            <span style={styles.volunteerDaysLabel}>📆 Volunteer Days:</span>
-            <span style={styles.volunteerDaysText}>{opp.volunteer_days.join(", ")}</span>
-          </div>
+  {opp.opportunity_type !== "job" && (
+  <div style={styles.volunteerDaysContainer}>
+    <span style={styles.volunteerDaysLabel}>📆 Volunteer Days:</span>
+    <span style={styles.volunteerDaysText}>{opp.volunteer_days.join(", ")}</span>
+  </div>
+)}
+
+
+
 
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", margin: "12px 0" }}>
           <div style={{ display: 'block', marginBottom: '10px' }}>

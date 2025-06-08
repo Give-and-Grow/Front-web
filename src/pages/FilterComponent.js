@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
 import './FilterComponent.css';
 
 const FilterComponent = ({ onApplyFilters }) => {
@@ -19,46 +20,60 @@ const FilterComponent = ({ onApplyFilters }) => {
   const [weekDaysOptions, setWeekDaysOptions] = useState([]);
   const [skillOptions, setSkillOptions] = useState([]);
   const [locationOptions, setLocationOptions] = useState([]);
+  const [organizationOptions, setOrganizationOptions] = useState([]);
 
-  // Fetch opportunity statuses
   useEffect(() => {
     fetch('http://127.0.0.1:5000/dropdown/opportunity-statuses')
       .then(res => res.json())
-      .then(data => setStatusOptions(data))
+      .then(data => {
+        const formatted = data.map(item => ({
+          label: item.label,
+          value: item.value,
+        }));
+        setStatusOptions(formatted);
+      })
       .catch(err => console.error('Failed to fetch status options:', err));
   }, []);
 
-  // Fetch opportunity types
   useEffect(() => {
     fetch('http://localhost:5000/dropdown/opportunity-types')
       .then(res => res.json())
-      .then(data => setOpportunityTypeOptions(data))
+      .then(data => {
+        const formatted = data.map(item => ({
+          label: item.label,
+          value: item.value,
+        }));
+        setOpportunityTypeOptions(formatted);
+      })
       .catch(err => console.error('Failed to fetch opportunity types:', err));
   }, []);
 
-  // Fetch week days
   useEffect(() => {
     fetch('http://localhost:5000/dropdown/week-days')
       .then(res => res.json())
-      .then(data => setWeekDaysOptions(data))
+      .then(data => {
+        const formatted = data.map(item => ({
+          label: item.label,
+          value: item.value,
+        }));
+        setWeekDaysOptions(formatted);
+      })
       .catch(err => console.error('Failed to fetch week days:', err));
   }, []);
 
-  // Fetch skills
   useEffect(() => {
     fetch('http://127.0.0.1:5000/dropdown/skills')
       .then(res => res.json())
       .then(data => {
-        const formattedSkills = data.map(skill => ({
+        const formatted = data.map(skill => ({
           label: skill.label,
           value: skill.value.toString()
         }));
-        setSkillOptions(formattedSkills);
+        setSkillOptions(formatted);
       })
       .catch(err => console.error('Failed to fetch skills:', err));
   }, []);
 
-  // Set Palestine cities (English names)
   useEffect(() => {
     const palestineCities = [
       { label: 'Ramallah', value: 'Ramallah' },
@@ -84,13 +99,22 @@ const FilterComponent = ({ onApplyFilters }) => {
       { label: 'Deir al-Balah', value: 'Deir al-Balah' },
       { label: 'Kufr Qaddum', value: 'Kufr Qaddum' },
       { label: 'Al-Bireh', value: 'Al-Bireh' },
-      { label: 'Bethlehem', value: 'Bethlehem' },
       { label: 'Al-Eizariya', value: 'Al-Eizariya' },
     ];
-    
-    setLocationOptions(
-      palestineCities.sort((a, b) => a.label.localeCompare(b.label))
-    );
+    setLocationOptions(palestineCities.sort((a, b) => a.label.localeCompare(b.label)));
+  }, []);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/public/organizations/')
+      .then(res => res.json())
+      .then(data => {
+        const formatted = data.results.map(org => ({
+          label: org.name,
+          value: org.id.toString()
+        }));
+        setOrganizationOptions(formatted);
+      })
+      .catch(err => console.error('Failed to fetch organizations:', err));
   }, []);
 
   const handleChange = (key, value) => {
@@ -105,64 +129,26 @@ const FilterComponent = ({ onApplyFilters }) => {
   };
 
   const fields = [
+    { label: 'Status', key: 'status', options: statusOptions },
+    { label: 'Opportunity Type', key: 'opportunity_type', options: opportunityTypeOptions },
+    { label: 'Location', key: 'location', options: locationOptions },
+    { label: 'Skill', key: 'skill_id', options: skillOptions },
+    { label: 'Organization', key: 'organization_id', options: organizationOptions },
     {
-      label: 'Status',
-      key: 'status',
-      options: statusOptions,
-    },
-    {
-      label: 'Opportunity Type',
-      key: 'opportunity_type',
-      options: opportunityTypeOptions,
-    },
-    {
-      label: 'Location',
-      key: 'location',
-      options: locationOptions,
-    },
-    {
-      label: 'Skill',
-      key: 'skill_id',
-      options: skillOptions,
-    },
-    {
-      label: 'Organization',
-      key: 'organization_id',
-      options: [
-        { label: 'Red Crescent', value: '10' },
-        { label: 'UNICEF', value: '11' },
-        { label: 'Green NGO', value: '12' },
-        { label: 'Save the Children', value: '13' },
-        { label: 'World Health Organization', value: '14' },
-        { label: 'Palestinian Relief Agency', value: '15' },
-        { label: 'Humanity First', value: '16' },
-        { label: 'Care International', value: '17' },
-        { label: 'Volunteer Palestine', value: '18' },
-        { label: 'Doctors Without Borders', value: '19' },
-      ]
-      
-    },
-    {
-      label: 'Start Time',
-      key: 'start_time',
+      label: 'Start Time', key: 'start_time',
       options: Array.from({ length: 24 }, (_, i) => {
         const hour = i.toString().padStart(2, '0') + ':00';
         return { label: hour, value: hour };
-      }),
+      })
     },
     {
-      label: 'End Time',
-      key: 'end_time',
+      label: 'End Time', key: 'end_time',
       options: Array.from({ length: 24 }, (_, i) => {
         const hour = i.toString().padStart(2, '0') + ':00';
         return { label: hour, value: hour };
-      }),
+      })
     },
-    {
-      label: 'Days',
-      key: 'volunteer_days',
-      options: weekDaysOptions,
-    },
+    { label: 'Days', key: 'volunteer_days', options: weekDaysOptions },
   ];
 
   return (
@@ -172,19 +158,17 @@ const FilterComponent = ({ onApplyFilters }) => {
         {fields.map(({ label, key, options }) => (
           <div key={key} className="filter-field">
             <label>{label}</label>
-            <select
-              value={filters[key]}
-              onChange={(e) => handleChange(key, e.target.value)}
-            >
-              <option value="">Select {label}</option>
-              {options && options.map(({ label, value }) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </select>
+            <Select
+              options={options}
+              value={options.find(opt => opt.value === filters[key]) || null}
+              onChange={(selected) => handleChange(key, selected ? selected.value : '')}
+              placeholder={`Select ${label}`}
+              isClearable
+              isSearchable
+            />
           </div>
         ))}
       </div>
-
       <button className="reset-button" onClick={resetFilters}>Reset Filters</button>
     </div>
   );
