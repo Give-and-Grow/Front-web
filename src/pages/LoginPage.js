@@ -77,15 +77,16 @@ const LoginPage = () => {
     return (
         <div className="login-container">
               <Navbar />
-            <div className="image-container">
+           
+
+            <div className="form-container">
+                 <div className="image-container">
                 <img
                     src={images[imageIndex]}
                     alt="Volunteer"
                     className={`login-image ${fade ? 'fade-in' : 'fade-out'}`}
                 />
             </div>
-
-            <div className="form-container">
                 <h2 className="title">
                     Join Us <br /> be the change you want <br /> to see in the world
                 </h2>

@@ -15,7 +15,7 @@
 }
 
 .login-image {
-    width: 30%;  /* تم تصغير الحجم من 90% إلى 70% */
+    width: 70%;  /* تم تصغير الحجم من 90% إلى 70% */
     height: 250px;  /* تم تقليل الارتفاع */
     border-radius: 70px;
     border: 7px solid #66bb6a;
@@ -23,13 +23,7 @@
     transition: opacity 0.5s ease-in-out;
 }
 
-.fade-in {
-    opacity: 1;
-}
 
-.fade-out {
-    opacity: 0;
-}
 
 .form-container {
    
@@ -113,4 +107,17 @@
     outline: none;  /* إزالة التحديد الافتراضي */
     color: #66bb6a;  /* تأكيد أن اللون يبقى كما هو عند التركيز */
 }
+
+
+
+.fade-in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.fade-out {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
 

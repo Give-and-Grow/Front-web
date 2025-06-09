@@ -48,6 +48,9 @@ import SettingAdmin from './pages/SettingAdmin';
 import InviteUsersPage from './pages/InviteUsersPage';
 import IdentityVerificationPage from './pages/IdentityVerificationPage';
 import InviteFrame from './pages/InviteFrame';
+import DiscountCodeManager from './pages/DiscountCodeManager';
+import FirebaseAdsManager from './pages/FirebaseAdsManager';
+
 function App() {
   return (
     <Router>
@@ -98,7 +101,9 @@ function App() {
                         <Route path="/SettingAdmin" element={<SettingAdmin />} /> 
                           <Route path="/InviteUsersPage" element={<InviteUsersPage />} /> 
                        <Route path="/IdentityVerificationPage" element={<IdentityVerificationPage />} /> 
- <Route path="/InviteFrame" element={<InviteFrame />} /> 
+            <Route path="/InviteFrame" element={<InviteFrame />} /> 
+               <Route path="/DiscountCodeManager" element={<DiscountCodeManager />} /> 
+                       <Route path="/FirebaseAdsManager" element={<FirebaseAdsManager />} /> 
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>

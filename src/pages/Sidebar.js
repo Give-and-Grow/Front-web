@@ -9,6 +9,9 @@ import {
   Settings,
   LogOut,
   Factory,
+  BadgePercent,
+  FaFire ,
+  Megaphone 
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -61,7 +64,8 @@ export default function Sidebar() {
       <SidebarItem icon={Briefcase} label="Volunteer Opportunities" to="/AdminOpportunities" />
       <SidebarItem icon={Layers} label="Skills" to="/AdminSkills" />
      <SidebarItem icon={Factory} label="Industries" to="/AdminIndustries" />
-
+    <SidebarItem icon={BadgePercent} label="Discount Codes" to="/DiscountCodeManager" />
+    <SidebarItem icon={Megaphone } label="Ad Management" to="/FirebaseAdsManager" />
       <SidebarItem icon={Settings} label="Settings" to="/SettingAdmin" />
    
       <div className="mt-auto">
