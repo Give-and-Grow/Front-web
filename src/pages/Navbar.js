@@ -148,7 +148,7 @@ const Navbar = () => {
   const adminLinks = [
     { to: '/Homepage', icon: <FiHome />, label: 'Home' },
     { to: '/AdminDashboard', icon: <FiBriefcase />, label: 'Dashboard' },
-    { to: '/manage-users', icon: <FiUsers />, label: 'Users' },
+   
     { to: '/reports', icon: <FiFileText />, label: 'Reports' },
     { to: '/profile', icon: <FiSettings />, label: 'Profile' },
   ];
