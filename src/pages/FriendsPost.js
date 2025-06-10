@@ -246,13 +246,48 @@ function PostCard({ item }) {
         }
       />
 
-      {item.content && (
-        <CardContent>
-          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-            {item.content}
-          </Typography>
-        </CardContent>
-      )}
+     {item.content && (
+  <CardContent>
+    <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+      {item.content}
+    </Typography>
+
+  {item.images && item.images.length > 0 && (
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 2,
+      mb: 2,
+      alignItems: 'center',  // لتوسيط محتوى العمود
+    }}
+  >
+    {item.images.map((imgUrl, index) => (
+      <Box
+        key={index}
+        sx={{
+          maxHeight: 300,
+          overflow: 'hidden',
+          borderRadius: 2,
+          boxShadow: 1,
+          bgcolor: '#f5f5f5',
+          width: '80%',  // اضفنا عرض لصندوق الصورة أيضاً
+        }}
+      >
+        <img
+          src={imgUrl}
+          alt={`Post Image ${index + 1}`}
+          style={{ width: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      </Box>
+    ))}
+  </Box>
+)}
+
+
+  </CardContent>
+)}
+
 
       <Box sx={{ display: 'flex', alignItems: 'center', padding: 1, gap: 2 }}>
         <IconButton onClick={() => setLiked(!liked)} color={liked ? 'error' : 'default'}>

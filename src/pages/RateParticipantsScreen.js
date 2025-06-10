@@ -132,9 +132,9 @@ const RateParticipantsScreen = () => {
 return (
   <>
     <Navbar />
-    <div className="container">
+    <div className="rate-container">
       
-      <div className="card">
+      <div className="rate-card">
         <h1 className="page-title">🌟 Participant Evaluation</h1>
 
         <label className="label">
