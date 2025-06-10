@@ -1,0 +1,168 @@
+.honor-board-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Arial', sans-serif;
+  background-color: #f0fdf4; /* Light green background to match theme */
+  min-height: 100vh;
+  direction: ltr; /* Change to 'rtl' for Arabic text */
+}
+
+.honor-board-container h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2e7d32; /* Theme green for heading */
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-section label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151; /* Dark gray for contrast */
+  margin-right: 0.5rem;
+}
+
+.filter-section select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #2e7d32; /* Theme green border */
+  border-radius: 0.375rem;
+  background-color: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.filter-section select:focus {
+  outline: none;
+  border-color: #2e7d32; /* Theme green on focus */
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2); /* Lighter green shadow */
+}
+
+.volunteer-list {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #2e7d32; /* Theme green border */
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.volunteer-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.volunteer-list::-webkit-scrollbar-track {
+  background: #f0fdf4; /* Light green track to match theme */
+  border-radius: 4px;
+}
+
+.volunteer-list::-webkit-scrollbar-thumb {
+  background: #2e7d32; /* Theme green thumb */
+  border-radius: 4px;
+}
+
+.volunteer-list::-webkit-scrollbar-thumb:hover {
+  background: #1a4d1e; /* Darker green on hover */
+}
+
+.volunteer-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #d1d5db; /* Light gray border for contrast */
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer; /* Indicate interactivity */
+}
+
+.volunteer-card:last-child {
+  border-bottom: none;
+}
+
+.volunteer-card:hover {
+  background-color: #ecfdf5; /* Very light green hover effect */
+}
+
+.volunteer-card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1rem;
+  border: 2px solid #2e7d32; /* Theme green border for avatar */
+}
+
+.volunteer-card div {
+  flex: 1;
+}
+
+.volunteer-card h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937; /* Dark gray for readability */
+  margin: 0 0 0.25rem 0;
+}
+
+.volunteer-card p {
+  font-size: 0.875rem;
+  color: #4b5563; /* Medium gray for secondary text */
+  margin: 0.25rem 0;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1rem;
+  color: #2e7d32; /* Theme green for loading text */
+  margin: 2rem 0;
+}
+
+.no-volunteers {
+  text-align: center;
+  font-size: 1rem;
+  color: #dc2626; /* Red for error to stand out */
+  margin: 2rem 0;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .honor-board-container {
+    padding: 1rem;
+  }
+
+  .filter-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-section label {
+    margin-bottom: 0.25rem;
+  }
+
+  .filter-section select {
+    width: 100%;
+  }
+
+  .volunteer-card img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .volunteer-card h4 {
+    font-size: 1.1rem;
+  }
+
+  .volunteer-card p {
+    font-size: 0.8rem;
+  }
+}
