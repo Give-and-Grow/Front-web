@@ -179,6 +179,9 @@ const Notification = ({ userToken }) => {
                         style={{ width: '100%', borderRadius: '10px', marginTop: '10px' }}
                         />
                         <p>
+                        <strong>From:</strong> {selectedNotification.from_user_name}
+                        </p>
+                        <p>
                         <strong>Date:</strong> {selectedNotification.created_at}
                         </p>
                     </div>

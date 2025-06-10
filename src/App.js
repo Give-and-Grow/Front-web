@@ -9,8 +9,8 @@ import Signuporganization from './pages/Signuporganization';
 import SelectUserType from './pages/SelectUserType';
 import SignupFlow from './pages/SignupFlow';
 import ChangePasswordProfile from './pages/ChangePasswordProfile';
-import ProfileOrganizationScreen from './pages/ProfileOrganizationScreen'
-import Navbar from './pages/Navbar'
+import ProfileOrganizationScreen from './pages/ProfileOrganizationScreen';
+import Navbar from './pages/Navbar';
 import CreatePostWeb from './pages/CreatePostWeb';
 import EditPostScreen from './pages/EditPostScreen';
 import FollowingScreen from './pages/FollowingScreen';
@@ -18,14 +18,14 @@ import FollowScreenOrganization from './pages/FollowScreenOrganization';
 import FriendsPost from './pages/FriendsPost';
 import AllOppertinitesUser from './pages/AllOppertinitesUser';
 import NearbyOpportunitiesUser from './pages/NearbyOpportunitiesUser';
-import JobOpportunities  from './pages/JobOpportunities';
+import JobOpportunities from './pages/JobOpportunities';
 import VolunteerOpportunities from './pages/VolunteerOpportunities';
 import ApplicationsScreen from './pages/ApplicationsScreen';
 import OpportunityFilters from './pages/OpportunityFilters';
-import OrganizationFilters from './pages/OrganizationFilters'
+import OrganizationFilters from './pages/OrganizationFilters';
 import CreatevolunterOpportunity from './pages/CreatevolunterOpportunity';
 import OpportunityList from './pages/OpportunityList';
-import OrganizationRejectAcceptUser from  './pages/OrganizationRejectAcceptUser';
+import OrganizationRejectAcceptUser from './pages/OrganizationRejectAcceptUser';
 import CreateJobOpportunity from './pages/CreateJobOpportunity';
 import AttendanceScreen from './pages/AttendanceScreen';
 import RateParticipantsScreen from './pages/RateParticipantsScreen';
@@ -50,6 +50,8 @@ import IdentityVerificationPage from './pages/IdentityVerificationPage';
 import InviteFrame from './pages/InviteFrame';
 import DiscountCodeManager from './pages/DiscountCodeManager';
 import FirebaseAdsManager from './pages/FirebaseAdsManager';
+import HonorBoard from './components/HonorBoard';
+
 
 function App() {
   return (
@@ -64,46 +66,86 @@ function App() {
         <Route path="/Signuporganization" element={<Signuporganization />} />
         <Route path="/SelectUserType" element={<SelectUserType />} />
         <Route path="/SignupFlow" element={<SignupFlow />} />
-        <Route path="/ChangePasswordProfile" element={<ChangePasswordProfile />} />
+        <Route path="/HonorBoard" element={<HonorBoard />} />
+        <Route
+          path="/ChangePasswordProfile"
+          element={<ChangePasswordProfile />}
+        />
 
         <Route path="/Navbar" element={<Navbar />} />
-        <Route path="/ProfileOrganizationScreen" element={<ProfileOrganizationScreen />} />
+        <Route
+          path="/ProfileOrganizationScreen"
+          element={<ProfileOrganizationScreen />}
+        />
         <Route path="/CreatePostWeb" element={<CreatePostWeb />} />
         <Route path="/EditPostScreen/:postId" element={<EditPostScreen />} />
-        <Route path="/FollowScreenOrganization" element={<FollowScreenOrganization />} />
+        <Route
+          path="/FollowScreenOrganization"
+          element={<FollowScreenOrganization />}
+        />
         <Route path="/FollowingScreen" element={<FollowingScreen />} />
         <Route path="/FriendsPost" element={<FriendsPost />} />
         <Route path="/AllOppertinitesUser" element={<AllOppertinitesUser />} />
-        <Route path="/NearbyOpportunitiesUser" element={<NearbyOpportunitiesUser />} />
+        <Route
+          path="/NearbyOpportunitiesUser"
+          element={<NearbyOpportunitiesUser />}
+        />
         <Route path="/JobOpportunities" element={<JobOpportunities />} />
-        <Route path="/VolunteerOpportunities" element={<VolunteerOpportunities />} />
+        <Route
+          path="/VolunteerOpportunities"
+          element={<VolunteerOpportunities />}
+        />
         <Route path="/ApplicationsScreen" element={<ApplicationsScreen />} />
-        <Route path="/EvaluateScreen/:participantId" element={<EvaluateScreen />} />
+        <Route
+          path="/EvaluateScreen/:participantId"
+          element={<EvaluateScreen />}
+        />
         <Route path="/OpportunityFilters" element={<OpportunityFilters />} />
         <Route path="/OrganizationFilters" element={<OrganizationFilters />} />
-         <Route path="/CreatevolunterOpportunity" element={<CreatevolunterOpportunity />} />
+        <Route
+          path="/CreatevolunterOpportunity"
+          element={<CreatevolunterOpportunity />}
+        />
         <Route path="/OpportunityList" element={<OpportunityList />} />
-        <Route path="/OrganizationRejectAcceptUser" element={<OrganizationRejectAcceptUser />} />
-          <Route path="/AttendanceScreen" element={<AttendanceScreen />} />
-           <Route path="/RateParticipantsScreen" element={<RateParticipantsScreen />} />
-             <Route path="/CreateJobOpportunity" element={<CreateJobOpportunity />} />
-             <Route path="/OppertinetisPublicUser" element={<OppertinetisPublicUser />} />
-                <Route path="/About" element={<About />} />
-               <Route path="/Contact" element={<Contact />} />
-              <Route path="/UserEvaluationCard/:userId" element={<UserEvaluationCardWrapper />} />
-           <Route path="/SkillsSection" element={<SkillsSection />} />
-           <Route path="/AdminDashboard" element={<AdminDashboard />} />
-             <Route path="/Sidebar" element={<Sidebar />} />
-             <Route path="/AdminSkills" element={<AdminSkills />} />
-             <Route path="/AdminIndustries" element={<AdminIndustries />} />
-                  <Route path="/AdminOpportunities" element={<AdminOpportunities />} />
-                      <Route path="/AccountsDashboard" element={<AccountsDashboard />} />
-                        <Route path="/SettingAdmin" element={<SettingAdmin />} /> 
-                          <Route path="/InviteUsersPage" element={<InviteUsersPage />} /> 
-                       <Route path="/IdentityVerificationPage" element={<IdentityVerificationPage />} /> 
-            <Route path="/InviteFrame" element={<InviteFrame />} /> 
-               <Route path="/DiscountCodeManager" element={<DiscountCodeManager />} /> 
-                       <Route path="/FirebaseAdsManager" element={<FirebaseAdsManager />} /> 
+        <Route
+          path="/OrganizationRejectAcceptUser"
+          element={<OrganizationRejectAcceptUser />}
+        />
+        <Route path="/AttendanceScreen" element={<AttendanceScreen />} />
+        <Route
+          path="/RateParticipantsScreen"
+          element={<RateParticipantsScreen />}
+        />
+        <Route
+          path="/CreateJobOpportunity"
+          element={<CreateJobOpportunity />}
+        />
+        <Route
+          path="/OppertinetisPublicUser"
+          element={<OppertinetisPublicUser />}
+        />
+        <Route path="/About" element={<About />} />
+        <Route path="/Contact" element={<Contact />} />
+        <Route
+          path="/UserEvaluationCard/:userId"
+          element={<UserEvaluationCardWrapper />}
+        />
+        <Route path="/SkillsSection" element={<SkillsSection />} />
+        <Route path="/AdminDashboard" element={<AdminDashboard />} />
+        <Route path="/Sidebar" element={<Sidebar />} />
+        <Route path="/AdminSkills" element={<AdminSkills />} />
+        <Route path="/AdminIndustries" element={<AdminIndustries />} />
+        <Route path="/AdminOpportunities" element={<AdminOpportunities />} />
+        <Route path="/AccountsDashboard" element={<AccountsDashboard />} />
+        <Route path="/SettingAdmin" element={<SettingAdmin />} />
+        <Route path="/InviteUsersPage" element={<InviteUsersPage />} />
+        <Route
+          path="/IdentityVerificationPage"
+          element={<IdentityVerificationPage />}
+        />
+        <Route path="/InviteFrame" element={<InviteFrame />} />
+        <Route path="/DiscountCodeManager" element={<DiscountCodeManager />} />
+        <Route path="/FirebaseAdsManager" element={<FirebaseAdsManager />} />
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>

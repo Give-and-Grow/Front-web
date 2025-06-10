@@ -20,6 +20,7 @@
     "axios": "^1.7.9",
     "boxicons": "^2.1.4",
     "browserify-zlib": "^0.2.0",
+    "canvas-confetti": "^1.9.3",
     "chart.js": "^4.4.7",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",

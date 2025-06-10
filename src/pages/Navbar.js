@@ -277,6 +277,14 @@ const Navbar = () => {
           })}
           {userToken && (
             <>
+              <li onClick={() => setMenuOpen(false)}>
+                <Link to="/honorboard">
+                  <span className="nav-icon">
+                    <MdStarRate />
+                  </span>
+                  Honor Board
+                </Link>
+              </li>
               <li
                 onClick={() => {
                   setMenuOpen(false);
