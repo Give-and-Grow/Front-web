@@ -110,7 +110,7 @@ const handleFilterChange = (value, screen) => {
         body: JSON.stringify(attendanceData)
       });
       const data = await res.json();
-      alert(data.message || 'Attendance saved');
+      // alert(data.message || 'Attendance saved');
       setModalVisible(false);
     } catch (error) {
       alert('Failed to save attendance');

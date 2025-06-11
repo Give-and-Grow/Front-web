@@ -5,7 +5,7 @@ import axios from 'axios';
 import Navbar from '../pages/Navbar';
 import './FollowingScreenOrg.css'; // create this CSS file for styles
 import { FaUserCog, FaUsers, FaUserPlus, FaPlus, FaEdit, FaTrash, FaUserCircle } from 'react-icons/fa';
-
+import AdComponent from '../components/AdComponent';
 const FollowingScreen = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState('');
@@ -164,6 +164,7 @@ const FollowingScreen = () => {
   return (
     <>
     <Navbar />  
+    <AdComponent />
     <div className="following-screen">
       <div className="profile-header">
         <div className="profile-info">
@@ -180,12 +181,7 @@ const FollowingScreen = () => {
 >
   <FaUserCog size={20} />
 </button>
-
-
-
-
         </div>
-
         <div className="follow-stats">
           <div className="follow-stat">
           <div className="clickable-follow" onClick={() => { setModalType('followers'); setModalVisible(true); }}>
@@ -230,7 +226,9 @@ const FollowingScreen = () => {
           </div>
         </div>
       )}
+      
     </div>
+    
     </>
 
   );

@@ -4,8 +4,7 @@ import './AdminSkills.css';
 import Navbar from '../pages/Navbar';
 import Sidebar from './Sidebar';
 import { Trash2, Edit2 } from 'lucide-react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Toast from '../components/Toast'; // Import custom Toast component
 
 export default function AdminIndustries() {
   const [industries, setIndustries] = useState([]);
@@ -14,11 +13,20 @@ export default function AdminIndustries() {
   const [totalPages, setTotalPages] = useState(1);
   const [editingIndustryId, setEditingIndustryId] = useState(null);
   const [editedName, setEditedName] = useState('');
-  const [newIndustryName, setNewIndustryName] = useState('');
+  const [newIndustryName, setNewIndustryName] = useState(''); // Fixed setter name
   const [adding, setAdding] = useState(false);
   const [filter, setFilter] = useState('all'); // all, top, unused, user-count
+  const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' }); // Toast state
   const perPage = 10;
   const token = localStorage.getItem('userToken');
+
+  const showToast = (message, type = 'success') => {
+    setToast({ isVisible: true, message, type });
+  };
+
+  const closeToast = () => {
+    setToast({ ...toast, isVisible: false });
+  };
 
   useEffect(() => {
     fetchIndustries();
@@ -47,15 +55,15 @@ export default function AdminIndustries() {
         setTotalPages(1);
         setPage(1);
       } else if (filter === 'user-count') {
-  setIndustries(response.data.organization_counts_per_industry);
-  setTotalPages(1);
-  setPage(1);
-}else {
+        setIndustries(response.data.organization_counts_per_industry);
+        setTotalPages(1);
+        setPage(1);
+      } else {
         setIndustries(response.data.industries);
         setTotalPages(response.data.pages);
       }
     } catch (error) {
-      toast.error('Error fetching industries');
+      showToast('Error fetching industries', 'error');
       console.error(error);
     }
     setLoading(false);
@@ -66,10 +74,10 @@ export default function AdminIndustries() {
       await axios.delete(`http://localhost:5000/admin/industries/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success("Industry deleted successfully!");
+      showToast('Industry deleted successfully!', 'success');
       fetchIndustries();
     } catch (error) {
-      toast.error("Failed to delete industry.");
+      showToast('Failed to delete industry', 'error');
     }
   };
 
@@ -85,18 +93,18 @@ export default function AdminIndustries() {
         { name: editedName },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success("Industry updated successfully!");
+      showToast('Industry updated successfully!', 'success');
       setEditingIndustryId(null);
       setEditedName('');
       fetchIndustries();
     } catch (error) {
-      toast.error("Failed to update industry.");
+      showToast('Failed to update industry', 'error');
     }
   };
 
   const addIndustry = async () => {
     if (!newIndustryName.trim()) {
-      toast.error('Please enter an industry name.');
+      showToast('Please enter an industry name', 'error');
       return;
     }
     setAdding(true);
@@ -106,11 +114,11 @@ export default function AdminIndustries() {
         { name: newIndustryName },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success("Industry added successfully!");
+      showToast('Industry added successfully!', 'success');
       setNewIndustryName('');
       fetchIndustries();
     } catch (error) {
-      toast.error("Failed to add industry.");
+      showToast('Failed to add industry', 'error');
     }
     setAdding(false);
   };
@@ -124,10 +132,10 @@ export default function AdminIndustries() {
   };
 
   return (
-     <>    
-     <Navbar />
-     <Sidebar /> 
-     <div className="container">
+    <>
+      <Navbar />
+      <Sidebar />
+      <div className="container">
         <h2 className="header-text">🏭 Manage Industries</h2>
 
         {filter === 'all' && (
@@ -157,7 +165,6 @@ export default function AdminIndustries() {
             />
             All Industries
           </label>
-         
           <label>
             <input
               type="radio"
@@ -194,7 +201,6 @@ export default function AdminIndustries() {
                       <th>Actions</th>
                     </>
                   )}
-                 
                   {filter === 'user-count' && (
                     <>
                       <th>Industry</th>
@@ -240,12 +246,11 @@ export default function AdminIndustries() {
                           </td>
                         </tr>
                       );
-                    }  else if (filter === 'user-count') {
+                    } else if (filter === 'user-count') {
                       return (
                         <tr key={industry.industry}>
                           <td>{industry.industry}</td>
-                         <td>{industry.organization_count}</td>
-
+                          <td>{industry.organization_count}</td>
                         </tr>
                       );
                     }
@@ -266,10 +271,13 @@ export default function AdminIndustries() {
             )}
           </>
         )}
-        <ToastContainer position="bottom-right" autoClose={2000} />
-   
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          isVisible={toast.isVisible}
+          onClose={closeToast}
+        />
       </div>
- 
-     </>
+    </>
   );
 }

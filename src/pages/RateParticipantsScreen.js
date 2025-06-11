@@ -121,7 +121,7 @@ const RateParticipantsScreen = () => {
       });
       const data = await res.json();
 
-      alert(data.message || 'Evaluations saved');
+      // alert(data.message || 'Evaluations saved');
       setModalVisible(false);
     } catch (error) {
       alert('Failed to save evaluations');
