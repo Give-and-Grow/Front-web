@@ -29,6 +29,7 @@ import {
   FaUsers,
   FaUser,
 } from 'react-icons/fa';
+import AdComponent from '../components/AdComponent';
 
 const FrindsPost = () => {
   const [activeTab, setActiveTab] = useState('my');
@@ -92,6 +93,7 @@ const FrindsPost = () => {
   return (
     <>
     <Navbar />
+    <AdComponent />
     <Box sx={{ maxWidth: 600, margin: 'auto', padding: 2 }}>
       {/* Tabs */}
       <Tabs

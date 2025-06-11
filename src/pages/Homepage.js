@@ -81,8 +81,7 @@ const fetchAds = async () => {
               <img src={ad.image_url} alt={ad.store_name} />
               <h3>{ad.store_name}</h3>
               <p>{ad.description}</p>
-              <a href={ad.website_url} target="_blank" rel="noreferrer">{ad.website_url}</a>
-            
+              
             </div>
           ))}
         </div>

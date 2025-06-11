@@ -1,22 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from './Navbar';  // عدل المسار حسب مكان ملف Navbar.js
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import Toast from '../components/Toast'; // Import custom Toast component
 
 const OrganizationRejectAcceptUser = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('orgrejectoraccept');
-  const [filter, setFilter] = useState("evaluate");
+  const [filter, setFilter] = useState('');
   const [opportunities, setOpportunities] = useState([]);
   const [expandedOpportunityId, setExpandedOpportunityId] = useState(null);
   const [participantsMap, setParticipantsMap] = useState({});
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' });
+  const scrollPositionRef = useRef(0); // Track scroll position
 
-  // جلب الفرص
-  const fetchOpportunities = async () => {
+  const showToast = (message, type = 'success') => {
+    setToast({ isVisible: true, message, type });
+  };
+
+  const closeToast = () => {
+    setToast({ ...toast, isVisible: false });
+  };
+
+  const fetchOpportunities = useCallback(async () => {
     try {
       const token = localStorage.getItem('userToken');
       if (!token) {
-        console.warn('No token found, please login first.');
+        showToast('Please login first', 'error');
         setOpportunities([]);
         return;
       }
@@ -27,45 +37,21 @@ const OrganizationRejectAcceptUser = () => {
       if (Array.isArray(data.opportunities)) {
         setOpportunities(data.opportunities);
       } else {
+        showToast('Unexpected response format', 'error');
         setOpportunities([]);
-        console.warn('Unexpected response format:', data);
       }
     } catch (error) {
       console.error('Error fetching opportunities:', error);
+      showToast('Failed to fetch opportunities', 'error');
       setOpportunities([]);
     }
-  };
+  }, []);
 
-  // جلب المشاركين لفرصة معينة بدون فلترة
-  const fetchParticipants = async (opportunityId) => {
+  const fetchParticipantsByStatus = useCallback(async (opportunityId, status) => {
     if (!opportunityId) return;
     setLoading(true);
     try {
       const token = localStorage.getItem('userToken');
-      const res = await fetch(
-        `http://localhost:5000/org/opportunities/${opportunityId}/participants`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const data = await res.json();
-      setParticipantsMap((prev) => ({
-        ...prev,
-        [opportunityId]: Array.isArray(data) ? data : [],
-      }));
-    } catch (error) {
-      console.error('Error fetching participants:', error);
-      setParticipantsMap((prev) => ({ ...prev, [opportunityId]: [] }));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // جلب المشاركين مع فلترة حسب الحالة
-  const fetchParticipantsByStatus = async (opportunityId, status) => {
-    if (!opportunityId) return;
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('userToken');
-      // نرسل الحالة كـ query param 
       const url = status
         ? `http://localhost:5000/org/opportunities/${opportunityId}/participants?status=${status}`
         : `http://localhost:5000/org/opportunities/${opportunityId}/participants`;
@@ -73,21 +59,26 @@ const OrganizationRejectAcceptUser = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      setParticipantsMap((prev) => ({
-        ...prev,
-        [opportunityId]: Array.isArray(data) ? data : [],
-      }));
+      if (res.ok) {
+        setParticipantsMap((prev) => ({
+          ...prev,
+          [opportunityId]: Array.isArray(data) ? data : [],
+        }));
+      } else {
+        showToast(data.message || 'Failed to fetch participants', 'error');
+      }
     } catch (error) {
       console.error('Error fetching participants by status:', error);
+      showToast('Failed to fetch participants', 'error');
       setParticipantsMap((prev) => ({ ...prev, [opportunityId]: [] }));
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // تغيير حالة مشاركة
-  const updateStatus = async (opportunityId, userId, status) => {
+  const updateStatus = useCallback(async (opportunityId, userId, status) => {
     try {
+      scrollPositionRef.current = window.scrollY; // Save scroll position
       const token = localStorage.getItem('userToken');
       const res = await fetch(
         `http://localhost:5000/org/opportunities/${opportunityId}/participants/${userId}/status`,
@@ -101,36 +92,47 @@ const OrganizationRejectAcceptUser = () => {
         }
       );
       const result = await res.json();
-      alert(result.message);
-      // تحديث المشاركين بحسب الفلتر الحالي
-      fetchParticipantsByStatus(opportunityId, filter);
+      if (res.ok) {
+        // Update participant status locally
+        setParticipantsMap((prev) => ({
+          ...prev,
+          [opportunityId]: prev[opportunityId].map((p) =>
+            p.user_id === userId ? { ...p, status } : p
+          ),
+        }));
+        showToast(`Participant ${status} successfully`, 'success');
+      } else {
+        showToast(result.message || `Failed to ${status} participant`, 'error');
+      }
     } catch (error) {
       console.error('Error updating status:', error);
+      showToast('Failed to update participant status', 'error');
+    } finally {
+      // Restore scroll position
+      window.scrollTo(0, scrollPositionRef.current);
     }
-  };
+  }, []);
 
-  // فتح أو إغلاق تفاصيل فرصة
-  const toggleExpand = (opportunityId) => {
+  const toggleExpand = useCallback((opportunityId) => {
     if (expandedOpportunityId === opportunityId) {
       setExpandedOpportunityId(null);
     } else {
       setExpandedOpportunityId(opportunityId);
       fetchParticipantsByStatus(opportunityId, filter);
     }
-  };
+  }, [expandedOpportunityId, filter, fetchParticipantsByStatus]);
 
   useEffect(() => {
     fetchOpportunities();
-  }, []);
+  }, [fetchOpportunities]);
 
-  // عند تغيير الفلتر نحدث المشاركين للفرصة المفتوحة حاليًا
-  const handleFilterChange = (e) => {
+  const handleFilterChange = useCallback((e) => {
     const selectedFilter = e.target.value;
     setFilter(selectedFilter);
     if (expandedOpportunityId) {
       fetchParticipantsByStatus(expandedOpportunityId, selectedFilter);
     }
-  };
+  }, [expandedOpportunityId, fetchParticipantsByStatus]);
 
   const renderParticipant = (item, opportunityId) => {
     const { status, user_id, user_name, user_profile_image } = item;
@@ -220,7 +222,6 @@ const OrganizationRejectAcceptUser = () => {
   return (
     <>
       <Navbar />
-
       <div className="container">
         <div style={styles.container}>
           <div style={styles.content}>
@@ -244,18 +245,28 @@ const OrganizationRejectAcceptUser = () => {
                     cursor: 'pointer',
                   }}
                 >
-                  <option value="">All Statuses</option>
+                  <option value="all">All Statuses</option>
                   <option value="pending">Pending</option>
                   <option value="accepted">Accepted</option>
                   <option value="rejected">Rejected</option>
                 </select>
               </div>
-              <div>
-                {opportunities.map(renderOpportunity)}
+              <div style={{ marginTop: '20px' }}>
+                {opportunities.length === 0 ? (
+                  <p style={{ textAlign: 'center', color: '#666' }}>No opportunities found.</p>
+                ) : (
+                  opportunities.map(renderOpportunity)
+                )}
               </div>
             </div>
           </div>
         </div>
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          isVisible={toast.isVisible}
+          onClose={closeToast}
+        />
       </div>
     </>
   );
@@ -279,6 +290,9 @@ const styles = {
   title: {
     textAlign: 'center',
     color: '#2e7d32',
+    fontSize: 36,
+    fontWeight: 'bold',
+    marginBottom: '10px',
   },
   opportunityCard: {
     border: '1px solid #ddd',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import './AccountsDashboard.css'
+import './AccountsDashboard.css';
 import axios from "axios";
 import {
   MdEmail,
@@ -15,8 +15,9 @@ import {
   MdGroup,
   MdTrendingUp
 } from "react-icons/md";
-import Sidebar from './Sidebar'; // تأكد من المسار حسب مشروعك
+import Sidebar from './Sidebar';
 import Navbar from '../pages/Navbar';
+import Toast from '../components/Toast'; // Adjust path if needed
 
 const roles = ["", "admin", "user", "organization"];
 
@@ -36,8 +37,16 @@ export default function AccountsDashboard() {
   const [isActive, setIsActive] = useState("");
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
-
+  const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' }); // Toast state
   const token = localStorage.getItem("usertoken");
+
+  const showToast = (message, type = 'success') => {
+    setToast({ isVisible: true, message, type });
+  };
+
+  const closeToast = () => {
+    setToast({ ...toast, isVisible: false });
+  };
 
   const fetchAccounts = async () => {
     try {
@@ -51,66 +60,66 @@ export default function AccountsDashboard() {
       setPages(res.data.pages);
     } catch (error) {
       console.error("Failed to fetch accounts", error);
+      showToast("Failed to fetch accounts", "error");
     }
   };
+
   const verifyOrganization = async (orgId) => {
-  try {
-    const response = await axios.put(
-      `http://localhost:5000/admin/organizations/proof/${orgId}/status`,
-      { status: "approved" },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/admin/organizations/proof/${orgId}/status`,
+        { status: "approved" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      showToast("Organization verification status updated successfully", "success");
+      fetchAccounts();
+    } catch (error) {
+      const message = error.response?.data?.message || error.message;
+      if (error.response) {
+        console.error("Verification failed with response:", error.response.data);
+        showToast(`Failed to verify organization: ${message}`, "error");
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        showToast("No response from server. Please check your connection.", "error");
+      } else {
+        console.error("Error during request setup:", error.message);
+        showToast(`Failed to verify organization: ${message}`, "error");
       }
-    );
-    alert("Organization verification status updated successfully");
-    fetchAccounts();
-  } catch (error) {
-    if (error.response) {
-      console.error("Verification failed with response:", error.response.data);
-      alert(`Failed to verify organization: ${error.response.data.message || error.message}`);
-    } else if (error.request) {
-      console.error("No response received:", error.request);
-      alert("No response from server. Please check your connection.");
-    } else {
-      console.error("Error during request setup:", error.message);
-      alert(`Failed to verify organization: ${error.message}`);
     }
-  }
-};
+  };
 
-const verifyUser = async (userId) => {
-  try {
-    const response = await axios.put(
-      `http://localhost:5000/admin/users/identity/${userId}/verification`,
-      { status: "approved" },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+  const verifyUser = async (userId) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/admin/users/identity/${userId}/verification`,
+        { status: "approved" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Response from verifyUser:", response);
+      showToast("Verification status updated successfully", "success");
+      fetchAccounts();
+    } catch (error) {
+      const message = error.response?.data?.message || error.message;
+      if (error.response) {
+        console.error("Verification failed with response:", error.response.data);
+        showToast(`Failed to verify user: ${message}`, "error");
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        showToast("No response from server. Please check your connection.", "error");
+      } else {
+        console.error("Error during request setup:", error.message);
+        showToast(`Failed to verify user: ${message}`, "error");
       }
-    );
-    console.log("Response from verifyUser:", response);
-    alert("Verification status updated successfully");
-    fetchAccounts();
-  } catch (error) {
-    if (error.response) {
-      // الخطأ جاء من الـ server مع رسالة أو كود
-      console.error("Verification failed with response:", error.response.data);
-      alert(`Failed to verify user: ${error.response.data.message || error.message}`);
-    } else if (error.request) {
-      // لم يصل رد من السيرفر
-      console.error("No response received:", error.request);
-      alert("No response from server. Please check your connection.");
-    } else {
-      // خطأ آخر
-      console.error("Error during request setup:", error.message);
-      alert(`Failed to verify user: ${error.message}`);
     }
-  }
-};
-
+  };
 
   const fetchStats = async () => {
     try {
@@ -122,6 +131,7 @@ const verifyUser = async (userId) => {
       setStats(res.data);
     } catch (error) {
       console.error("Failed to fetch stats", error);
+      showToast("Failed to fetch stats", "error");
     }
   };
 
@@ -208,34 +218,32 @@ const verifyUser = async (userId) => {
                 </th>
               </tr>
             </thead>
-           <tbody>
-  {accounts.map((acc) => (
-    <tr key={acc.id}>
-      <td>{acc.email}</td>
-      <td>{acc.username}</td>
-      <td>{acc.role}</td>
-      <td>{acc.is_active ? "Yes" : "No"}</td>
-      <td>
-  {acc.is_email_verified ? (
-    "Yes"
-  ) : acc.role === "user" ? (
-    <button onClick={() => verifyUser(acc.id)} className="verify-btn">
-      Verify User
-    </button>
-  ) : acc.role === "organization" ? (
-    <button onClick={() => verifyOrganization(acc.id)} className="verify-btn">
-      Verify Org
-    </button>
-  ) : (
-    "No"
-  )}
-</td>
-
-      <td>{new Date(acc.created_at).toLocaleDateString()}</td>
-    </tr>
-  ))}
-</tbody>
-
+            <tbody>
+              {accounts.map((acc) => (
+                <tr key={acc.id}>
+                  <td>{acc.email}</td>
+                  <td>{acc.username}</td>
+                  <td>{acc.role}</td>
+                  <td>{acc.is_active ? "Yes" : "No"}</td>
+                  <td>
+                    {acc.is_email_verified ? (
+                      "Yes"
+                    ) : acc.role === "user" ? (
+                      <button onClick={() => verifyUser(acc.id)} className="verify-btn">
+                        Verify User
+                      </button>
+                    ) : acc.role === "organization" ? (
+                      <button onClick={() => verifyOrganization(acc.id)} className="verify-btn">
+                        Verify Org
+                      </button>
+                    ) : (
+                      "No"
+                    )}
+                  </td>
+                  <td>{new Date(acc.created_at).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
 
@@ -258,6 +266,12 @@ const verifyUser = async (userId) => {
           </button>
         </div>
       </div>
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={closeToast}
+      />
     </>
   );
 }

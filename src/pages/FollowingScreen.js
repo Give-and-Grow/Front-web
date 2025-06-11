@@ -7,7 +7,7 @@ import Navbar from '../pages/Navbar';
 import './FollowingScreen.css'; // create this CSS file for styles
 import { FaUserCog, FaUsers, FaUserPlus, FaPlus, FaEdit, FaTrash, FaUserCircle, FaTools} from 'react-icons/fa';
 import { motion, AnimatePresence } from "framer-motion"; 
-
+import AdComponent from '../components/AdComponent';
 const FollowingScreen = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState('');
@@ -291,6 +291,7 @@ const getSkillIcon = (skillName) => {
   return (
     <>
     <Navbar />  
+    <AdComponent />
     <div className="following-screen">
       <div className="profile-header">
 
