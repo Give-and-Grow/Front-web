@@ -4,6 +4,8 @@ import './LoginPage.css';
 import { useNavigate } from 'react-router-dom';
 import { requestFCMToken } from '../firebase';
 import Navbar from '../pages/Navbar';
+import Footer from '../components/Footer'; // مسار الفوتر الجديد حسب مكانه عندك
+
 import Toast from '../components/Toast'; // Import the Toast component
 
 const images = [
@@ -140,6 +142,8 @@ const LoginPage = () => {
         isVisible={toast.isVisible}
         onClose={closeToast}
       />
+                <Footer />
+
     </div>
   );
 };

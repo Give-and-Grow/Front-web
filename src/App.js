@@ -51,6 +51,7 @@ import InviteFrame from './pages/InviteFrame';
 import DiscountCodeManager from './pages/DiscountCodeManager';
 import FirebaseAdsManager from './pages/FirebaseAdsManager';
 import HonorBoard from './components/HonorBoard';
+import AdRequestForm from './components/AdRequestForm';
 
 
 function App() {
@@ -126,6 +127,7 @@ function App() {
         />
         <Route path="/About" element={<About />} />
         <Route path="/Contact" element={<Contact />} />
+        <Route path="/AdRequestForm" element={<AdRequestForm/>}/>
         <Route
           path="/UserEvaluationCard/:userId"
           element={<UserEvaluationCardWrapper />}
