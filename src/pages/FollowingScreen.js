@@ -53,10 +53,28 @@ const FollowingScreen = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts(res.data || []);
+      return res.data.length;
     } catch (err) {
       console.error('Posts error:', err);
+      return 0;
     }
   };
+
+  useEffect(() => {
+    const getTokenAndFetch = async () => {
+      const savedToken = localStorage.getItem('userToken');
+      if (savedToken) {
+        setToken(savedToken);
+        fetchProfile(savedToken);
+        const postsLength = await fetchPosts(savedToken); // الحصول على طول المصفوفة
+        console.log('عدد المنشورات:', postsLength);
+        fetchFollowers(savedToken);
+        fetchFollowing(savedToken);
+      }
+    };
+    getTokenAndFetch();
+  }, []);
+
 
   const fetchFollowers = async (token) => {
     try {
@@ -159,107 +177,7 @@ const FollowingScreen = () => {
   );
 
   const skillIcons = {
-    html: '🌐',
-    css: '🎨',
-    javascript: '⚡',
-    js: '⚡',
-    react: '⚛️',
-    'react native': '📱',
-    'node.js': '🟩',
-    node: '🟩',
-    python: '🐍',
-    java: '☕',
-    sql: '🗄️',
-    mysql: '🗄️',
-    mongodb: '🍃',
-    'data analysis': '📊',
-    'data entry': '⌨️',
-    'data visualization': '📈',
-    excel: '📊',
-    'web development': '🕸️',
-    'graphic design': '🎨',
-    'ui/ux design': '🖌️',
-    design: '🖌️',
-    figma: '🎨',
-    canva: '🖼️',
-    'adobe photoshop': '🖼️',
-    'adobe illustrator': '✒️',
-    django: '🌐',
-    fastapi: '🚀',
-    flutter: '💙',
-    laravel: '🟥',
-    git: '🔧',
-    github: '🐙',
-    'project management': '📋',
-    'event planning': '🎉',
-    'event coordination': '🎯',
-    teamwork: '🤝',
-    leadership: '🧠',
-    communication: '🗣️',
-    'public speaking': '📢',
-    marketing: '📣',
-    'content writing': '✍️',
-    copywriting: '📝',
-    'social media management': '📱',
-    teaching: '👩‍🏫',
-    fundraising: '💰',
-    'presentation skills': '🖥️',
-    mentoring: '👨‍🏫',
-    translation: '🌍',
-    'customer service': '💬',
-    finance: '💵',
-    accounting: '📒',
-    research: '🔍',
-    'problem solving': '🧩',
-    'critical thinking': '🧠',
-    'cloud computing': '☁️',
-    aws: '☁️',
-    azure: '🔷',
-    'ai/ml': '🤖',
-    ai: '🤖',
-    ml: '🤖',
-    'ai/ml basics': '🤖',
-    cybersecurity: '🛡️',
-    networking: '🌐',
-    wordpress: '📝',
-    'mobile app development': '📱',
-    'video editing': '🎬',
-    'photo editing': '🖼️',
-    '3d modeling': '📐',
-    autocad: '📏',
-    robotics: '🤖',
-    'arduino programming': '🛠️',
-    'raspberry pi': '🍓',
-    'science education': '🔬',
-    'mathematics tutoring': '➕',
-    'language tutoring': '🗣️',
-    'sign language': '👋',
-    'first aid': '⛑️',
-    'basic first aid': '⛑️',
-    childcare: '🧸',
-    'elder care': '🧓',
-    'environmental awareness': '🌱',
-    'renewable energy': '⚡',
-    'recycling coordination': '♻️',
-    'volunteer coordination': '🙋',
-    'virtual assistance': '💻',
-    'slack management': '💬',
-    'trello/jira use': '📌',
-    'google workspace': '📂',
-    logistics: '🚚',
-    'supply chain': '🏭',
-    'email marketing': '📧',
-    seo: '🔍',
-    'technical writing': '🧾',
-    'report writing': '🧾',
-    editing: '✂️',
-    proofreading: '🔍',
-    'event hosting': '🎙️',
-    'conflict mediation': '🤝',
-    typing: '⌨️',
-    'wall painting': '🎨',
-    'inventory management': '📦',
-    'transportation assistance': '🚗',
+   
     'food preparation': '🍲',
   };
 
@@ -343,6 +261,7 @@ const FollowingScreen = () => {
                 <strong>{followers?.length || 0}</strong>
               </div>
             </div>
+            
             <div className="follow-stat">
               <div
                 className="clickable-follow"
@@ -355,9 +274,34 @@ const FollowingScreen = () => {
                 <strong>{following?.length || 0}</strong>
               </div>
             </div>
+            <div className="follow-stat">
+              <div
+                className="clickable-follow"
+                onClick={() => {
+                  setModalType('posts'); // تغيير نوع المودال إلى 'posts' إذا كنت تريد عرض المنشورات
+                  setModalVisible(true);
+                }}
+              >
+                <span>Posts</span>
+                <strong>{posts?.length || 0}</strong> {/* استخدام posts?.length بدلاً من followers?.length */}
+              </div>
+            </div>
           </div>
 
           <div className="bio">✍️ {userData?.bio || 'No bio available'}</div>
+          <br></br>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button onClick={() => navigate('/profile')}>
+              <FaUserCog size={20} /> Edit profile
+            </button>
+            <a href={`http://localhost:5000/profile/download_cv/${userData?.account_id}`} download style={{ textDecoration: 'none' }}>
+              <button>
+                <FaUserCog size={20} /> Download CV{userData?.id}
+              </button>
+            </a>
+          </div>
+
         </div>
 
         {/* Tab Navigation */}
