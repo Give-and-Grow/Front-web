@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../pages/Navbar';
+import Footer from '../components/Footer'; // مسار الفوتر الجديد حسب مكانه عندك
+import AdComponent from '../components/AdComponent'; // Adjust path as needed
 
 const About = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -7,6 +9,7 @@ const About = () => {
   return (
     <>
       <Navbar />
+      <AdComponent/>
       <div style={styles.wrapper}>
         <div style={styles.container}>
           <h1 style={styles.title}>About <span style={styles.brand}>Give & Grow</span></h1>
@@ -45,6 +48,8 @@ const About = () => {
           </div>
         </div>
       </div>
+      <Footer />
+
     </>
   );
 };

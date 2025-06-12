@@ -26,7 +26,7 @@ import {
 } from 'react-icons/md';
 import ChatList from '../components/ChatList';
 import ChatBox from '../components/ChatBox';
-import Notification from './Notification'; // Import the new Notification component
+import Notification from './Notification';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -148,7 +148,6 @@ const Navbar = () => {
   const adminLinks = [
     { to: '/Homepage', icon: <FiHome />, label: 'Home' },
     { to: '/AdminDashboard', icon: <FiBriefcase />, label: 'Dashboard' },
-   
     { to: '/reports', icon: <FiFileText />, label: 'Reports' },
     { to: '/profile', icon: <FiSettings />, label: 'Profile' },
   ];
@@ -198,6 +197,7 @@ const Navbar = () => {
       { to: '/Homepage', icon: <FiHome />, label: 'Home' },
       { to: '/About', icon: <FiInfo />, label: 'About' },
       { to: '/Contact', icon: <FiPhone />, label: 'Contact' },
+      { to: '/AdRequestForm', icon: <FiFileText />, label: 'Ad Request' },
       { to: '/LoginPage', icon: <FiUser />, label: 'Login' },
     ];
   } else if (userRole === 'admin') {

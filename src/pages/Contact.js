@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './Contact.css'
+import AdComponent from '../components/AdComponent'; // Adjust path as needed
+import Footer from '../components/Footer'; // مسار الفوتر الجديد حسب مكانه عندك
 import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
 
 const Contact = () => {
@@ -30,9 +32,9 @@ const Contact = () => {
   return (
     <>
       <Navbar />
+      <AdComponent/>
       <div className="contact-page">
-    
-      <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
+      <form onSubmit={handleSubmit} style={{ maxWidth: '700px', margin: '0 auto' }}>
         <p style={{ 
           textAlign: 'center', 
           marginBottom: '20px', 
@@ -89,7 +91,8 @@ const Contact = () => {
         {status && <p style={{ marginTop: '15px', color: '#388e3c', textAlign: 'center' }}>{status}</p>}
       </form>
       </div >
-     
+           <Footer />
+
     </>
   );
 };

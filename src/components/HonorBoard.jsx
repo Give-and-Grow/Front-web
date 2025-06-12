@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../pages/Navbar'; // Adjust path as needed
 import AdComponent from '../components/AdComponent'; // Import the updated AdComponent
+import Footer from '../components/Footer'; // مسار الفوتر الجديد حسب مكانه عندك
+
 import confetti from 'canvas-confetti';
 import './HonorBoard.css';
 
@@ -111,7 +113,7 @@ const HonorBoard = () => {
           </div>
 
           {loading ? (
-            <p className="loading">Loading...</p>
+            <p className="loadin">Loading...</p>
           ) : (
             <div className="volunteer-list">
               {volunteers.length === 0 ? (
@@ -148,6 +150,7 @@ const HonorBoard = () => {
           <AdComponent />
         </div>
       </div>
+      <Footer />
     </>
   );
 };
