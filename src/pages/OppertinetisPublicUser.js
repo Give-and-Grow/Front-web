@@ -152,47 +152,41 @@ export default function OppertinetisPublicUser() {
       alert("Failed to leave the opportunity.");
     }
   };
-  const fetchSummary = async (oppId) => {
-    if (summaries[oppId]) {
-      // التلخيص موجود، نرجعه فوراً
-      return summaries[oppId];
-    }
-  
-    // في الويب بنستخدم localStorage بدل AsyncStorage
-    const token = localStorage.getItem('userToken');
-    if (!token) {
-      alert('Please login first');
-      return;
-    }
-  
-    setSummaryLoading((prev) => ({ ...prev, [oppId]: true }));
-  
-    try {
-      const response = await fetch(`http://localhost:5000/opportunities/summary/${oppId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      const data = await response.json();
-      console.log("Summary data for oppId", oppId, data);
-  
-      if (response.ok && data.summary) {
-        setSummaries((prev) => ({ ...prev, [oppId]: data.summary }));
-        return data.summary;  // ترجع التلخيص اللي جاك من السيرفر
-      } else {
-        alert(data.msg || 'Failed to fetch summary');
-        return null;
-      }
-    } catch (err) {
-      console.error("Error fetching summary:", err);
-      alert('An error occurred while fetching summary');
+ const fetchSummary = async (oppId) => {
+  if (summaries[oppId]) return summaries[oppId];
+
+  const token = localStorage.getItem('userToken');
+  if (!token) {
+    alert('Please login first');
+    return;
+  }
+
+  setSummaryLoading((prev) => ({ ...prev, [oppId]: true }));
+
+  try {
+    const response = await fetch(`http://localhost:5000/opportunities/summary/${oppId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = await response.json();
+    console.log("API response for oppId", oppId, data);
+
+    if (response.ok && data.summary) {
+      // لو data.summary هو كائن، خزنه زي ما هو
+      setSummaries((prev) => ({ ...prev, [oppId]: typeof data.summary === 'string' ? { summary: data.summary } : data.summary }));
+      return typeof data.summary === 'string' ? { summary: data.summary } : data.summary;
+    } else {
+      alert(data.msg || 'Failed to fetch summary');
       return null;
-    } finally {
-      setSummaryLoading((prev) => ({ ...prev, [oppId]: false }));
     }
-  };
-  
+  } catch (err) {
+    console.error("Error fetching summary:", err);
+    alert('An error occurred while fetching summary');
+    return null;
+  } finally {
+    setSummaryLoading((prev) => ({ ...prev, [oppId]: false }));
+  }
+};
   const toggleDetails = (id) => {
     setExpandedOpportunities(prev => ({
       ...prev,
@@ -262,24 +256,33 @@ export default function OppertinetisPublicUser() {
 
       {/* Summary Section */}
       <div style={{ marginTop: 10 }}>
+        {console.log("Summary for opp", opp.id, summaries[String(opp.id)])}
         {summaryLoading[opp.id] ? (
           <div style={{ textAlign: "center" }}>
             <div className="spinner" style={{
-              width: 24, height: 24, border: '4px solid #ccc',
-              borderTop: '4px solid #388e3c', borderRadius: '50%',
-              animation: 'spin 1s linear infinite', margin: 'auto'
+              width: 24,
+              height: 24,
+              border: '4px solid #ccc',
+              borderTop: '4px solid #388e3c',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              margin: 'auto'
             }} />
           </div>
-        ) : summaries[opp.id] ? (
+        ) : summaries[String(opp.id)] ? (
           <div style={{ backgroundColor: '#e8f5e9', padding: 10, borderRadius: 10 }}>
-            <p style={{ color: '#2e7d32', fontWeight: 'bold', margin: 0 }}>📌 Summary:</p>
-            <p style={{ color: '#1b5e20', marginTop: 4 }}>{summaries[opp.id].summary}</p>
+            <p style={{ color: '#2e7d32', fontWeight: 'bold', margin: 0 }}>
+              📌 Summary:
+              {console.log(summaries[String(opp.id)].summary)}
+              </p>
+            <p style={{ color: '#1b5e20', marginTop: 4 }}>{summaries[String(opp.id)].summary || 'No summary text'}</p>
           </div>
         ) : (
           <button
             style={styles.summaryButton}
-            onClick={() => fetchSummary(opp.id)}
+            onClick={() => fetchSummary(String(opp.id))}
           >
+            
             ✨ View Summary
           </button>
         )}
