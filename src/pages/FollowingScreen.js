@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaUserCog, FaUserCircle, FaPlus, FaEdit, FaTrash, FaTools, FaStar, FaTh } from 'react-icons/fa';
+import {
+  FaUserCog,
+  FaUserCircle,
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaTools,
+  FaStar,
+  FaTh,
+} from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-import Navbar from '../pages/Navbar'; // Adjust path as needed
-import AdComponent from '../components/AdComponent'; // Adjust path as needed
-import UserEvaluationCard from './UserEvaluationCard'; // Adjust path as needed
-import './FollowingScreen.css'; // CSS file for styles
+import Navbar from '../pages/Navbar';
+import AdComponent from '../components/AdComponent';
+import UserEvaluationCard from './UserEvaluationCard';
+import FriendSuggestions from '../components/FriendSuggestions';
+import './FollowingScreen.css';
 
 const FollowingScreen = () => {
   const navigate = useNavigate();
@@ -17,8 +27,9 @@ const FollowingScreen = () => {
   const [posts, setPosts] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState('');
-  const [activeTab, setActiveTab] = useState('posts'); // Default tab: Posts
+  const [activeTab, setActiveTab] = useState('posts');
   const [showSkills, setShowSkills] = useState(true);
+  const [followStatus, setFollowStatus] = useState({});
 
   const toggleSkills = () => setShowSkills((prev) => !prev);
 
@@ -60,28 +71,13 @@ const FollowingScreen = () => {
     }
   };
 
-  useEffect(() => {
-    const getTokenAndFetch = async () => {
-      const savedToken = localStorage.getItem('userToken');
-      if (savedToken) {
-        setToken(savedToken);
-        fetchProfile(savedToken);
-        const postsLength = await fetchPosts(savedToken); // الحصول على طول المصفوفة
-        console.log('عدد المنشورات:', postsLength);
-        fetchFollowers(savedToken);
-        fetchFollowing(savedToken);
-      }
-    };
-    getTokenAndFetch();
-  }, []);
-
-
   const fetchFollowers = async (token) => {
     try {
       const res = await axios.get(`http://localhost:5000/follow/followers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setFollowers(res.data);
+      res.data.forEach((user) => checkFollowStatus(user.id, token));
     } catch (err) {
       console.error('Followers error:', err);
     }
@@ -93,8 +89,51 @@ const FollowingScreen = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setFollowing(res.data);
+      res.data.forEach((user) => checkFollowStatus(user.id, token));
     } catch (err) {
       console.error('Following error:', err);
+    }
+  };
+
+  const checkFollowStatus = async (userId, token) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/follow/${userId}/is-following`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const isFollowing = res.data.is_following;
+      setFollowStatus((prev) => ({
+        ...prev,
+        [userId]: isFollowing,
+      }));
+    } catch (err) {
+      console.error(`Error checking follow status for user ${userId}:`, err);
+      setFollowStatus((prev) => ({
+        ...prev,
+        [userId]: false,
+      }));
+    }
+  };
+
+  const handleFollow = async (userId) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:5000/follow/${userId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (res.status === 200) {
+        setFollowStatus((prev) => ({ ...prev, [userId]: true }));
+        setFollowing((prev) => [...prev, { id: userId }]);
+        //alert('Followed successfully');
+      }
+    } catch (err) {
+      console.error('Follow error:', err);
+      alert('Follow failed');
     }
   };
 
@@ -104,10 +143,12 @@ const FollowingScreen = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.status === 200) {
+        setFollowStatus((prev) => ({ ...prev, [userId]: false }));
         setFollowing((prev) => prev.filter((user) => user.id !== userId));
-        alert('Unfollowed successfully');
+        //alert('Unfollowed successfully');
       }
-    } catch {
+    } catch (err) {
+      console.error('Unfollow error:', err);
       alert('Unfollow failed');
     }
   };
@@ -129,13 +170,28 @@ const FollowingScreen = () => {
         {user.profile_picture ? (
           <img src={user.profile_picture} alt="avatar" className="avatar" />
         ) : (
-          <div className="avatar-placeholder">{user.username[0].toUpperCase()}</div>
+          <div className="avatar-placeholder">
+            {user.username[0].toUpperCase()}
+          </div>
         )}
         <span>{user.username}</span>
       </div>
-      <button className="unfollow-btn" onClick={() => handleUnfollow(user.id)}>
-        Unfollow
-      </button>
+      {followStatus[user.id] === undefined ? (
+        <button className="loading-btn" disabled>
+          Loading...
+        </button>
+      ) : followStatus[user.id] ? (
+        <button
+          className="unfollow-btn"
+          onClick={() => handleUnfollow(user.id)}
+        >
+          Unfollow
+        </button>
+      ) : (
+        <button className="follow-btn" onClick={() => handleFollow(user.id)}>
+          Follow
+        </button>
+      )}
     </div>
   );
 
@@ -152,7 +208,9 @@ const FollowingScreen = () => {
       <p>{post.content}</p>
       <div className="tags">
         {post.tags?.map((tag, i) => (
-          <span key={i} className="tag">#{tag}</span>
+          <span key={i} className="tag">
+            #{tag}
+          </span>
         ))}
       </div>
       <small>
@@ -177,7 +235,6 @@ const FollowingScreen = () => {
   );
 
   const skillIcons = {
-   
     'food preparation': '🍲',
   };
 
@@ -186,7 +243,7 @@ const FollowingScreen = () => {
     for (let key in skillIcons) {
       if (lower.includes(key)) return skillIcons[key];
     }
-    return '✨'; // Default icon
+    return '✨';
   };
 
   const tabs = [
@@ -203,14 +260,33 @@ const FollowingScreen = () => {
         <div className="profile-header">
           <div className="profile-info">
             {userData?.profile_picture ? (
-              <img src={userData.profile_picture} className="avatar-big" alt="Profile" />
+              <img
+                src={userData.profile_picture}
+                className="avatar-big"
+                alt="Profile"
+              />
             ) : (
               <FaUserCircle size={80} className="avatar-placeholder-big" />
             )}
-            <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', fontSize: '1.5rem' }}>
+            <h2
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontWeight: '600',
+                fontSize: '1.5rem',
+              }}
+            >
               {userData?.full_name || 'User'}
               {userData?.identity_verification_status === 'approved' && (
-                <span className="verified-status" style={{ display: 'flex', alignItems: 'center', marginLeft: '8px' }}>
+                <span
+                  className="verified-status"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginLeft: '8px',
+                  }}
+                >
                   <svg
                     className="verified-icon"
                     xmlns="http://www.w3.org/2000/svg"
@@ -219,12 +295,22 @@ const FollowingScreen = () => {
                     viewBox="0 0 64 64"
                     fill="none"
                   >
-                    <circle cx="32" cy="32" r="30" stroke="#2e7d32" strokeWidth="4" fill="#2e7d32" filter="url(#fancyShadow)" />
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="30"
+                      stroke="#2e7d32"
+                      strokeWidth="4"
+                      fill="#2e7d32"
+                      filter="url(#fancyShadow)"
+                    />
                     {[...Array(12)].map((_, i) => {
-                      const angle = (i * 30) * (Math.PI / 180);
+                      const angle = i * 30 * (Math.PI / 180);
                       const x = 32 + 28 * Math.cos(angle);
                       const y = 32 + 28 * Math.sin(angle);
-                      return <circle key={i} cx={x} cy={y} r="2" fill="#81c784" />;
+                      return (
+                        <circle key={i} cx={x} cy={y} r="2" fill="#81c784" />
+                      );
                     })}
                     <path
                       d="M20 33 L28 41 L44 25"
@@ -235,15 +321,30 @@ const FollowingScreen = () => {
                       fill="none"
                     />
                     <defs>
-                      <filter id="fancyShadow" x="-10" y="-10" width="84" height="84">
-                        <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#1b5e20" floodOpacity="0.7" />
+                      <filter
+                        id="fancyShadow"
+                        x="-10"
+                        y="-10"
+                        width="84"
+                        height="84"
+                      >
+                        <feDropShadow
+                          dx="0"
+                          dy="0"
+                          stdDeviation="3"
+                          floodColor="#1b5e20"
+                          floodOpacity="0.7"
+                        />
                       </filter>
                     </defs>
                   </svg>
                 </span>
               )}
             </h2>
-            <button onClick={() => navigate('/profile')} className="edit-profile-btn">
+            <button
+              onClick={() => navigate('/profile')}
+              className="edit-profile-btn"
+            >
               <FaUserCog size={20} />
             </button>
           </div>
@@ -261,7 +362,6 @@ const FollowingScreen = () => {
                 <strong>{followers?.length || 0}</strong>
               </div>
             </div>
-            
             <div className="follow-stat">
               <div
                 className="clickable-follow"
@@ -278,39 +378,49 @@ const FollowingScreen = () => {
               <div
                 className="clickable-follow"
                 onClick={() => {
-                  setModalType('posts'); // تغيير نوع المودال إلى 'posts' إذا كنت تريد عرض المنشورات
-                  setModalVisible(true);
+                  setModalType('posts');
                 }}
               >
                 <span>Posts</span>
-                <strong>{posts?.length || 0}</strong> {/* استخدام posts?.length بدلاً من followers?.length */}
+                <strong>{posts?.length || 0}</strong>
               </div>
             </div>
           </div>
 
           <div className="bio">✍️ {userData?.bio || 'No bio available'}</div>
-          <br></br>
+          <br />
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button onClick={() => navigate('/profile')}>
               <FaUserCog size={20} /> Edit profile
             </button>
-            <a href={`http://localhost:5000/profile/download_cv/${userData?.account_id}`} download style={{ textDecoration: 'none' }}>
+            <a
+              href={`http://localhost:5000/profile/download_cv/${userData?.account_id}`}
+              download
+              style={{ textDecoration: 'none' }}
+            >
               <button>
-                <FaUserCog size={20} /> Download CV{userData?.id}
+                <FaUserCog size={20} /> Download CV
               </button>
             </a>
           </div>
-
         </div>
 
-        {/* Tab Navigation */}
+        {/* Add FriendSuggestions component here */}
+        <FriendSuggestions
+          token={token}
+          followStatus={followStatus}
+          setFollowStatus={setFollowStatus}
+          handleFollow={handleFollow}
+          handleUnfollow={handleUnfollow}
+        />
+
         <div className="tabs flex">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               className={`tab-btn flex-1 py-3 text-center text-sm font-semibold ${
-                activeTab === tab.id ? 'font-bold'  : '' // استبدال الحدود بتغيير وزن الخط
+                activeTab === tab.id ? 'font-bold' : ''
               }`}
               onClick={() => setActiveTab(tab.id)}
             >
@@ -322,7 +432,6 @@ const FollowingScreen = () => {
           ))}
         </div>
 
-        {/* Tab Content */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -339,7 +448,9 @@ const FollowingScreen = () => {
                   onClick={toggleSkills}
                 >
                   <FaTools className="text-3xl text-green-400" />
-                  <span className="text-green-400 underline decoration-dotted">Skills</span>
+                  <span className="text-green-400 underline decoration-dotted">
+                    Skills
+                  </span>
                 </h2>
                 {showSkills && (
                   <motion.div
@@ -353,15 +464,22 @@ const FollowingScreen = () => {
                       userData.skills.map((skill, index) => (
                         <motion.div
                           key={index}
-                          whileHover={{ scale: 1.1, boxShadow: '0 8px 20px rgba(0,0,0,0.15)' }}
+                          whileHover={{
+                            scale: 1.1,
+                            boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
+                          }}
                           className="flex items-center gap-2 bg-white border-2 border-pink-300 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-transform duration-200"
                         >
                           <span>{skill.name}</span>
-                          <span className="text-lg">{getSkillIcon(skill.name)}</span>
+                          <span className="text-lg">
+                            {getSkillIcon(skill.name)}
+                          </span>
                         </motion.div>
                       ))
                     ) : (
-                      <span className="text-gray-500 italic">No skills available</span>
+                      <span className="text-gray-500 italic">
+                        No skills available
+                      </span>
                     )}
                   </motion.div>
                 )}
@@ -370,19 +488,26 @@ const FollowingScreen = () => {
 
             {activeTab === 'evaluation' && (
               <section className="evaluation-section">
-                {userData && <UserEvaluationCard userId={userData.account_id} />}
+                {userData && (
+                  <UserEvaluationCard userId={userData.account_id} />
+                )}
               </section>
             )}
 
             {activeTab === 'posts' && (
               <div className="post-list">
-                <button className="add-post-btn mb-6" onClick={() => navigate('/CreatePostWeb')}>
+                <button
+                  className="add-post-btn mb-6"
+                  onClick={() => navigate('/CreatePostWeb')}
+                >
                   <FaPlus size={16} /> Add Post
                 </button>
                 {posts?.length > 0 ? (
                   posts.map(renderPostItem)
                 ) : (
-                  <span className="text-gray-500 italic">No posts available</span>
+                  <span className="text-gray-500 italic">
+                    No posts available
+                  </span>
                 )}
               </div>
             )}
@@ -392,9 +517,21 @@ const FollowingScreen = () => {
         {modalVisible && (
           <div className="modal-overlay" onClick={() => setModalVisible(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <button
+                onClick={() => setModalVisible(false)}
+                className="close-modal"
+              >
+                X
+              </button>
+              <br></br>
               <h3>{modalType === 'followers' ? 'Followers' : 'Following'}</h3>
-              {modalType === 'followers' ? followers.map(renderUserItem) : following.map(renderUserItem)}
-              <button onClick={() => setModalVisible(false)} className="close-modal">
+              {modalType === 'followers'
+                ? followers.map(renderUserItem)
+                : following.map(renderUserItem)}
+              <button
+                onClick={() => setModalVisible(false)}
+                className="close-modal"
+              >
                 Close
               </button>
             </div>
