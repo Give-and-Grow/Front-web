@@ -14,7 +14,37 @@ export default function VolunteerOpportunities() {
   const [participationStatus, setParticipationStatus] = useState({});
   const [expandedOpportunities, setExpandedOpportunities] = useState({});
   const [showMoreDetails, setShowMoreDetails] = useState({});
+ useEffect(() => {
+  const fetchParticipationStatus = async () => {
+  const newStatus = {};
+  const token = localStorage.getItem("userToken");
 
+  for (const opp of opportunities) {
+    try {
+      const res = await fetch(`http://localhost:5000/user-participation/${opp.id}/is_participant`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+      newStatus[opp.id] = data.status || 'not_joined'; // ممكن تكون accepted, pending, rejected, أو null
+    } catch (error) {
+      console.error("Error fetching participation:", error);
+      newStatus[opp.id] = 'error';
+    }
+  }
+
+  setParticipationStatus(newStatus);
+};
+
+
+  if (opportunities.length > 0) {
+    fetchParticipationStatus();
+  }
+}, [opportunities]);
   useEffect(() => {
     async function fetchOpportunities() {
       try {
@@ -349,23 +379,60 @@ export default function VolunteerOpportunities() {
         
         </>
       )}
-  <div style={styles.joinWithdrawContainer} className="joinWithdrawContainer">
-            {participationStatus[opp.id] === "joined" ? (
-              <button
-                style={{ ...styles.joinWithdrawButton, ...styles.leaveButton }}
-                onClick={() => handleLeave(opp.id)}
-              >
-                ✗ Withdraw
-              </button>
-            ) : (
-              <button
-                style={{ ...styles.joinWithdrawButton, ...styles.joinButton }}
-                onClick={() => handleJoin(opp.id)}
-              >
-                ✓ Join
-              </button>
-            )}
-          </div>
+     <div style={styles.joinWithdrawContainer}>
+ 
+
+  {opp.status === 'filled' && (
+    <button disabled style={{ ...styles.btn, ...styles.full }}>Full</button>
+  )}
+
+  {opp.status === 'open' && (
+    <>
+      {participationStatus[opp.id] === 'accepted' && (
+        <button disabled style={{ ...styles.btn, ...styles.accepted }}>open_Accepted</button>
+      )}
+
+      {participationStatus[opp.id] === 'rejected' && (
+        <button disabled style={{ ...styles.btn, ...styles.rejected }}>open_Rejected</button>
+      )}
+
+      {participationStatus[opp.id] === 'pending' && (
+        <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>Withdraw</button>
+      )}
+
+      {!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined' ? (
+        <button onClick={() => handleJoin(opp.id)} style={{ ...styles.btn, ...styles.join }}>Join</button>
+      ) : null}
+    </>
+  )}
+</div>
+{opp.status === 'closed' && (
+  <>
+    {participationStatus[opp.id] === 'accepted' && (
+      <button disabled style={{ ...styles.btn, ...styles.accepted }}>
+        Accepted – Closed
+      </button>
+    )}
+
+    {participationStatus[opp.id] === 'rejected' && (
+      <button disabled style={{ ...styles.btn, ...styles.rejected }}>
+        Rejected – Closed
+      </button>
+    )}
+
+    {participationStatus[opp.id] === 'pending' && (
+      <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>
+        Withdraw – Closed
+      </button>
+    )}
+
+    {!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined' ? (
+      <button disabled style={{ ...styles.btn, ...styles.closed }}>
+        Closed
+      </button>
+    ) : null}
+  </>
+)}
       {/* CSS for spinner */}
       <style>{`
         @keyframes spin {

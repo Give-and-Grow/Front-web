@@ -54,7 +54,7 @@ import AdminAdRequests from './pages/AdminAdRequests';
 import HonorBoard from './components/HonorBoard';
 import AdRequestForm from './components/AdRequestForm';
 
-
+import ParticipationButton from './pages/ParticipationButton';
 function App() {
   return (
     <Router>
@@ -150,6 +150,7 @@ function App() {
         <Route path="/InviteFrame" element={<InviteFrame />} />
         <Route path="/DiscountCodeManager" element={<DiscountCodeManager />} />
         <Route path="/FirebaseAdsManager" element={<FirebaseAdsManager />} />
+          <Route path="/ParticipationButton" element={<ParticipationButton />} />
         {/* Add any additional routes as needed */}
       </Routes>
     </Router>

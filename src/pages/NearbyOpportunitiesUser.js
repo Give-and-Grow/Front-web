@@ -15,34 +15,40 @@ export default function NearbyOpportunitiesUser() {
   const [expandedOpportunities, setExpandedOpportunities] = useState({});
   const [showMoreDetails, setShowMoreDetails] = useState({});
 
-  useEffect(() => {
-    async function fetchOpportunities() {
-      try {
-        const token = localStorage.getItem("userToken");
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+ useEffect(() => {
+  async function fetchOpportunities() {
+    try {
+      const token = localStorage.getItem("userToken");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-        const response = await fetch(`http://localhost:5000/opportunities/nearby_opportunities`, {
-          headers,
+      const response = await fetch(`http://localhost:5000/opportunities/nearby_opportunities`, {
+        headers,
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.opportunities) {
+        // ✅ ترتيب الفرص حسب الحالة: open → pending → closed → full
+        const sortedOpportunities = [...data.opportunities].sort((a, b) => {
+          const priority = { open: 0, pending: 1, closed: 2, full: 3 };
+          return (priority[a.status] ?? 99) - (priority[b.status] ?? 99);
         });
 
-        const data = await response.json();
-
-        if (response.ok && data.opportunities) {
-          setOpportunities(data.opportunities);
-          setFilteredOpportunities(data.opportunities);
-        } else {
-          setError(data.msg || "No opportunities found.");
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Failed to fetch opportunities.");
-      } finally {
-        setLoading(false);
+        setOpportunities(sortedOpportunities);
+        setFilteredOpportunities(sortedOpportunities);
+      } else {
+        setError(data.msg || "No opportunities found.");
       }
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setError("Failed to fetch opportunities.");
+    } finally {
+      setLoading(false);
     }
+  }
 
-    fetchOpportunities();
-  }, []);
+  fetchOpportunities();
+}, []);
 
   const applyFilters = (filters) => {
     const isEmpty = Object.values(filters).every(value => !value || value === "");
@@ -130,7 +136,37 @@ export default function NearbyOpportunitiesUser() {
       alert("Failed to join the opportunity.");
     }
   };
-  
+ useEffect(() => {
+  const fetchParticipationStatus = async () => {
+  const newStatus = {};
+  const token = localStorage.getItem("userToken");
+
+  for (const opp of opportunities) {
+    try {
+      const res = await fetch(`http://localhost:5000/user-participation/${opp.id}/is_participant`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+      newStatus[opp.id] = data.status || 'not_joined'; // ممكن تكون accepted, pending, rejected, أو null
+    } catch (error) {
+      console.error("Error fetching participation:", error);
+      newStatus[opp.id] = 'error';
+    }
+  }
+
+  setParticipationStatus(newStatus);
+};
+
+
+  if (opportunities.length > 0) {
+    fetchParticipationStatus();
+  }
+}, [opportunities]);
   const handleLeave = async (opportunityId) => {
     try {
       const token = localStorage.getItem("userToken");
@@ -305,82 +341,120 @@ export default function NearbyOpportunitiesUser() {
         {showDetails ? "Hide Details ▲" : "Show Details ▼"}
       </button>
 
-      {/* Additional Details if showDetails is true */}
-      {showDetails && (
-        <>
-          <div style={styles.volunteerDaysContainer}>
-            <span style={styles.volunteerDaysLabel}>📆 Volunteer Days:</span>
-            <span style={styles.volunteerDaysText}>{opp.volunteer_days.join(", ")}</span>
-          </div>
+     {/* Additional Details if showDetails is true */}
+                        {showDetails && (
+                          <>
+                            {opp.opportunity_type !== "job" && (
+                              <div style={styles.volunteerDaysContainer}>
+                                <span style={styles.volunteerDaysLabel}>📆 Volunteer Days:</span>
+                                <span style={styles.volunteerDaysText}>{opp.volunteer_days.join(", ")}</span>
+                              </div>
+                            )}
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", margin: "12px 0" }}>
-          <div style={{ display: 'block', marginBottom: '10px' }}>
-  <div style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
-    📍 Location:
-      <button onClick={() => openLocationInMaps(opp.location)} style={styles.badge}>
-        View location
-      </button>
-  </div>
-  <div>
-    <span style={styles.badge}>{opp.location}</span>
-  </div>
-</div>
+                            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", margin: "12px 0" }}>
+                              <div style={{ display: 'block', marginBottom: '10px' }}>
+                                <div style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
+                                  📍 Location:
+                                  <button onClick={() => openLocationInMaps(opp.location)} style={styles.badge}>
+                                    View location
+                                  </button>
+                                </div>
+                                <div>
+                                  <span style={styles.badge}>{opp.location}</span>
+                                </div>
+                              </div>
 
-<div style={{ display: 'block', marginBottom: '10px' }}>
-  <div style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
-    🎯 Opportunity Type:
-  </div>
-  <div>
-    <span style={styles.badge}>{opp.opportunity_type}</span>
-  </div>
-</div>
+                              <div style={{ display: 'block', marginBottom: '10px' }}>
+                                <div style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
+                                  🎯 Opportunity Type:
+                                </div>
+                                <div>
+                                  <span style={styles.badge}>{opp.opportunity_type}</span>
+                                </div>
+                              </div>
 
-            <div style={styles.skillsContainer}>
-  <p style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
-    🛠️ Skills Required:
-  </p>
-  {opp.skills.map((skill) => (
-    <span key={skill.id} style={styles.badge}>
-      💡 {skill.name}
-    </span>
-  ))}
-</div>
+                              <div style={styles.skillsContainer}>
+                                <p style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
+                                  🛠️ Skills Required:
+                                </p>
+                                {opp.skills.map((skill) => (
+                                  <span key={skill.id} style={styles.badge}>
+                                    💡 {skill.name}
+                                  </span>
+                                ))}
+                              </div>
 
-<div style={{ marginTop: '8px' }}>
-  <p style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
-    📌 Status:
-  </p>
-  <span style={styles.badge}>
-    {opp.status.value === "open" ? "🔓 Open" : "🔒 Closed"}
-  </span>
-</div>
+                              <div style={{ marginTop: '8px' }}>
+                                <p style={{ fontWeight: 'bold', color: '#388e3c', marginBottom: '4px' }}>
+                                  📌 Status:
+                                </p>
+                                <span style={styles.badge}>
+                                  {opp.status?.toLowerCase() === "closed" ? "🔒 closed" : "🔓 open"}
+                                </span>
+                              </div>
+                            </div>
 
-          </div>
+                            <p><strong>📅 Start Date:</strong> {opp.start_date}</p>
+                            <p><strong>📅 End Date:</strong> {opp.end_date}</p>
+                            <p><strong>✉️ Contact:</strong> {opp.contact_email}</p>
+                          </>
+                        )}
+      <div style={styles.joinWithdrawContainer}>
+ 
 
-          <p><strong>📅 Start Date:</strong> {opp.start_date}</p>
-          <p><strong>📅 End Date:</strong> {opp.end_date}</p>
-          <p><strong>✉️ Contact:</strong> {opp.contact_email}</p>
+  {opp.status === 'filled' && (
+    <button disabled style={{ ...styles.btn, ...styles.full }}>Full</button>
+  )}
 
-        
-        </>
+  {opp.status === 'open' && (
+    <>
+      {participationStatus[opp.id] === 'accepted' && (
+        <button disabled style={{ ...styles.btn, ...styles.accepted }}>open_Accepted</button>
       )}
-  <div style={styles.joinWithdrawContainer} className="joinWithdrawContainer">
-            {participationStatus[opp.id] === "joined" ? (
-              <button
-                style={{ ...styles.joinWithdrawButton, ...styles.leaveButton }}
-                onClick={() => handleLeave(opp.id)}
-              >
-                ✗ Withdraw
-              </button>
-            ) : (
-              <button
-                style={{ ...styles.joinWithdrawButton, ...styles.joinButton }}
-                onClick={() => handleJoin(opp.id)}
-              >
-                ✓ Join
-              </button>
-            )}
-          </div>
+
+      {participationStatus[opp.id] === 'rejected' && (
+        <button disabled style={{ ...styles.btn, ...styles.rejected }}>open_Rejected</button>
+      )}
+
+      {participationStatus[opp.id] === 'pending' && (
+        <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>Withdraw</button>
+      )}
+
+      {!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined' ? (
+        <button onClick={() => handleJoin(opp.id)} style={{ ...styles.btn, ...styles.join }}>Join</button>
+      ) : null}
+    </>
+  )}
+</div>
+{opp.status === 'closed' && (
+  <>
+    {participationStatus[opp.id] === 'accepted' && (
+      <button disabled style={{ ...styles.btn, ...styles.accepted }}>
+        Accepted – Closed
+      </button>
+    )}
+
+    {participationStatus[opp.id] === 'rejected' && (
+      <button disabled style={{ ...styles.btn, ...styles.rejected }}>
+        Rejected – Closed
+      </button>
+    )}
+
+    {participationStatus[opp.id] === 'pending' && (
+      <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>
+        Withdraw – Closed
+      </button>
+    )}
+
+    {!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined' ? (
+      <button disabled style={{ ...styles.btn, ...styles.closed }}>
+        Closed
+      </button>
+    ) : null}
+  </>
+)}
+
+
       {/* CSS for spinner */}
       <style>{`
         @keyframes spin {
@@ -406,6 +480,48 @@ export default function NearbyOpportunitiesUser() {
 }
 
 const styles = {
+   closed: {
+    backgroundColor: "#9e9e9e",
+    color: "#fff",
+    cursor: "not-allowed",
+    opacity: 0.7,
+  },
+  full: {
+    backgroundColor: "#795548",
+    color: "#fff",
+    cursor: "not-allowed",
+    opacity: 0.7,
+  },
+  btn: {
+    padding: "10px 20px",
+    fontSize: 16,
+    border: "none",
+    borderRadius: 8,
+    cursor: "pointer",
+    marginRight: 10,
+    marginTop: 10,
+    transition: "0.3s",
+  },
+  join: {
+    backgroundColor: "#4caf50",
+    color: "#fff",
+  },
+  withdraw: {
+    backgroundColor: "#ff9800",
+    color: "#fff",
+  },
+  accepted: {
+    backgroundColor: "#2196f3",
+    color: "#fff",
+    cursor: "not-allowed",
+    opacity: 0.7,
+  },
+  rejected: {
+    backgroundColor: "#f44336",
+    color: "#fff",
+    cursor: "not-allowed",
+    opacity: 0.7,
+  },
   container: {
     maxWidth: 1200,
     margin: "auto",
