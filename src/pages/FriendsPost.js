@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
+import Navbar from '../pages/Navbar';
 import {
   Card,
   CardHeader,
@@ -15,8 +15,7 @@ import {
   Box,
   CircularProgress,
 } from '@mui/material';
-
-// استيراد الأيقونات من react-icons (فايرفوكس مثال على FontAwesome)
+import FriendSuggestions from '../components/FriendSuggestions';
 import {
   FaHeart,
   FaRegHeart,
@@ -37,7 +36,7 @@ const FrindsPost = () => {
   const [friendsPosts, setFriendsPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState('');
- 
+  const [followStatus, setFollowStatus] = useState({}); // New state for follow status
 
   useEffect(() => {
     const getTokenAndFetch = async () => {
@@ -45,12 +44,11 @@ const FrindsPost = () => {
       if (savedToken) {
         setToken(savedToken);
         await fetchMyPosts(savedToken);
-        await fetchFriendsPosts(savedToken);  // <-- أضف هذا السطر
+        await fetchFriendsPosts(savedToken);
       }
     };
     getTokenAndFetch();
   }, []);
-
 
   const fetchMyPosts = async (authToken) => {
     const usedToken = authToken || token;
@@ -64,7 +62,7 @@ const FrindsPost = () => {
       console.error('Posts error:', err);
     }
   };
-  
+
   const fetchFriendsPosts = async (authToken) => {
     const usedToken = authToken || token;
     if (!usedToken) return;
@@ -77,51 +75,94 @@ const FrindsPost = () => {
       console.error('Error fetching friends posts:', err);
     }
   };
-  
-  // في onRefresh استخدم التوكن من الـ state
+
   const onRefresh = () => {
     if (!token) return;
     setLoading(true);
     Promise.all([fetchMyPosts(token), fetchFriendsPosts(token)]).finally(() => setLoading(false));
   };
+
   useEffect(() => {
     onRefresh();
   }, []);
+
+  const handleFollow = async (userId) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:5000/follow/${userId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (res.status === 200) {
+        setFollowStatus((prev) => ({ ...prev, [userId]: true }));
+        // alert('Followed successfully');
+      }
+    } catch (err) {
+      console.error('Follow error:', err);
+      alert('Follow failed');
+    }
+  };
+
+  const handleUnfollow = async (userId) => {
+    try {
+      const res = await axios.delete(`http://localhost:5000/follow/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.status === 200) {
+        setFollowStatus((prev) => ({ ...prev, [userId]: false }));
+        // alert('Unfollowed successfully');
+      }
+    } catch (err) {
+      console.error('Unfollow error:', err);
+      alert('Unfollow failed');
+    }
+  };
 
   const displayedPosts = activeTab === 'my' ? myPosts : friendsPosts;
 
   return (
     <>
-    <Navbar />
-    <AdComponent />
-    <Box sx={{ maxWidth: 600, margin: 'auto', padding: 2 }}>
-      {/* Tabs */}
-      <Tabs
-        value={activeTab}
-        onChange={(e, val) => setActiveTab(val)}
-        textColor="success"
-        indicatorColor="success"
-        centered
-        sx={{ marginBottom: 2 }}
-      >
-        <Tab icon={<FaUser size={20} />} label="My Posts" value="my" />
-        <Tab icon={<FaUsers size={20} />} label="Friends' Posts" value="friends" />
-        <IconButton onClick={onRefresh} color="success" aria-label="refresh posts">
-          <FaSyncAlt />
-        </IconButton>
-      </Tabs>
+      <Navbar />
+      <AdComponent />
+      <Box sx={{ maxWidth: 600, margin: 'auto', padding: 2 }}>
+        {/* Tabs */}
+        <Tabs
+          value={activeTab}
+          onChange={(e, val) => setActiveTab(val)}
+          textColor="success"
+          indicatorColor="success"
+          centered
+          sx={{ marginBottom: 2 }}
+        >
+          <Tab icon={<FaUser size={20} />} label="My Posts" value="my" />
+          <Tab icon={<FaUsers size={20} />} label="Friends' Posts" value="friends" />
+          <IconButton onClick={onRefresh} color="success" aria-label="refresh posts">
+            <FaSyncAlt />
+          </IconButton>
+        </Tabs>
 
-      {loading && <CircularProgress sx={{ display: 'block', margin: '20px auto' }} />}
+        {/* FriendSuggestions Component */}
+        <FriendSuggestions
+          token={token}
+          followStatus={followStatus}
+          setFollowStatus={setFollowStatus}
+          handleFollow={handleFollow}
+          handleUnfollow={handleUnfollow}
+        />
 
-      {!loading && displayedPosts.length === 0 && (
-        <Typography align="center" color="text.secondary" sx={{ mt: 4 }}>
-          No posts found
-        </Typography>
-      )}
+        {loading && <CircularProgress sx={{ display: 'block', margin: '20px auto' }} />}
 
-      {!loading &&
-        displayedPosts.map((item) => <PostCard key={item.post_id || item.id} item={item} />)}
-    </Box>
+        {!loading && displayedPosts.length === 0 && (
+          <Typography align="center" color="text.secondary" sx={{ mt: 4 }}>
+            No posts found
+          </Typography>
+        )}
+
+        {!loading &&
+          displayedPosts.map((item) => <PostCard key={item.post_id || item.id} item={item} />)}
+      </Box>
     </>
   );
 };
@@ -139,28 +180,26 @@ function PostCard({ item }) {
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      });
-      
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
   };
+
   const fetchComments = async () => {
     if (!token) return;
     try {
       const res = await axios.get(`http://localhost:5000/posts/${item.post_id}/comments`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('Comments fetched:', res.data);  // <---- هنا
       setComments(res.data);
     } catch (err) {
       console.error('Error fetching comments:', err);
     }
   };
-  
 
   const toggleComments = () => {
     if (!showComments) fetchComments();
@@ -214,7 +253,6 @@ function PostCard({ item }) {
   };
 
   return (
-   
     <Card sx={{ mb: 2 }} elevation={3}>
       <CardHeader
         avatar={
@@ -248,48 +286,45 @@ function PostCard({ item }) {
         }
       />
 
-     {item.content && (
-  <CardContent>
-    <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-      {item.content}
-    </Typography>
+      {item.content && (
+        <CardContent>
+          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+            {item.content}
+          </Typography>
 
-  {item.images && item.images.length > 0 && (
-  <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 2,
-      mb: 2,
-      alignItems: 'center',  // لتوسيط محتوى العمود
-    }}
-  >
-    {item.images.map((imgUrl, index) => (
-      <Box
-        key={index}
-        sx={{
-          maxHeight: 300,
-          overflow: 'hidden',
-          borderRadius: 2,
-          boxShadow: 1,
-          bgcolor: '#f5f5f5',
-          width: '80%',  // اضفنا عرض لصندوق الصورة أيضاً
-        }}
-      >
-        <img
-          src={imgUrl}
-          alt={`Post Image ${index + 1}`}
-          style={{ width: '100%', objectFit: 'cover', display: 'block' }}
-        />
-      </Box>
-    ))}
-  </Box>
-)}
-
-
-  </CardContent>
-)}
-
+          {item.images && item.images.length > 0 && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                mb: 2,
+                alignItems: 'center',
+              }}
+            >
+              {item.images.map((imgUrl, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    maxHeight: 300,
+                    overflow: 'hidden',
+                    borderRadius: 2,
+                    boxShadow: 1,
+                    bgcolor: '#f5f5f5',
+                    width: '80%',
+                  }}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={`Post Image ${index + 1}`}
+                    style={{ width: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          )}
+        </CardContent>
+      )}
 
       <Box sx={{ display: 'flex', alignItems: 'center', padding: 1, gap: 2 }}>
         <IconButton onClick={() => setLiked(!liked)} color={liked ? 'error' : 'default'}>
@@ -411,7 +446,6 @@ function PostCard({ item }) {
         </Box>
       )}
     </Card>
-   
   );
 }
 
