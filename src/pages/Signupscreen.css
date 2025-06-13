@@ -1,187 +1,79 @@
-/* General Styles */
-.container {
- /* max-width: 550px;
+.signup-container {
+  max-width: 600px;
   margin: auto;
-  height: 50%;
-  padding: 40px;
-  background: #f9f9f9;
-  text-align: center;
-  border-radius: 12px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;*/
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #e8f5e9;
-  padding-top: 30px;  /* تم تقليل المسافة العليا */
-  min-height: 150vh;
+  padding: 20px;
 }
 
-.headerImage {
-  width: 120px;
-  height: 120px;
-  margin-bottom: 10px;
-  transition: transform 0.3s ease;
-}
-
-.headerImage:hover {
-  transform: scale(1.05);
-}
-
-.title {
-  font-size: 26px;
-  font-weight: bold;
-  color: #4caf50;
-  margin-bottom: 30px;
-  font-family: 'Arial', sans-serif;
-  transition: color 0.3s ease;
-}
-
-.title:hover {
-  color: #388e3c;
-}
-
-.input {
+.signup-input {
   width: 100%;
-  max-width: 500px;
-  height: 12px;
-  padding: 15px;
-  font-size: 16px;
-  margin-bottom: 20px;
-  border: 2px solid #66bb6a;
-  border-radius: 30px;
-  background: #fff;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  padding: 10px;
+  margin: 10px 0;
 }
 
-.input:focus {
-  border-color: #388e3c; /* تغيير اللون عند التركيز */
-  box-shadow: 0px 4px 10px rgba(56, 142, 60, 0.3); /* إضافة ظل عند التركيز */
-  transform: scale(1.05); /* زيادة حجم الحقل قليلاً */
-  outline: none; /* إزالة الإطار الافتراضي */
-}
-
-
-.button {
-  width: 100%;
-  max-width: 500px;
-  padding: 15px;
-  background: #388e3c;
+.signup-button {
+  padding: 12px;
+  background-color: #28a745;
   color: white;
-  font-weight: bold;
   border: none;
-  border-radius: 30px;
+  width: 100%;
   cursor: pointer;
-  margin-top: 20px;
-  transition: all 0.3s ease;
+  margin-top: 10px;
 }
 
-.button:hover {
-  background: #66bb6a;
-  transform: scale(1.05);
+.signup-title {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-.button:active {
-  background: #2c6b2f;
-  transform: scale(0.98);
+.signup-header-image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
 }
 
-.progressContainer {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 40px;
-}
-
-.progressStep {
-  width: 40px;
-  height: 8px;
-  background: #c8e6c9;
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-.activeStep {
-  background: #388e3c;
-}
-
-.genderContainer {
- 
+.signup-progress-container {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin: 20px 0;
 }
 
-.genderButton {
+.signup-progress-step {
   flex: 1;
-  margin: 0 8px;
-  background: #c8e6c9;
-  padding: 12px;
-  border-radius: 30px;
+  height: 5px;
+  background-color: #ccc;
+  margin: 0 5px;
+}
+
+.signup-active-step {
+  background-color: #28a745;
+}
+
+.signup-gender-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.signup-gender-button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 10px;
+  background-color: #548560;
   border: none;
   cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s ease;
 }
 
-.selectedGender {
-  background: #388e3c;
+.signup-selected-gender {
+  background-color: #28a745;
   color: white;
 }
 
-.welcomeTitle {
-  font-size: 28px;
-  font-weight: bold;
-  color: #388E3C;
-  margin-bottom: 15px;
-}
-
-.welcomeSubtitle {
-  font-size: 18px;
-  color: #4CAF50;
-  margin-bottom: 25px;
-}
-
-.resendLink {
-  color: #388E3C;
+.signup-resend-link {
   text-decoration: underline;
+  cursor: pointer;
+  color: #007bff;
+  text-align: center;
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 10px;
-  }
-
-  .headerImage {
-    width: 50px;
-    height: 50px;
-  }
-
-  .title {
-    font-size: 22px;
-    margin-bottom: 10px;
-  }
-
-  .input,
-  .button {
-    max-width: 100%;
-  }
-
-  .progressStep {
-    width: 35px;
-    height: 6px;
-  }
-
-  .genderButton {
-    font-size: 14px;
-  }
-
-  .welcomeTitle {
-    font-size: 24px;
-  }
-
-  .welcomeSubtitle {
-    font-size: 16px;
-  }
+.signup-resend-form {
+  margin-top: 10px;
 }

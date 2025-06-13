@@ -160,7 +160,7 @@ const ChatBox = ({ opportunityId, isLocked, userRole, onClose }) => {
   return (
     <div className="chat-box">
       <div className="chat-box-header">
-        <h3>Chat for Opportunity {opportunityId}</h3>
+        <h3>Chat</h3>
         <button className="close-button" onClick={onClose}>X</button>
       </div>
       <div className="chat-messages">
