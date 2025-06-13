@@ -11,7 +11,7 @@ body {
   padding: 0;
 }
 
-.create-job-container {
+.create-volunteer-container {
   background: #ffffff;
   padding: 30px;
   max-width: 700px;
@@ -20,19 +20,14 @@ body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
 }
 
-.create-job-input-description {
-  color: black;
-  text-align: left;
-}
-
-.create-job-title {
+.create-volunteer-title {
   text-align: center;
   color: #2e7d32;
   margin-bottom: 30px;
   font-weight: 600;
 }
 
-.create-job-input {
+.create-volunteer-input {
   width: 100%;
   padding: 14px 16px;
   margin-bottom: 15px;
@@ -43,18 +38,29 @@ body {
   font-size: 15px;
 }
 
-.create-job-input:focus {
+.create-volunteer-input:focus {
   outline: none;
   border-color: #66bb6a;
 }
 
-.create-job-description {
+.create-volunteer-description {
   height: 120px;
   resize: none;
   overflow-y: auto;
 }
 
-.create-job-button {
+.create-volunteer-description::placeholder {
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.2;
+  color: #666;
+}
+
+.create-volunteer-description {
+  padding-top: 12px;
+}
+
+.create-volunteer-button {
   background: linear-gradient(to right, #66bb6a, #43a047);
   color: white;
   padding: 12px 24px;
@@ -67,18 +73,18 @@ body {
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.create-job-button:hover {
+.create-volunteer-button:hover {
   background: linear-gradient(to right, #5fa962, #388e3c);
   transform: scale(1.03);
 }
 
-.create-job-steps {
+.create-volunteer-steps {
   display: flex;
   justify-content: center;
   margin: 25px 0 30px;
 }
 
-.create-job-step-circle {
+.create-volunteer-step-circle {
   width: 35px;
   height: 35px;
   background-color: #e0e0e0;
@@ -93,73 +99,69 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.create-job-step-circle-active {
+.create-volunteer-step-circle-active {
   background-color: #66bb6a;
   color: white;
   transform: scale(1.1);
   box-shadow: 0 4px 10px rgba(102, 187, 106, 0.3);
 }
 
-.create-job-skills-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.create-job-skill-btn {
-  background-color: #e8f5e9;
-  color: #388e3c;
-  border: 2px solid #a5d6a7;
-  padding: 8px 16px;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.create-job-skill-btn:hover {
-  background-color: #c8e6c9;
-}
-
-.create-job-skill-btn-selected {
-  background-color: #66bb6a;
-  color: white;
-  border-color: #4caf50;
-}
-
-.create-job-buttons-row {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.create-job-description::placeholder {
-  text-align: left;
-  vertical-align: top;
-  line-height: 1.2;
-  color: #666;
-}
-
-.create-job-description {
-  padding-top: 12px;
-}
-
-.create-job-label {
+.create-volunteer-label {
   font-size: 16px;
   margin-bottom: 5px;
   color: #2e7d32;
   font-weight: 600;
 }
 
-.create-job-select {
+.create-volunteer-buttons-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.create-volunteer-horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.create-volunteer-skill-button {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: #2c3e50;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.create-volunteer-skill-button-active {
+  background-color: #66bb6a;
+}
+
+.create-volunteer-skill-button-inactive {
+  background-color: #a5d6a7;
+}
+
+.create-volunteer-days-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.create-volunteer-select {
   width: 80%;
   max-width: 500px;
   margin: 8px auto;
 }
 
-.create-job-select .create-job-select-control {
+.create-volunteer-select .create-volunteer-select-control {
   border: 2px solid #66bb6a;
   border-radius: 25px;
   padding: 5px;
@@ -167,20 +169,25 @@ body {
   background-color: #fff;
 }
 
-.create-job-select .create-job-select-placeholder {
+.create-volunteer-select .create-volunteer-select-placeholder {
   color: #777;
 }
 
-.create-job-select .create-job-select-multi-value {
+.create-volunteer-select .create-volunteer-select-multi-value {
   background-color: #a5d6a7;
   color: white;
   border-radius: 20px;
 }
 
-.create-job-select .create-job-select-multi-value-label {
+.create-volunteer-select .create-volunteer-select-multi-value-label {
   color: white;
 }
 
-.create-job-select .create-job-select-multi-value-remove {
+.create-volunteer-select .create-volunteer-select-multi-value-remove {
   color: white;
+}
+
+.create-volunteer-image-preview {
+  max-width: 100%;
+  margin-bottom: 20px;
 }

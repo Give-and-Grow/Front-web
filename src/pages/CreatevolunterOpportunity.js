@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Select from 'react-select'; 
-import DatePicker, { registerLocale } from 'react-datepicker';
-import enUS from 'date-fns/locale/en-US';  // استيراد اللغة الإنجليزية
-import Navbar from '../pages/Navbar';  // عدل المسار حسب مكان ملف Navbar.js
+import Select from 'react-select';
+import Navbar from '../pages/Navbar';
 import InviteFrame from '../pages/InviteFrame';
+import './CreateVolunteerOpportunity.css';
 
-// تسجل اللغة الانجليزية مع المكتبة
-registerLocale('en-US', enUS);
 const timeOptions = [
   '08:00', '09:00', '10:00', '11:00', '12:00',
   '13:00', '14:00', '15:00', '16:00', '17:00',
@@ -25,9 +22,9 @@ const dayOptions = [
 ];
 
 const CreateVolunteerOpportunity = () => {
-   const [uploading, setUploading] = useState(false); // حالة لعرض حالة الرفع
+  const [uploading, setUploading] = useState(false);
   const [step, setStep] = useState(1);
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
@@ -43,13 +40,12 @@ const navigate = useNavigate();
   const [volunteerDays, setVolunteerDays] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
-const [showInviteFrame, setShowInviteFrame] = useState(false);
-const [createdOpportunityId, setCreatedOpportunityId] = useState(null);
+  const [showInviteFrame, setShowInviteFrame] = useState(false);
+  const [createdOpportunityId, setCreatedOpportunityId] = useState(null);
 
   useEffect(() => {
     axios.get(`http://localhost:5000/skills/`)
       .then(res => {
-        // تحويل السكيلز لصيغة react-select
         const skillsOptions = res.data.map(skill => ({
           value: skill.id,
           label: skill.name,
@@ -58,10 +54,10 @@ const [createdOpportunityId, setCreatedOpportunityId] = useState(null);
       })
       .catch(err => alert('Failed to fetch skills'));
   }, []);
-const handleSkillsChange = (selectedOptions) => {
+
+  const handleSkillsChange = (selectedOptions) => {
     setSelectedSkills(selectedOptions || []);
   };
-
 
   const toggleDay = (dayValue) => {
     if (volunteerDays.includes(dayValue)) {
@@ -71,88 +67,63 @@ const handleSkillsChange = (selectedOptions) => {
     }
   };
 
-  const toggleSkill = (skillId) => {
-    if (selectedSkills.includes(skillId)) {
-      setSelectedSkills(selectedSkills.filter(id => id !== skillId));
-    } else {
-      setSelectedSkills([...selectedSkills, skillId]);
-    }
-  };
-const handleSubmit = async () => {
-  const token = localStorage.getItem('userToken');
+  const handleSubmit = async () => {
+    const token = localStorage.getItem('userToken');
 
-  const formData = {
-    title,
-    description,
-    location,
-    start_date: startDate.trim(),
-    end_date: endDate.trim(),
-    status: 'open',
-    image_url: imageUrl,
-    application_link: applicationLink,
-    contact_email: contactEmail.trim(),
-    opportunity_type: 'volunteer',
-    skills: selectedSkills.map(s => s.value),
-    max_participants: parseInt(maxParticipants),
-    base_points: parseInt(basePoints),
-    start_time: startTime,
-    end_time: endTime,
-    volunteer_days: volunteerDays,
-  };
-
-  try {
-    const response = await axios.post(`http://localhost:5000/opportunities/create`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    });
-
-    const newOpportunityId = response.data.opportunity_id;
-    alert('Opportunity created successfully!');
+    const formData = {
+      title,
+      description,
+      location,
+      start_date: startDate.trim(),
+      end_date: endDate.trim(),
+      status: 'open',
+      image_url: imageUrl,
+      application_link: applicationLink,
+      contact_email: contactEmail.trim(),
+      opportunity_type: 'volunteer',
+      skills: selectedSkills.map(s => s.value),
+      max_participants: parseInt(maxParticipants),
+      base_points: parseInt(basePoints),
+      start_time: startTime,
+      end_time: endTime,
+      volunteer_days: volunteerDays,
+    };
 
     try {
-      const chatResponse = await axios.post(`http://127.0.0.1:5000/chat/opportunity/${newOpportunityId}/create`, {}, {
+      const response = await axios.post(`http://localhost:5000/opportunities/create`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         }
       });
 
-      console.log("Chat created:", chatResponse.data);
-      alert('Chat created successfully for this opportunity!');
+      const newOpportunityId = response.data.opportunity_id;
+      alert('Opportunity created successfully!');
 
-      // ✅ أظهر الفريم واحتفظ بالـ ID
-      setCreatedOpportunityId(newOpportunityId);
-      setShowInviteFrame(true);
+      try {
+        const chatResponse = await axios.post(`http://127.0.0.1:5000/chat/opportunity/${newOpportunityId}/create`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
 
-    } catch (chatError) {
-      console.error('Failed to create chat', chatError);
-      alert('Opportunity created, but failed to create chat.');
+        console.log("Chat created:", chatResponse.data);
+        alert('Chat created successfully for this opportunity!');
+
+        setCreatedOpportunityId(newOpportunityId);
+        setShowInviteFrame(true);
+
+      } catch (chatError) {
+        console.error('Failed to create chat', chatError);
+        alert('Opportunity created, but failed to create chat.');
+      }
+
+    } catch (error) {
+      alert('Failed to create opportunity!');
+      console.error(error.response?.data || error);
     }
+  };
 
-  } catch (error) {
-    alert('Failed to create opportunity!');
-    console.error(error.response?.data || error);
-  }
-};
-
-
-
-  const renderStepIndicator = () => (
-    <div style={styles.stepIndicator}>
-      {[1, 2, 3].map(num => (
-        <div
-          key={num}
-          style={{
-            ...styles.stepCircle,
-            backgroundColor: step === num ? '#66bb6a' : '#ccc',
-          }}
-        >
-          {num}
-        </div>
-      ))}
-    </div>
-  );
-const handleImageUpload = async (event) => {
+  const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -160,14 +131,14 @@ const handleImageUpload = async (event) => {
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'my_unsigned_preset'); // غيره إلى ال upload preset الخاص بك
+    formData.append('upload_preset', 'my_unsigned_preset');
 
     try {
       const response = await axios.post(
         'https://api.cloudinary.com/v1_1/dhrugparh/image/upload',
         formData
       );
-      setImageUrl(response.data.secure_url); // حفظ رابط الصورة من Cloudinary
+      setImageUrl(response.data.secure_url);
       setUploading(false);
     } catch (error) {
       alert('Failed to upload image');
@@ -176,172 +147,165 @@ const handleImageUpload = async (event) => {
     }
   };
 
+  const renderStepIndicator = () => (
+    <div className="create-volunteer-steps">
+      {[1, 2, 3].map(num => (
+        <div
+          key={num}
+          className={`create-volunteer-step-circle ${step === num ? 'create-volunteer-step-circle-active' : ''}`}
+        >
+          {num}
+        </div>
+      ))}
+    </div>
+  );
+
   return (
-     
-    <div style={styles.container}>
-     
+    <div className="create-volunteer-container">
       <Navbar />
-    
-      <h2 style={styles.heading}>Create Opportunity</h2>
+      <h2 className="create-volunteer-title">Create Opportunity</h2>
       {renderStepIndicator()}
 
       {step === 1 && (
         <>
-        <label style={styles.label}>Title:</label>
+          <label className="create-volunteer-label">Title:</label>
           <input
-            style={styles.input}
+            className="create-volunteer-input"
             placeholder="Title"
             value={title}
             onChange={e => setTitle(e.target.value)}
           />
-          <label style={styles.label}>Description:</label>
+          <label className="create-volunteer-label">Description:</label>
           <textarea
-  style={{ ...styles.input, height: 100, resize: 'none' }}
-  placeholder="Description"
-  value={description}
-  onChange={e => setDescription(e.target.value)}
-/>
-<label style={styles.label}>Location:</label>
+            className="create-volunteer-input create-volunteer-description"
+            placeholder="Description"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+          />
+          <label className="create-volunteer-label">Location:</label>
           <input
-            style={styles.input}
+            className="create-volunteer-input"
             placeholder="Location"
             value={location}
             onChange={e => setLocation(e.target.value)}
           />
-          <button style={styles.button} onClick={() => setStep(2)}>Next</button>
+          <button className="create-volunteer-button" onClick={() => setStep(2)}>Next</button>
         </>
       )}
 
       {step === 2 && (
         <>
-        <label style={styles.label}>Start Date:</label>
-<input
-  style={styles.input}
-  placeholder="Select start date (Day, Month, Year)"
-  type="date"
-  value={startDate}
-  onChange={e => setStartDate(e.target.value)}
-/>
-
-<label style={styles.label}>End Date:</label>
-<input
-  style={styles.input}
-  placeholder="Select end date (Day, Month, Year)"
-  type="date"
-  value={endDate}
-  onChange={e => setEndDate(e.target.value)}
-/>
-
-<label style={styles.label}>Contact Email:</label>
+          <label className="create-volunteer-label">Start Date:</label>
           <input
-            style={styles.input}
+            className="create-volunteer-input"
+            placeholder="Select start date (Day, Month, Year)"
+            type="date"
+            value={startDate}
+            onChange={e => setStartDate(e.target.value)}
+          />
+          <label className="create-volunteer-label">End Date:</label>
+          <input
+            className="create-volunteer-input"
+            placeholder="Select end date (Day, Month, Year)"
+            type="date"
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
+          />
+          <label className="create-volunteer-label">Contact Email:</label>
+          <input
+            className="create-volunteer-input"
             placeholder="Contact Email"
             type="email"
             value={contactEmail}
             onChange={e => setContactEmail(e.target.value)}
           />
-          <div style={styles.buttonsContainer}>
-            <button style={styles.button} onClick={() => setStep(1)}>Back</button>
-            <button style={styles.button} onClick={() => setStep(3)}>Next</button>
+          <div className="create-volunteer-buttons-row">
+            <button className="create-volunteer-button" onClick={() => setStep(1)}>Back</button>
+            <button className="create-volunteer-button" onClick={() => setStep(3)}>Next</button>
           </div>
         </>
       )}
 
       {step === 3 && (
         <>
-        
-<label style={styles.label}>Upload Image:</label>
+          <label className="create-volunteer-label">Upload Image:</label>
           <input
-           type="file"
+            type="file"
             accept="image/*"
             onChange={handleImageUpload}
             disabled={uploading}
-            style={styles.input}
+            className="create-volunteer-input"
           />
           {uploading && <p>Uploading image...</p>}
           {imageUrl && (
             <>
               <p>Uploaded Image Preview:</p>
-              <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '100%', marginBottom: 20 }} />
+              <img src={imageUrl} alt="Uploaded" className="create-volunteer-image-preview" />
             </>
           )}
-          
-          <label style={styles.label}>Application Link:</label>
+          <label className="create-volunteer-label">Application Link:</label>
           <input
-            style={styles.input}
+            className="create-volunteer-input"
             placeholder="Application Link"
             value={applicationLink}
             onChange={e => setApplicationLink(e.target.value)}
           />
-           <label style={styles.label}>Max Participants:</label>
+          <label className="create-volunteer-label">Max Participants:</label>
           <input
-            style={styles.input}
+            className="create-volunteer-input"
             placeholder="Max Participants"
             type="number"
             value={maxParticipants}
             onChange={e => setMaxParticipants(e.target.value)}
           />
-           <label style={styles.label}>Base Points:</label>
+          <label className="create-volunteer-label">Base Points:</label>
           <input
-            style={styles.input}
+            className="create-volunteer-input"
             placeholder="Base Points"
             type="number"
             value={basePoints}
             onChange={e => setBasePoints(e.target.value)}
           />
-
-          <label style={styles.label}>Start Time:</label>
-          <div style={styles.horizontalScroll}>
+          <label className="create-volunteer-label">Start Time:</label>
+          <div className="create-volunteer-horizontal-scroll">
             {timeOptions.map(time => (
               <button
                 key={time}
-                style={{
-                  ...styles.skillButton,
-                  backgroundColor: startTime === time ? '#66bb6a' : '#a5d6a7',
-                }}
+                className={`create-volunteer-skill-button ${startTime === time ? 'create-volunteer-skill-button-active' : 'create-volunteer-skill-button-inactive'}`}
                 onClick={() => setStartTime(time)}
               >
                 {time}
               </button>
             ))}
           </div>
-
-          <label style={styles.label}>End Time:</label>
-          <div style={styles.horizontalScroll}>
+          <label className="create-volunteer-label">End Time:</label>
+          <div className="create-volunteer-horizontal-scroll">
             {timeOptions.map(time => (
               <button
                 key={time}
-                style={{
-                  ...styles.skillButton,
-                  backgroundColor: endTime === time ? '#66bb6a' : '#a5d6a7',
-                }}
-                onClick={() => setEndTime(time)}
+                className={`create-volunteer-skill-button ${endTime === time ? 'create-volunteer-skill-button-active' : 'create-volunteer-skill-button-inactive'}`}
+    onClick={() => setEndTime(time)}
               >
                 {time}
               </button>
             ))}
           </div>
-
-          <label style={styles.label}>Volunteer Days:</label>
-          <div style={styles.daysContainer}>
+          <label className="create-volunteer-label">Volunteer Days:</label>
+          <div className="create-volunteer-days-container">
             {dayOptions.map(day => (
               <button
                 key={day.value}
-                style={{
-                  ...styles.skillButton,
-                  backgroundColor: volunteerDays.includes(day.value) ? '#66bb6a' : '#a5d6a7',
-                  marginRight: 10,
-                  marginBottom: 10,
-                }}
+                className={`create-volunteer-skill-button ${volunteerDays.includes(day.value) ? 'create-volunteer-skill-button-active' : 'create-volunteer-skill-button-inactive'}`}
                 onClick={() => toggleDay(day.value)}
               >
                 {day.label}
               </button>
             ))}
           </div>
-
-         <label style={styles.label}>Select Skills:</label>
+          <label className="create-volunteer-label">Select Skills:</label>
           <Select
+            className="create-volunteer-select"
+            classNamePrefix="create-volunteer-select"
             options={availableSkills}
             value={selectedSkills}
             onChange={handleSkillsChange}
@@ -349,142 +313,20 @@ const handleImageUpload = async (event) => {
             placeholder="Select skills..."
             closeMenuOnSelect={false}
           />
-
-          <div style={styles.buttonsContainer}>
-            <button style={styles.button} onClick={() => setStep(2)}>Back</button>
-            <button style={styles.button} onClick={handleSubmit}>Submit</button>
+          <div className="create-volunteer-buttons-row">
+            <button className="create-volunteer-button" onClick={() => setStep(2)}>Back</button>
+            <button className="create-volunteer-button" onClick={handleSubmit}>Submit</button>
           </div>
-            {showInviteFrame && (
-  <InviteFrame
-    onYes={() => navigate(`/inviteUsersPage?opportunityId=${createdOpportunityId}`)}
-    onNo={() => setShowInviteFrame(false)}
-  />
-)}
+          {showInviteFrame && (
+            <InviteFrame
+              onYes={() => navigate(`/inviteUsersPage?opportunityId=${createdOpportunityId}`)}
+              onNo={() => setShowInviteFrame(false)}
+            />
+          )}
         </>
-        
       )}
-       
     </div>
-   
-     
   );
- 
 };
-const styles = {
-  container: {
-    maxWidth: 600,
-    margin: '40px auto',
-    padding: 30,
-    backgroundColor: 'color: #2e7d32;',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-    borderRadius: 12,
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    color: '#34495e',
-  },
-  banner: {
-    width: '100%',
-    borderRadius: 10,
-    marginBottom: 25,
-    objectFit: 'cover',
-  },
-  heading: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 25,
-    color: '#2c3e50',
-    textAlign: 'center',
-  },
-  input: {
-    width: '100%',
-    padding: '12px 15px',
-    marginBottom: 20,
-    borderRadius: 8,
-    border: '1.5px solid #d1d8e0',
-    fontSize: 16,
-    transition: 'border-color 0.3s',
-    outline: 'none',
-    boxSizing: 'border-box',
-  },
-  inputFocus: {
-    borderColor: '#2980b9',
-    boxShadow: '0 0 5px color: #2e7d32;',
-  },
-  button: {
-    backgroundColor: 'color: #2e7d32;',
-    color: 'white',
-    border: 'none',
-    padding: '12px 25px',
-    borderRadius: 8,
-    fontSize: 16,
-    cursor: 'pointer',
-    fontWeight: '600',
-    boxShadow: '0 4px 8px rgba(39, 174, 96, 0.4)',
-    transition: 'background-color 0.3s ease',
-    marginRight: 15,
-    minWidth: 100,
-  },
-  buttonHover: {
-    backgroundColor: 'color: #2e7d32;',
-  },
-  buttonsContainer: {
-    marginTop: 20,
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  stepIndicator: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: 30,
-    gap: 15,
-  },
-  stepCircle: {
-    width: 35,
-    height: 35,
-    borderRadius: '50%',
-    lineHeight: '35px',
-    textAlign: 'center',
-    fontWeight: '700',
-    color: 'white',
-    fontSize: 16,
-    userSelect: 'none',
-  },
-  label: {
-    fontWeight: '700',
-    fontSize: 16,
-    marginBottom: 10,
-    color: '#34495e',
-    display: 'block',
-  },
-  horizontalScroll: {
-    display: 'flex',
-    overflowX: 'auto',
-    paddingBottom: 10,
-    marginBottom: 20,
-    gap: 12,
-  },
-  skillButton: {
-    flexShrink: 0,
-    padding: '8px 16px',
-    borderRadius: 20,
-    border: 'none',
-    fontWeight: '600',
-    fontSize: 14,
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-    color: '#2c3e50',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-  },
-  daysContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    marginBottom: 20,
-  },
-
-
-
-};
-
-
-
 
 export default CreateVolunteerOpportunity;

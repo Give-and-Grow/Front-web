@@ -2,6 +2,80 @@ import React, { useEffect, useState } from "react";
 import FilterComponent from './FilterComponent';
 import OpportunityFilters from "./OpportunityFilters";
 import Navbar from './Navbar';  // عدل المسار حسب مكان ملف Navbar.js
+
+const SkeletonCard = () => (
+  <div style={styless.card}>
+    <div style={{ ...styless.cardImage, ...styless.skeleton }} />
+    <div style={{ ...styless.cardLine, width: '60%' }} />
+    <div style={{ ...styless.cardLine, width: '80%' }} />
+    <div style={{ ...styless.cardLine, width: '70%' }} />
+    <div style={{ ...styless.cardLine, width: '50%' }} />
+    <div style={{ ...styless.cardButton, width: '60%' }} />
+    <div style={{ ...styless.cardButton, width: '80%' }} />
+    <div style={styless.joinWithdrawContainer}>
+      <div style={{ ...styless.btn, ...styless.skeleton, width: 120 }} />
+    </div>
+  </div>
+);
+// حركة الشيمر
+function shimmerStyle() {
+  return {
+    background: 'linear-gradient(90deg, #ddd 25%, #eee 50%, #ddd 75%)',
+    backgroundSize: '200% 100%',
+    animation: 'shimmer 1.5s infinite',
+  };
+}
+
+const styless = {
+  card: {
+    width: 300, // أعرض من قبل
+    padding: '20px',
+    background: '#f2f2f2',
+    borderRadius: '12px',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: '10px',
+  },
+  cardImage: {
+    width: '100%',
+    height: 160,
+    borderRadius: '8px',
+    marginBottom: 16,
+  },
+  cardLine: {
+    height: 20,
+    borderRadius: 4,
+    marginBottom: 10,
+    ...shimmerStyle(),
+  },
+  cardButton: {
+    height: 32,
+    borderRadius: 6,
+    marginBottom: 10,
+    ...shimmerStyle(),
+  },
+  btn: {
+    height: 40,
+    borderRadius: 8,
+    ...shimmerStyle(),
+  },
+  joinWithdrawContainer: {
+    marginTop: 16,
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  skeleton: {
+    backgroundColor: '#ccc',
+    position: 'relative',
+    overflow: 'hidden',
+    ...shimmerStyle(),
+  },
+};
+
+
 export default function VolunteerOpportunities() {
 
   const [opportunities, setOpportunities] = useState([]);
@@ -263,7 +337,12 @@ export default function VolunteerOpportunities() {
         {/* Opportunities List */}
         <div style={styles.opportunityList}>
           {loading ? (
-            <p>Loading opportunities...</p>
+            // <p>Loading opportunities...</p>
+            <div style={styles.cardsGrid}>
+                {[...Array(6)].map((_, index) => (
+                  <SkeletonCard key={index} />
+                ))}
+              </div>
           ) : error ? (
             <p style={{ color: "red" }}>{error}</p>
           ) : (

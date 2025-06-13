@@ -3,8 +3,82 @@ import FilterComponent from './FilterComponent';
 import OpportunityFilters from "./OpportunityFilters";
 import Navbar from '../pages/Navbar';
 import { useNavigate } from 'react-router-dom';
-import Toast from '../components/Toast'; // Import custom Toast component
+import Toast from '../components/Toast';
 import AdComponent from '../components/AdComponent';
+
+const SkeletonCard = () => (
+  <div style={styless.card}>
+    <div style={{ ...styless.cardImage, ...styless.skeleton }} />
+    <div style={{ ...styless.cardLine, width: '60%' }} />
+    <div style={{ ...styless.cardLine, width: '80%' }} />
+    <div style={{ ...styless.cardLine, width: '70%' }} />
+    <div style={{ ...styless.cardLine, width: '50%' }} />
+    <div style={{ ...styless.cardButton, width: '60%' }} />
+    <div style={{ ...styless.cardButton, width: '80%' }} />
+    <div style={styless.joinWithdrawContainer}>
+      <div style={{ ...styless.btn, ...styless.skeleton, width: 120 }} />
+    </div>
+  </div>
+);
+// حركة الشيمر
+function shimmerStyle() {
+  return {
+    background: 'linear-gradient(90deg, #ddd 25%, #eee 50%, #ddd 75%)',
+    backgroundSize: '200% 100%',
+    animation: 'shimmer 1.5s infinite',
+  };
+}
+
+const styless = {
+  card: {
+    width: 300, // أعرض من قبل
+    padding: '20px',
+    background: '#f2f2f2',
+    borderRadius: '12px',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: '10px',
+  },
+  cardImage: {
+    width: '100%',
+    height: 160,
+    borderRadius: '8px',
+    marginBottom: 16,
+  },
+  cardLine: {
+    height: 20,
+    borderRadius: 4,
+    marginBottom: 10,
+    ...shimmerStyle(),
+  },
+  cardButton: {
+    height: 32,
+    borderRadius: 6,
+    marginBottom: 10,
+    ...shimmerStyle(),
+  },
+  btn: {
+    height: 40,
+    borderRadius: 8,
+    ...shimmerStyle(),
+  },
+  joinWithdrawContainer: {
+    marginTop: 16,
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  skeleton: {
+    backgroundColor: '#ccc',
+    position: 'relative',
+    overflow: 'hidden',
+    ...shimmerStyle(),
+  },
+};
+
+
 
 export default function AllOpportunitiesUser() {
   const [opportunities, setOpportunities] = useState([]);
@@ -15,10 +89,11 @@ export default function AllOpportunitiesUser() {
   const [summaries, setSummaries] = useState({});
   const [summaryLoading, setSummaryLoading] = useState({});
   const [participationStatus, setParticipationStatus] = useState({});
+  const [buttonLoading, setButtonLoading] = useState({}); // New state for per-opportunity button loading
   const [expandedOpportunities, setExpandedOpportunities] = useState({});
   const [showMoreDetails, setShowMoreDetails] = useState({});
   const [filter, setFilter] = useState('All');
-  const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' }); // Toast state
+  const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' });
 
   const showToast = (message, type = 'success') => {
     setToast({ isVisible: true, message, type });
@@ -29,41 +104,80 @@ export default function AllOpportunitiesUser() {
   };
 
   useEffect(() => {
-  async function fetchOpportunities() {
-    try {
-      const token = localStorage.getItem("userToken");
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    async function fetchOpportunitiesAndParticipation() {
+      try {
+        const token = localStorage.getItem("userToken");
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-      const response = await fetch(`http://localhost:5000/opportunities/list`, {
-        headers,
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.opportunities) {
-        // ✅ ترتيب الفرص: open → pending → closed → full
-        const sortedOpportunities = [...data.opportunities].sort((a, b) => {
-          const priority = { open: 0, pending: 1, closed: 2, full: 3 };
-          return (priority[a.status] ?? 99) - (priority[b.status] ?? 99);
+        // Fetch opportunities
+        const response = await fetch(`http://localhost:5000/opportunities/list`, {
+          headers,
         });
 
-        setOpportunities(sortedOpportunities);
-        setFilteredOpportunities(sortedOpportunities);
-      } else {
-        setError(data.msg || "No opportunities found.");
-        showToast(data.msg || "No opportunities found.", 'error');
-      }
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setError("Failed to fetch opportunities.");
-      showToast("Failed to fetch opportunities.", 'error');
-    } finally {
-      setLoading(false);
-    }
-  }
+        const data = await response.json();
 
-  fetchOpportunities();
-}, []);
+        if (response.ok && data.opportunities) {
+          // Sort opportunities: open → pending → closed → full
+          const sortedOpportunities = [...data.opportunities].sort((a, b) => {
+            const priority = { open: 0, pending: 1, closed: 2, full: 3 };
+            return (priority[a.status] ?? 99) - (priority[b.status] ?? 99);
+          });
+
+          // Initialize button loading state
+          const initialButtonLoading = sortedOpportunities.reduce((acc, opp) => ({
+            ...acc,
+            [opp.id]: true,
+          }), {});
+          setButtonLoading(initialButtonLoading);
+
+          // Fetch participation status for all opportunities in parallel
+          const participationPromises = sortedOpportunities.map(async (opp) => {
+            try {
+              const res = await fetch(`http://localhost:5000/user-participation/${opp.id}/is_participant`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+              const participationData = await res.json();
+              return { id: opp.id, status: participationData.status || 'not_joined' };
+            } catch (error) {
+              console.error(`Error fetching participation for opp ${opp.id}:`, error);
+              return { id: opp.id, status: 'error' };
+            }
+          });
+
+          const participationResults = await Promise.all(participationPromises);
+          const newParticipationStatus = participationResults.reduce((acc, { id, status }) => ({
+            ...acc,
+            [id]: status,
+          }), {});
+          const newButtonLoading = participationResults.reduce((acc, { id }) => ({
+            ...acc,
+            [id]: false,
+          }), {});
+
+          // Set state
+          setOpportunities(sortedOpportunities);
+          setFilteredOpportunities(sortedOpportunities);
+          setParticipationStatus(newParticipationStatus);
+          setButtonLoading(newButtonLoading);
+        } else {
+          setError(data.msg || "No opportunities found.");
+          showToast(data.msg || "No opportunities found.", 'error');
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError("Failed to fetch opportunities.");
+        showToast("Failed to fetch opportunities.", 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchOpportunitiesAndParticipation();
+  }, []);
 
   const applyFilters = (filters) => {
     const isEmpty = Object.values(filters).every(value => !value || value === "");
@@ -75,16 +189,12 @@ export default function AllOpportunitiesUser() {
 
     const filtered = opportunities.filter((opp) => {
       if (filters.status && (!opp.status || opp.status.toLowerCase() !== filters.status.toLowerCase())) return false;
-
       if (filters.opportunity_type && opp.opportunity_type !== filters.opportunity_type) return false;
-
       if (filters.location && opp.location !== filters.location) return false;
-
       if (filters.skill_id) {
         const skillIdStr = String(filters.skill_id);
         if (!opp.skills || !opp.skills.some(s => String(s.id) === skillIdStr)) return false;
       }
-
       if (filters.organization_id && String(opp.organization_id) !== String(filters.organization_id)) return false;
 
       const parseTime = (timeStr) => {
@@ -93,17 +203,9 @@ export default function AllOpportunitiesUser() {
         return hours * 60 + minutes;
       };
 
-      if (filters.start_time) {
-        if (!opp.start_time || parseTime(opp.start_time) < parseTime(filters.start_time)) return false;
-      }
-
-      if (filters.end_time) {
-        if (!opp.end_time || parseTime(opp.end_time) > parseTime(filters.end_time)) return false;
-      }
-
-      if (filters.volunteer_days) {
-        if (!opp.volunteer_days || !opp.volunteer_days.includes(filters.volunteer_days)) return false;
-      }
+      if (filters.start_time && (!opp.start_time || parseTime(opp.start_time) < parseTime(filters.start_time))) return false;
+      if (filters.end_time && (!opp.end_time || parseTime(opp.end_time) > parseTime(filters.end_time))) return false;
+      if (filters.volunteer_days && (!opp.volunteer_days || !opp.volunteer_days.includes(filters.volunteer_days))) return false;
 
       return true;
     });
@@ -127,7 +229,7 @@ export default function AllOpportunitiesUser() {
         showToast("Joined successfully!", 'success');
         setParticipationStatus((prevStatus) => ({
           ...prevStatus,
-          [opportunityId]: 'joined',
+          [opportunityId]: 'pending', // Assume 'pending' until approved/rejected
         }));
       } else {
         showToast(result.msg || "Failed to join.", 'error');
@@ -137,37 +239,7 @@ export default function AllOpportunitiesUser() {
       showToast("Failed to join the opportunity.", 'error');
     }
   };
-useEffect(() => {
-  const fetchParticipationStatus = async () => {
-  const newStatus = {};
-  const token = localStorage.getItem("userToken");
 
-  for (const opp of opportunities) {
-    try {
-      const res = await fetch(`http://localhost:5000/user-participation/${opp.id}/is_participant`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const data = await res.json();
-      newStatus[opp.id] = data.status || 'not_joined'; // ممكن تكون accepted, pending, rejected, أو null
-    } catch (error) {
-      console.error("Error fetching participation:", error);
-      newStatus[opp.id] = 'error';
-    }
-  }
-
-  setParticipationStatus(newStatus);
-};
-
-
-  if (opportunities.length > 0) {
-    fetchParticipationStatus();
-  }
-}, [opportunities]);
   const handleLeave = async (opportunityId) => {
     try {
       const token = localStorage.getItem("userToken");
@@ -182,11 +254,10 @@ useEffect(() => {
       const result = await response.json();
       if (response.ok) {
         showToast("Left successfully!", 'success');
-        setParticipationStatus((prevStatus) => {
-          const newStatus = { ...prevStatus };
-          delete newStatus[opportunityId];
-          return newStatus;
-        });
+        setParticipationStatus((prevStatus) => ({
+          ...prevStatus,
+          [opportunityId]: 'not_joined',
+        }));
       } else {
         showToast(result.msg || "Failed to leave.", 'error');
       }
@@ -196,41 +267,39 @@ useEffect(() => {
     }
   };
 
- const fetchSummary = async (oppId) => {
-  if (summaries[oppId]) return summaries[oppId];
+  const fetchSummary = async (oppId) => {
+    if (summaries[oppId]) return summaries[oppId];
 
-  const token = localStorage.getItem('userToken');
-  if (!token) {
-    alert('Please login first');
-    return;
-  }
-
-  setSummaryLoading((prev) => ({ ...prev, [oppId]: true }));
-
-  try {
-    const response = await fetch(`http://localhost:5000/opportunities/summary/${oppId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const data = await response.json();
-    console.log("API response for oppId", oppId, data);
-
-    if (response.ok && data.summary) {
-      // لو data.summary هو كائن، خزنه زي ما هو
-      setSummaries((prev) => ({ ...prev, [oppId]: typeof data.summary === 'string' ? { summary: data.summary } : data.summary }));
-      return typeof data.summary === 'string' ? { summary: data.summary } : data.summary;
-    } else {
-      alert(data.msg || 'Failed to fetch summary');
-      return null;
+    const token = localStorage.getItem('userToken');
+    if (!token) {
+      showToast('Please login first', 'error');
+      return;
     }
-  } catch (err) {
-    console.error("Error fetching summary:", err);
-    alert('An error occurred while fetching summary');
-    return null;
-  } finally {
-    setSummaryLoading((prev) => ({ ...prev, [oppId]: false }));
-  }
-};
+
+    setSummaryLoading((prev) => ({ ...prev, [oppId]: true }));
+
+    try {
+      const response = await fetch(`http://localhost:5000/opportunities/summary/${oppId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await response.json();
+      if (response.ok && data.summary) {
+        setSummaries((prev) => ({ ...prev, [oppId]: typeof data.summary === 'string' ? { summary: data.summary } : data.summary }));
+        return typeof data.summary === 'string' ? { summary: data.summary } : data.summary;
+      } else {
+        showToast(data.msg || 'Failed to fetch summary', 'error');
+        return null;
+      }
+    } catch (err) {
+      console.error("Error fetching summary:", err);
+      showToast('An error occurred while fetching summary', 'error');
+      return null;
+    } finally {
+      setSummaryLoading((prev) => ({ ...prev, [oppId]: false }));
+    }
+  };
+
   const toggleDetails = (id) => {
     setExpandedOpportunities(prev => ({
       ...prev,
@@ -239,7 +308,6 @@ useEffect(() => {
   };
 
   const handleFilterChange = (value, screen) => {
-    console.log('Filter selected:', value, screen);
     setFilter(value);
     navigate(screen);
   };
@@ -275,16 +343,19 @@ useEffect(() => {
         <h1 style={styles.title}>🌱 Available Opportunities</h1>
 
         <div style={styles.contentWrapper}>
-          {/* Sidebar Filters */}
           <div style={styles.sidebar}>
             <h3 style={styles.sidebarTitle}>🔍 Filter</h3>
             <FilterComponent onApplyFilters={applyFilters} />
           </div>
 
-          {/* Opportunities List */}
           <div style={styles.opportunityList}>
             {loading ? (
-              <p>Loading opportunities...</p>
+              // <p>Loading opportunities...</p>
+              <div style={styles.cardsGrid}>
+                {[...Array(6)].map((_, index) => (
+                  <SkeletonCard key={index} />
+                ))}
+              </div>
             ) : error ? (
               <p style={{ color: "red" }}>{error}</p>
             ) : (
@@ -307,12 +378,10 @@ useEffect(() => {
                         <p><strong>🕓 Time:</strong> {opp.start_time} - {opp.end_time}</p>
                         <p><strong>📝 Description:</strong> {opp.description}</p>
 
-                        {/* Summary Section */}
                         <div style={{ marginTop: 10 }}>
-                          {console.log("Summary for opp", opp.id, summaries[String(opp.id)])}
                           {summaryLoading[opp.id] ? (
                             <div style={{ textAlign: "center" }}>
-                              <div className="spinner" style={{
+                              <div style={{
                                 width: 24,
                                 height: 24,
                                 border: '4px solid #ccc',
@@ -326,8 +395,7 @@ useEffect(() => {
                             <div style={{ backgroundColor: '#e8f5e9', padding: 10, borderRadius: 10 }}>
                               <p style={{ color: '#2e7d32', fontWeight: 'bold', margin: 0 }}>
                                 📌 Summary:
-                                {console.log(summaries[String(opp.id)].summary)}
-                                </p>
+                              </p>
                               <p style={{ color: '#1b5e20', marginTop: 4 }}>{summaries[String(opp.id)].summary || 'No summary text'}</p>
                             </div>
                           ) : (
@@ -335,14 +403,11 @@ useEffect(() => {
                               style={styles.summaryButton}
                               onClick={() => fetchSummary(String(opp.id))}
                             >
-                              
                               ✨ View Summary
                             </button>
                           )}
                         </div>
 
-
-                        {/* Show Details Button */}
                         <button
                           style={styles.showDetailsButton}
                           onClick={() =>
@@ -352,7 +417,6 @@ useEffect(() => {
                           {showDetails ? "Hide Details ▲" : "Show Details ▼"}
                         </button>
 
-                        {/* Additional Details if showDetails is true */}
                         {showDetails && (
                           <>
                             {opp.opportunity_type !== "job" && (
@@ -411,70 +475,63 @@ useEffect(() => {
                           </>
                         )}
 
-         <div style={styles.joinWithdrawContainer}>
- 
-
-  {opp.status === 'filled' && (
-    <button disabled style={{ ...styles.btn, ...styles.full }}>Full</button>
-  )}
-
-  {opp.status === 'open' && (
-    <>
-      {participationStatus[opp.id] === 'accepted' && (
-        <button disabled style={{ ...styles.btn, ...styles.accepted }}>open_Accepted</button>
-      )}
-
-      {participationStatus[opp.id] === 'rejected' && (
-        <button disabled style={{ ...styles.btn, ...styles.rejected }}>open_Rejected</button>
-      )}
-
-      {participationStatus[opp.id] === 'pending' && (
-        <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>Withdraw</button>
-      )}
-
-      {!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined' ? (
-        <button onClick={() => handleJoin(opp.id)} style={{ ...styles.btn, ...styles.join }}>Join</button>
-      ) : null}
-    </>
-  )}
-</div>
-{opp.status === 'closed' && (
-  <>
-    {participationStatus[opp.id] === 'accepted' && (
-      <button disabled style={{ ...styles.btn, ...styles.accepted }}>
-        Accepted – Closed
-      </button>
-    )}
-
-    {participationStatus[opp.id] === 'rejected' && (
-      <button disabled style={{ ...styles.btn, ...styles.rejected }}>
-        Rejected – Closed
-      </button>
-    )}
-
-    {participationStatus[opp.id] === 'pending' && (
-      <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>
-        Withdraw – Closed
-      </button>
-    )}
-
-    {!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined' ? (
-      <button disabled style={{ ...styles.btn, ...styles.closed }}>
-        Closed
-      </button>
-    ) : null}
-  </>
-)}
-
-
-
-                        {/* CSS for spinner */}
-                        <style>{`
-                          @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
-                          }
-                        `}</style>
+                        <div style={styles.joinWithdrawContainer}>
+                          {buttonLoading[opp.id] ? (
+                            <button disabled style={{ ...styles.btn, ...styles.loading }}>
+                              Loading...
+                            </button>
+                          ) : opp.status === 'filled' ? (
+                            <button disabled style={{ ...styles.btn, ...styles.full }}>
+                              Full
+                            </button>
+                          ) : opp.status === 'open' ? (
+                            <>
+                              {participationStatus[opp.id] === 'accepted' && (
+                                <button disabled style={{ ...styles.btn, ...styles.accepted }}>
+                                  Accepted
+                                </button>
+                              )}
+                              {participationStatus[opp.id] === 'rejected' && (
+                                <button disabled style={{ ...styles.btn, ...styles.rejected }}>
+                                  Rejected
+                                </button>
+                              )}
+                              {participationStatus[opp.id] === 'pending' && (
+                                <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>
+                                  Withdraw
+                                </button>
+                              )}
+                              {(!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined') && (
+                                <button onClick={() => handleJoin(opp.id)} style={{ ...styles.btn, ...styles.join }}>
+                                  Join
+                                </button>
+                              )}
+                            </>
+                          ) : opp.status === 'closed' ? (
+                            <>
+                              {participationStatus[opp.id] === 'accepted' && (
+                                <button disabled style={{ ...styles.btn, ...styles.accepted }}>
+                                  Accepted – Closed
+                                </button>
+                              )}
+                              {participationStatus[opp.id] === 'rejected' && (
+                                <button disabled style={{ ...styles.btn, ...styles.rejected }}>
+                                  Rejected – Closed
+                                </button>
+                              )}
+                              {participationStatus[opp.id] === 'pending' && (
+                                <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>
+                                  Withdraw – Closed
+                                </button>
+                              )}
+                              {(!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined') && (
+                                <button disabled style={{ ...styles.btn, ...styles.closed }}>
+                                  Closed
+                                </button>
+                              )}
+                            </>
+                          ) : null}
+                        </div>
                       </div>
                     );
                   })}
@@ -483,17 +540,16 @@ useEffect(() => {
             )}
           </div>
         </div>
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          isVisible={toast.isVisible}
-          onClose={closeToast}
-        />
       </div>
+      <Toast
+        isVisible={toast.isVisible}
+        message={toast.message}
+        type={toast.type}
+        onClose={closeToast}
+      />
     </>
   );
 }
-
 const styles = {
   closed: {
     backgroundColor: "#9e9e9e",

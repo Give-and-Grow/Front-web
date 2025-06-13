@@ -6,6 +6,19 @@ import OpportunityFilters from './OpportunityFilters';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const SkeletonApplicationCard = () => (
+  <div style={styles.card}>
+    <div style={{ ...styles.header, alignItems: 'center' }}>
+      <div style={{ ...styles.skeletonCircle }} />
+      <div style={{ ...styles.skeletonLine, width: '60%' }} />
+    </div>
+    <div style={{ ...styles.skeletonLine, width: '90%', marginBottom: 10 }} />
+    <div style={{ ...styles.skeletonLine, width: '80%', marginBottom: 10 }} />
+    <div style={{ ...styles.skeletonLine, width: '70%', marginBottom: 10 }} />
+    <div style={{ ...styles.skeletonLine, width: '40%', height: 32, borderRadius: 8 }} />
+  </div>
+);
+
 const ApplicationsScreen = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,18 +43,19 @@ const ApplicationsScreen = () => {
   }, []);
 
   const fetchApplications = async (authToken) => {
-    try {
-      const res = await axios.get(`http://localhost:5000/user-participation/applications`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      setApplications(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const res = await axios.get(`http://localhost:5000/user-participation/applications`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+    const sortedApplications = res.data.sort((a, b) => new Date(b.opportunity.start_date) - new Date(a.opportunity.start_date));
 
+    setApplications(sortedApplications);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
   const confirmCertificateDownload = (onConfirm) => {
     const ToastContent = () => (
       <div>
@@ -146,7 +160,11 @@ const ApplicationsScreen = () => {
       <h1 style={styles.screenTitle}>My Applications</h1>
 
       {loading ? (
-        <div style={styles.loading}>Loading...</div>
+        <div style={styles.listContainer}>
+          {[...Array(3)].map((_, i) => (
+            <SkeletonApplicationCard key={i} />
+          ))}
+        </div>
       ) : (
         <>
           {applications.length === 0 ? (
@@ -266,6 +284,27 @@ const styles = {
     color: 'white',
     marginTop: 12,
   },
+
+    skeletonLine: {
+    height: 16,
+    backgroundColor: '#ddd',
+    borderRadius: 6,
+    marginBottom: 8,
+    animation: 'shimmer 1.5s infinite',
+    background: 'linear-gradient(90deg, #ddd 25%, #eee 50%, #ddd 75%)',
+    backgroundSize: '200% 100%',
+  },
+  skeletonCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: '50%',
+    backgroundColor: '#ccc',
+    marginRight: 12,
+    animation: 'shimmer 1.5s infinite',
+    background: 'linear-gradient(90deg, #ddd 25%, #eee 50%, #ddd 75%)',
+    backgroundSize: '200% 100%',
+  },
+
 };
 
 export default ApplicationsScreen;
