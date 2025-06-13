@@ -29,35 +29,41 @@ export default function AllOpportunitiesUser() {
   };
 
   useEffect(() => {
-    async function fetchOpportunities() {
-      try {
-        const token = localStorage.getItem("userToken");
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  async function fetchOpportunities() {
+    try {
+      const token = localStorage.getItem("userToken");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-        const response = await fetch(`http://localhost:5000/opportunities/list`, {
-          headers,
+      const response = await fetch(`http://localhost:5000/opportunities/list`, {
+        headers,
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.opportunities) {
+        // ✅ ترتيب الفرص: open → pending → closed → full
+        const sortedOpportunities = [...data.opportunities].sort((a, b) => {
+          const priority = { open: 0, pending: 1, closed: 2, full: 3 };
+          return (priority[a.status] ?? 99) - (priority[b.status] ?? 99);
         });
 
-        const data = await response.json();
-
-        if (response.ok && data.opportunities) {
-          setOpportunities(data.opportunities);
-          setFilteredOpportunities(data.opportunities);
-        } else {
-          setError(data.msg || "No opportunities found.");
-          showToast(data.msg || "No opportunities found.", 'error');
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Failed to fetch opportunities.");
-        showToast("Failed to fetch opportunities.", 'error');
-      } finally {
-        setLoading(false);
+        setOpportunities(sortedOpportunities);
+        setFilteredOpportunities(sortedOpportunities);
+      } else {
+        setError(data.msg || "No opportunities found.");
+        showToast(data.msg || "No opportunities found.", 'error');
       }
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setError("Failed to fetch opportunities.");
+      showToast("Failed to fetch opportunities.", 'error');
+    } finally {
+      setLoading(false);
     }
+  }
 
-    fetchOpportunities();
-  }, []);
+  fetchOpportunities();
+}, []);
 
   const applyFilters = (filters) => {
     const isEmpty = Object.values(filters).every(value => !value || value === "");
@@ -131,7 +137,37 @@ export default function AllOpportunitiesUser() {
       showToast("Failed to join the opportunity.", 'error');
     }
   };
+useEffect(() => {
+  const fetchParticipationStatus = async () => {
+  const newStatus = {};
+  const token = localStorage.getItem("userToken");
 
+  for (const opp of opportunities) {
+    try {
+      const res = await fetch(`http://localhost:5000/user-participation/${opp.id}/is_participant`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+      newStatus[opp.id] = data.status || 'not_joined'; // ممكن تكون accepted, pending, rejected, أو null
+    } catch (error) {
+      console.error("Error fetching participation:", error);
+      newStatus[opp.id] = 'error';
+    }
+  }
+
+  setParticipationStatus(newStatus);
+};
+
+
+  if (opportunities.length > 0) {
+    fetchParticipationStatus();
+  }
+}, [opportunities]);
   const handleLeave = async (opportunityId) => {
     try {
       const token = localStorage.getItem("userToken");
@@ -375,23 +411,62 @@ export default function AllOpportunitiesUser() {
                           </>
                         )}
 
-                        <div style={styles.joinWithdrawContainer} className="joinWithdrawContainer">
-                          {participationStatus[opp.id] === "joined" ? (
-                            <button
-                              style={{ ...styles.joinWithdrawButton, ...styles.leaveButton }}
-                              onClick={() => handleLeave(opp.id)}
-                            >
-                              ✗ Withdraw
-                            </button>
-                          ) : (
-                            <button
-                              style={{ ...styles.joinWithdrawButton, ...styles.joinButton }}
-                              onClick={() => handleJoin(opp.id)}
-                            >
-                              ✓ Join
-                            </button>
-                          )}
-                        </div>
+         <div style={styles.joinWithdrawContainer}>
+ 
+
+  {opp.status === 'filled' && (
+    <button disabled style={{ ...styles.btn, ...styles.full }}>Full</button>
+  )}
+
+  {opp.status === 'open' && (
+    <>
+      {participationStatus[opp.id] === 'accepted' && (
+        <button disabled style={{ ...styles.btn, ...styles.accepted }}>open_Accepted</button>
+      )}
+
+      {participationStatus[opp.id] === 'rejected' && (
+        <button disabled style={{ ...styles.btn, ...styles.rejected }}>open_Rejected</button>
+      )}
+
+      {participationStatus[opp.id] === 'pending' && (
+        <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>Withdraw</button>
+      )}
+
+      {!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined' ? (
+        <button onClick={() => handleJoin(opp.id)} style={{ ...styles.btn, ...styles.join }}>Join</button>
+      ) : null}
+    </>
+  )}
+</div>
+{opp.status === 'closed' && (
+  <>
+    {participationStatus[opp.id] === 'accepted' && (
+      <button disabled style={{ ...styles.btn, ...styles.accepted }}>
+        Accepted – Closed
+      </button>
+    )}
+
+    {participationStatus[opp.id] === 'rejected' && (
+      <button disabled style={{ ...styles.btn, ...styles.rejected }}>
+        Rejected – Closed
+      </button>
+    )}
+
+    {participationStatus[opp.id] === 'pending' && (
+      <button onClick={() => handleLeave(opp.id)} style={{ ...styles.btn, ...styles.withdraw }}>
+        Withdraw – Closed
+      </button>
+    )}
+
+    {!participationStatus[opp.id] || participationStatus[opp.id] === 'not_joined' ? (
+      <button disabled style={{ ...styles.btn, ...styles.closed }}>
+        Closed
+      </button>
+    ) : null}
+  </>
+)}
+
+
 
                         {/* CSS for spinner */}
                         <style>{`
@@ -420,6 +495,48 @@ export default function AllOpportunitiesUser() {
 }
 
 const styles = {
+  closed: {
+    backgroundColor: "#9e9e9e",
+    color: "#fff",
+    cursor: "not-allowed",
+    opacity: 0.7,
+  },
+  full: {
+    backgroundColor: "#795548",
+    color: "#fff",
+    cursor: "not-allowed",
+    opacity: 0.7,
+  },
+  btn: {
+    padding: "10px 20px",
+    fontSize: 16,
+    border: "none",
+    borderRadius: 8,
+    cursor: "pointer",
+    marginRight: 10,
+    marginTop: 10,
+    transition: "0.3s",
+  },
+  join: {
+    backgroundColor: "#4caf50",
+    color: "#fff",
+  },
+  withdraw: {
+    backgroundColor: "#ff9800",
+    color: "#fff",
+  },
+  accepted: {
+    backgroundColor: "#2196f3",
+    color: "#fff",
+    cursor: "not-allowed",
+    opacity: 0.7,
+  },
+  rejected: {
+    backgroundColor: "#f44336",
+    color: "#fff",
+    cursor: "not-allowed",
+    opacity: 0.7,
+  },
   container: {
     maxWidth: 1200,
     margin: "auto",
@@ -622,6 +739,7 @@ const styles = {
     fontWeight: 'bold',
     transition: 'background-color 0.3s ease',
   },
+
   summaryButton: {
     backgroundColor: '#a5d6a7',
     padding: 10,
@@ -633,5 +751,7 @@ const styles = {
     color: '#1b5e20',
     fontWeight: 'bold',
     textAlign: 'center'
-  }
+  },
+  
+  
 };
