@@ -50,6 +50,7 @@ import IdentityVerificationPage from './pages/IdentityVerificationPage';
 import InviteFrame from './pages/InviteFrame';
 import DiscountCodeManager from './pages/DiscountCodeManager';
 import FirebaseAdsManager from './pages/FirebaseAdsManager';
+import AdminAdRequests from './pages/AdminAdRequests';
 import HonorBoard from './components/HonorBoard';
 import AdRequestForm from './components/AdRequestForm';
 
@@ -133,6 +134,7 @@ function App() {
           element={<UserEvaluationCardWrapper />}
         />
         <Route path="/SkillsSection" element={<SkillsSection />} />
+        <Route path="/AdminAdRequests" element={<AdminAdRequests />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/Sidebar" element={<Sidebar />} />
         <Route path="/AdminSkills" element={<AdminSkills />} />

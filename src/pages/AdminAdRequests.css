@@ -1,0 +1,140 @@
+.admin-ad-requests {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #f0fdf4; /* أخضر فاتح جداً */
+  border-radius: 12px;
+  box-shadow: 0 0 25px rgba(34, 197, 94, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.admin-ad-requests h2 {
+  text-align: center;
+  color: #15803d; /* أخضر غامق */
+  margin-bottom: 30px;
+}
+
+.admin-ad-requests table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #f0fdf4;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(34, 197, 94, 0.1);
+}
+
+.admin-ad-requests th,
+.admin-ad-requests td {
+  border: 1px solid #bbf7d0;
+  padding: 14px;
+  text-align: left;
+  font-size: 15px;
+  color: #065f46;
+}
+
+.admin-ad-requests th {
+  background-color: #dcfce7;
+  color: #065f46;
+}
+
+.admin-ad-requests .ad-image {
+  max-width: 100px;
+  border-radius: 10px;
+  border: 2px solid #bbf7d0;
+}
+
+.admin-ad-requests button {
+  padding: 8px 14px;
+  margin: 0 4px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.approve {
+  background-color: #4ade80;
+  color: white;
+}
+
+.approve:hover {
+  background-color: #22c55e;
+}
+
+.reject {
+  background-color: #f87171;
+  color: white;
+}
+
+.reject:hover {
+  background-color: #dc2626;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.2);
+}
+
+.modal-content h3 {
+  margin-bottom: 10px;
+  color: #166534;
+}
+
+.modal-content textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background-color: #ecfdf5;
+  font-size: 14px;
+  resize: none;
+}
+
+.modal-content textarea:focus {
+  border-color: #22c55e;
+  outline: none;
+  background-color: #f0fdf4;
+}
+
+.modal-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit-reject {
+  background-color: #f87171;
+  color: white;
+  margin-right: 10px;
+}
+
+.submit-reject:hover {
+  background-color: #dc2626;
+}
+
+.cancel {
+  background-color: #aaa;
+  color: white;
+}
+
+.cancel:hover {
+  background-color: #777;
+}
